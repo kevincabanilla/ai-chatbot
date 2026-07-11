@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "paths": {
+      // Always update the alias in vite.config.ts when updating this.
+      "@/*": ["./src/*"]
+    },
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "es2023",
     "lib": ["ES2023", "DOM"],
@@ -22,5 +26,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src", "libs"],
+  "exclude": ["node_modules", "build", "dist"]
 }
