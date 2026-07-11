@@ -1,7 +1,8 @@
 import "./App.css";
+import { MainContainer } from "./components";
 
 const App = () => {
-  return <></>;
+  return <MainContainer />;
 };
 
 export default App;

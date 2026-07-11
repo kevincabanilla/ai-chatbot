@@ -2,12 +2,12 @@
 
 @theme {
   --font-sans: "Geist Variable", "Geist", system-ui, -apple-system, sans-serif;
+  --text: #eeece9;
+  --background: #22252b;
+  --accent: #292C34;
 }
 
 :root {
-  --text: #eeece9;
-  --background: #22252b;
-  --accent: #aa3bff;
 
   letter-spacing: 0.18px;
   color-scheme: dark;
