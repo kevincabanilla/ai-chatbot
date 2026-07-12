@@ -5,11 +5,23 @@
 
   --color-bg-primary: #22252b;
   --color-bg-secondary: #292c34;
+
+  --color-primary: #0f172a;
+  --color-primary-foreground: #f8fafc;
+
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #0f172a;
+
+  --color-accent: #3fa4f0;
+  --color-accent-foreground: #030617;
+
+  --color-foreground: #e2e8f0;
 }
 
 :root {
   letter-spacing: 0.18px;
   color-scheme: dark;
+  color: var(--color-foreground);
   background: var(--color-bg-primary);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
