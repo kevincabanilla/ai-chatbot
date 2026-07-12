@@ -27,6 +27,7 @@ export const AppTextArea = ({
       )}
       placeholder="Ask me anything"
       rows={1}
+      value={value}
       {...props}
     />
   );
