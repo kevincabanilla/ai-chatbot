@@ -6,7 +6,11 @@ import { AppTextArea } from "../inputs/AppTextArea";
 import { AppIconButton } from "../buttons/AppIconButton";
 import clsx from "clsx";
 
-export const PromptTextArea = () => {
+export const PromptTextArea = ({
+  onSubmit,
+}: {
+  onSubmit: (value: string) => void;
+}) => {
   const [prompt, setPrompt] = useState("");
   const [isMultiRow, setIsMultiRow] = useState(false);
 
@@ -40,6 +44,16 @@ export const PromptTextArea = () => {
         )}
         value={prompt}
         onChange={onInputChange}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            if (prompt.trim().length > 0) {
+              onSubmit(prompt);
+              setPrompt("");
+              setIsMultiRow(false);
+            }
+          }
+        }}
       />
 
       {isMultiRow && <div className="flex-1" />}

@@ -14,7 +14,11 @@ export const MainContainer = () => {
             <h1 className="text-lg md:text-3xl">{greeting}</h1>
           </div>
 
-          <PromptTextArea />
+          <PromptTextArea
+            onSubmit={(v) => {
+              console.log(v);
+            }}
+          />
         </div>
       </div>
     </main>
