@@ -1,12 +1,26 @@
 import { useEffect, useState } from "react";
 
-export function useTypingAnimation(text: string) {
+export function useTypingAnimation(
+  text: string,
+  options?: {
+    speed?: number;
+    random?: number;
+    cursor?: boolean;
+  },
+) {
+  const { speed = 30, random = 70, cursor = true } = options ?? {};
+
   const [visibleChars, setVisibleChars] = useState(0);
 
   useEffect(() => {
+    if (!text) return;
+
+    let cancelled = false;
     let timeoutId: ReturnType<typeof setTimeout>;
 
     const display = (index: number) => {
+      if (cancelled) return;
+
       setVisibleChars(index);
 
       if (index < text.length) {
@@ -14,7 +28,7 @@ export function useTypingAnimation(text: string) {
           () => {
             display(index + 1);
           },
-          30 + Math.random() * 70, // Human-like typing speed
+          speed + Math.random() * random, // Human-like typing speed
         );
       }
     };
@@ -22,12 +36,11 @@ export function useTypingAnimation(text: string) {
     display(0);
 
     return () => {
+      cancelled = true;
       clearTimeout(timeoutId);
     };
-  }, [text]);
+  }, [text, speed, random]);
 
   const isTyping = visibleChars < text.length;
-  const displayed = text.slice(0, visibleChars).concat(isTyping ? "|" : "");
-
-  return displayed;
+  return text.slice(0, visibleChars).concat(cursor && isTyping ? "|" : "");
 }
