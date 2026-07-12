@@ -1,7 +1,7 @@
-import { AppCard } from "../containers/AppCard";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/utils";
 import { useTypingAnimation } from "@/hooks";
+import { PromptTextArea } from "../ui/PromptTextArea";
 
 export const MainContainer = () => {
   const greeting = useTypingAnimation(Helper.pickRandom(GREETINGS));
@@ -14,8 +14,7 @@ export const MainContainer = () => {
             <h1 className="text-lg md:text-3xl">{greeting}</h1>
           </div>
 
-          <AppCard className="p-4">
-          </AppCard>
+          <PromptTextArea />
         </div>
       </div>
     </main>
