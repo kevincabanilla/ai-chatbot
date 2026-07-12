@@ -1,4 +1,4 @@
-import { AppCard } from "./AppCard";
+import { AppCard } from "../containers/AppCard";
 import { PromptTextArea } from "../inputs/PromptTextArea";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/utils";
