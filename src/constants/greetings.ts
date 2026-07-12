@@ -5,7 +5,6 @@ export const GREETINGS = [
   "How can I assist you today?",
   "What would you like to work on?",
   "What are you working on today?",
-  "Ask me anything.",
   "How's it going? What can I help with?",
   "Need help with something?",
   "What would you like to do today?",
