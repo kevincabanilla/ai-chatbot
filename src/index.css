@@ -28,3 +28,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+@utility full-size {
+  @apply h-full w-full;
+}
