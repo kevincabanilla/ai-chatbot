@@ -1,8 +1,8 @@
 import "./App.css";
-import { MainContainer } from "./components";
+import { MainView } from "./components";
 
 const App = () => {
-  return <MainContainer />;
+  return <MainView />;
 };
 
 export default App;

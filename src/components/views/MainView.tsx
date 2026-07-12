@@ -3,7 +3,7 @@ import { Helper } from "@/utils";
 import { useTypingAnimation } from "@/hooks";
 import { PromptTextArea } from "../ui/PromptTextArea";
 
-export const MainContainer = () => {
+export const MainView = () => {
   const greeting = useTypingAnimation(Helper.pickRandom(GREETINGS));
 
   return (
