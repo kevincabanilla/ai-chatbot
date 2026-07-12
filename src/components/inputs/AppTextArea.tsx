@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import clsx from "clsx";
 
-export const PromptTextArea = ({
+export const AppTextArea = ({
   className,
   value,
   ...props

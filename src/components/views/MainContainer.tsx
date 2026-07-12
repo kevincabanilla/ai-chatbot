@@ -1,5 +1,4 @@
 import { AppCard } from "../containers/AppCard";
-import { PromptTextArea } from "../inputs/PromptTextArea";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/utils";
 import { useTypingAnimation } from "@/hooks";
@@ -16,7 +15,6 @@ export const MainContainer = () => {
           </div>
 
           <AppCard className="p-4">
-            <PromptTextArea />
           </AppCard>
         </div>
       </div>
