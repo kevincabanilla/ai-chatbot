@@ -3,16 +3,14 @@
 @theme {
   --font-sans: "Geist Variable", "Geist", system-ui, -apple-system, sans-serif;
 
-  --color-primary: #eeece9;
-  --color-background: #22252b;
-  --color-accent: #292c34;
+  --color-bg-primary: #22252b;
+  --color-bg-secondary: #292c34;
 }
 
 :root {
   letter-spacing: 0.18px;
   color-scheme: dark;
-  color: var(--color-primary);
-  background: var(--color-background);
+  background: var(--color-bg-primary);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

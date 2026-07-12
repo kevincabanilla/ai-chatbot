@@ -9,7 +9,7 @@ export const AppCard = ({
   return (
     <div
       className={clsx(
-        "bg-accent rounded-2xl backdrop-blur-lg",
+        "bg-bg-secondary rounded-4xl",
         "border border-sky-300/20 hover:border-sky-300/40",
         className,
       )}
