@@ -41,15 +41,16 @@ export const PromptTextArea = ({
 
       <AppTextArea
         className={clsx(
-          isMultiRow ? "order-first basis-full p-6" : "flex-1 py-2",
+          isMultiRow ? "order-first basis-full p-4" : "flex-1 py-2",
         )}
         value={prompt}
         onChange={onInputChange}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            if (prompt.trim().length > 0) {
-              onSubmit(prompt);
+            const cleanValue = prompt.trim();
+            if (cleanValue.length > 0) {
+              onSubmit(cleanValue);
               setPrompt("");
               setIsMultiRow(false);
             }
