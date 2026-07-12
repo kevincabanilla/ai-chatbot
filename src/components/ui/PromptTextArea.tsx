@@ -29,6 +29,15 @@ export const PromptTextArea = ({
     }
   };
 
+  const submit = () => {
+    const cleanValue = prompt.trim();
+    if (cleanValue.length > 0) {
+      onSubmit(cleanValue);
+      setPrompt("");
+      setIsMultiRow(false);
+    }
+  };
+
   return (
     <AppCard
       className={clsx(
@@ -48,12 +57,7 @@ export const PromptTextArea = ({
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            const cleanValue = prompt.trim();
-            if (cleanValue.length > 0) {
-              onSubmit(cleanValue);
-              setPrompt("");
-              setIsMultiRow(false);
-            }
+            submit();
           }
         }}
       />
@@ -63,7 +67,7 @@ export const PromptTextArea = ({
       <AppIconButton rounded icon={Mic} label="Dictate" variant="ghost" />
 
       {prompt.length > 0 && (
-        <AppIconButton rounded icon={ArrowUp} label="Submit" />
+        <AppIconButton rounded icon={ArrowUp} label="Submit" onClick={submit} />
       )}
     </AppCard>
   );
