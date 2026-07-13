@@ -1,8 +1,8 @@
 import axios from "axios";
-import type { ChatMessage } from "@/shared/types";
+import type { ChatMessage, ChatResponse } from "@/shared/types";
 
-export async function sendChat(messages: ChatMessage[]): Promise<ChatMessage> {
-  const response = await axios.post<ChatMessage>("/api/chat", {
+export async function sendChat(messages: ChatMessage[]): Promise<ChatResponse> {
+  const response = await axios.post<ChatResponse>("/api/chat", {
     messages,
   });
 

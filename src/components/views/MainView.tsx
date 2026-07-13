@@ -1,7 +1,7 @@
 import { useState } from "react";
 import clsx from "clsx";
 import useSWRMutation from "swr/mutation";
-import type { ChatMessage } from "@/shared/types";
+import type { ChatMessage, ChatResponse } from "@/shared/types";
 import { sendChat } from "@/api/chatApi";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/utils";
@@ -17,14 +17,14 @@ export const MainView = () => {
 
   const [messages, setMessages] = useState<MessageItem[]>([]);
 
-  const hasStarted = messages.length > 1;
+  const hasStarted = messages.length > 0;
 
   const {
     trigger,
     isMutating: isLoading,
     error,
   } = useSWRMutation<
-    ChatMessage, // Response type
+    ChatResponse, // Response type
     Error, // Error type
     string, // SWR key type
     ChatMessage[] // Argument passed to trigger()
@@ -46,13 +46,12 @@ export const MainView = () => {
       updatedMessages.map((x) => ({ content: x.content, role: x.role })),
     );
 
-    setMessages([
-      ...updatedMessages,
-      {
-        ...reply,
-        timestamp: Date.now(),
-      },
-    ]);
+    updatedMessages.push({
+      ...reply.message,
+      timestamp: Date.now(),
+    });
+
+    setMessages([...updatedMessages]);
 
     if (error != null) {
       console.log(error.message);
