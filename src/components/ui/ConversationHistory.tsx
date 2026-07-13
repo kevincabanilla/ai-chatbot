@@ -1,14 +1,20 @@
 import { useEffect } from "react";
 import clsx from "clsx";
-import type { MessageItem, MessageRole } from "@/models";
-import { AppCard } from "../containers/AppCard";
 import { Bot } from "lucide-react";
+import type { ChatRole } from "@/shared/types";
+import { AppCard } from "../containers/AppCard";
+
+export interface MessageItem {
+  role: ChatRole;
+  content: string;
+  timestamp: number;
+}
 
 const ChatItem = ({
   messageRole,
   children,
 }: {
-  messageRole: MessageRole;
+  messageRole: ChatRole;
   children: React.ReactNode;
 }) => {
   const isFromUser = messageRole === "user";
@@ -33,7 +39,7 @@ const ChatItem = ({
           "px-4 py-2 mb-6",
           "max-w-lg rounded-2xl",
           "whitespace-pre-wrap",
-          "wrap-anywhere"
+          "wrap-anywhere",
         )}
       >
         <p>{children}</p>
@@ -56,13 +62,11 @@ export const ConversationHistory = ({
 
   return (
     <div className="full-size">
-      {messages
-        .filter((x) => x.visible)
-        .map((item) => (
-          <ChatItem key={item.timestamp} messageRole={item.role}>
-            {item.content}
-          </ChatItem>
-        ))}
+      {messages.map((item) => (
+        <ChatItem key={item.timestamp} messageRole={item.role}>
+          {item.content}
+        </ChatItem>
+      ))}
     </div>
   );
 };
