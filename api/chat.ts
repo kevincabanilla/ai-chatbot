@@ -10,8 +10,7 @@ export async function POST(request: Request) {
 
   try {
     body = (await request.json()) as ChatRequest;
-  } catch (error) {
-    console.error(error);
+  } catch {
     return errorResponse(400, "Invalid JSON body");
   }
 
@@ -26,11 +25,11 @@ export async function POST(request: Request) {
 
     return Response.json(response);
   } catch (error) {
-    console.error(error);
-
     if (error instanceof ChatValidationError) {
       return errorResponse(400, error.message);
     }
+
+    console.error(error);
 
     return errorResponse(500, "Internal server error");
   }
