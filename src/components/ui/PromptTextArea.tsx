@@ -7,8 +7,10 @@ import { AppIconButton } from "../buttons/AppIconButton";
 import clsx from "clsx";
 
 export const PromptTextArea = ({
+  disabled,
   onSubmit,
 }: {
+  disabled: boolean,
   onSubmit: (value: string) => void;
 }) => {
   const [prompt, setPrompt] = useState("");
@@ -52,6 +54,7 @@ export const PromptTextArea = ({
         className={clsx(
           isMultiRow ? "order-first basis-full p-4" : "flex-1 py-2",
         )}
+        disabled={disabled}
         value={prompt}
         onChange={onInputChange}
         onKeyDown={(e) => {

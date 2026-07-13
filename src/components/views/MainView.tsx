@@ -5,12 +5,74 @@ import { useTypingAnimation } from "@/hooks";
 import { PromptTextArea } from "../ui/PromptTextArea";
 import { useState } from "react";
 import { ConversationHistory } from "../ui/ConversationHistory";
-import type { MessageItem } from "@/models";
+import type { ChatCompletionMessage, MessageItem } from "@/models";
+import useSWRMutation from "swr/mutation";
+import { chatCompletion } from "@/api/chatApi";
+
+const currentTimestamp = Date.now();
 
 export const MainView = () => {
   const greeting = useTypingAnimation(Helper.pickRandom(GREETINGS));
-  const [messages, setMessages] = useState<MessageItem[]>([]);
-  const hasStarted = messages.length > 0;
+
+  const [messages, setMessages] = useState<MessageItem[]>([
+    {
+      role: "system",
+      content: "You are a helpful assistant.",
+      timestamp: currentTimestamp,
+      visible: false,
+    },
+  ]);
+
+  const hasStarted = messages.length > 1;
+
+  const {
+    trigger,
+    isMutating: isLoading,
+    error,
+  } = useSWRMutation<
+    ChatCompletionMessage[], // Response type
+    Error, // Error type
+    string, // SWR key type
+    ChatCompletionMessage[] // Argument passed to trigger()
+  >("chat", (_, { arg }) => chatCompletion(arg));
+
+  async function sendMessage(message: string) {
+    const updatedMessages: MessageItem[] = [
+      ...messages,
+      {
+        visible: true,
+        content: message,
+        role: "user",
+        timestamp: Date.now(),
+      },
+    ];
+
+    setMessages(updatedMessages);
+
+    const replies = await trigger(
+      updatedMessages.map((x) => ({
+        content: x.content,
+        role: x.role,
+      })),
+    );
+
+    if (replies.length === 0) return;
+
+    const reply = replies[0];
+
+    setMessages([
+      ...updatedMessages,
+      {
+        ...reply,
+        visible: true,
+        timestamp: Date.now(),
+      },
+    ]);
+
+    if (error != null) {
+      console.log(error.message);
+    }
+  }
 
   return (
     <main>
@@ -39,15 +101,9 @@ export const MainView = () => {
             )}
           >
             <PromptTextArea
+              disabled={isLoading}
               onSubmit={(v) => {
-                setMessages([
-                  ...messages,
-                  {
-                    content: v,
-                    source: messages.length % 2 !== 0 ? "AI" : "User",
-                    timestamp: Date.now(),
-                  },
-                ]);
+                void sendMessage(v);
               }}
             />
           </div>

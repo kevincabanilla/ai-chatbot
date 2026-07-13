@@ -10,5 +10,5 @@ export async function chatCompletion(messages: ChatCompletionMessage[]) {
     })
     .then((res) => res.data as ChatCompletionResponse);
 
-  return response.choices[0].message.content;
+  return response.choices.map(x => x.message);
 }
