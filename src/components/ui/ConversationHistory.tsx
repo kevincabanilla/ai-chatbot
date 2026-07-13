@@ -1,17 +1,17 @@
 import { useEffect } from "react";
 import clsx from "clsx";
-import type { MessageItem, MessageSource } from "@/models";
+import type { MessageItem, MessageRole } from "@/models";
 import { AppCard } from "../containers/AppCard";
 import { Bot } from "lucide-react";
 
 const ChatItem = ({
-  messageSource,
+  messageRole,
   children,
 }: {
-  messageSource: MessageSource;
+  messageRole: MessageRole;
   children: React.ReactNode;
 }) => {
-  const isFromUser = messageSource === "User";
+  const isFromUser = messageRole === "user";
 
   return (
     <div className={clsx("w-full flex", isFromUser ? "flex-row-reverse" : "")}>
@@ -33,6 +33,7 @@ const ChatItem = ({
           "px-4 py-2 mb-6",
           "max-w-lg rounded-2xl",
           "whitespace-pre-wrap",
+          "wrap-anywhere"
         )}
       >
         <p>{children}</p>
@@ -55,11 +56,13 @@ export const ConversationHistory = ({
 
   return (
     <div className="full-size">
-      {messages.map((item) => (
-        <ChatItem key={item.timestamp} messageSource={item.source}>
-          {item.content}
-        </ChatItem>
-      ))}
+      {messages
+        .filter((x) => x.visible)
+        .map((item) => (
+          <ChatItem key={item.timestamp} messageRole={item.role}>
+            {item.content}
+          </ChatItem>
+        ))}
     </div>
   );
 };

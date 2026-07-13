@@ -1,4 +1,6 @@
+export type MessageRole = "user" | "system";
+
 export interface ChatCompletionMessage {
-  role: string;
+  role: MessageRole;
   content: string;
 }
