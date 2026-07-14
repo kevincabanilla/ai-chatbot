@@ -24,7 +24,7 @@ export const MainView = () => {
     isMutating: isLoading,
     error,
   } = useSWRMutation<
-    ChatResponse, // Response type
+    ChatResponse | null, // Response type
     Error, // Error type
     string, // SWR key type
     ChatMessage[] // Argument passed to trigger()
@@ -46,16 +46,19 @@ export const MainView = () => {
       updatedMessages.map((x) => ({ content: x.content, role: x.role })),
     );
 
+    if (error != null) {
+      console.error(error.message);
+      return;
+    }
+
+    if (!reply?.message?.content) return;
+
     updatedMessages.push({
       ...reply.message,
       timestamp: Date.now(),
     });
 
     setMessages([...updatedMessages]);
-
-    if (error != null) {
-      console.log(error.message);
-    }
   };
 
   return (

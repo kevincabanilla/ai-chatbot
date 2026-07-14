@@ -10,5 +10,5 @@ export interface ChatRequest {
 }
 
 export interface ChatResponse {
-  message: ChatMessage;
+  message?: ChatMessage;
 }
