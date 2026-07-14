@@ -69,7 +69,7 @@ export const MainView = () => {
         <div className="w-full md:w-2xl">
           {hasStarted ? (
             <div className="h-full pb-14">
-              <ConversationHistory messages={messages} />
+              <ConversationHistory isLoading={isLoading} messages={messages} />
             </div>
           ) : (
             <div className="text-center p-5">

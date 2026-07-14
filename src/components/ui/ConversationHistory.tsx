@@ -48,9 +48,28 @@ const ChatItem = ({
   );
 };
 
+const TypingDots = () => {
+  return (
+    <div className="flex gap-2 p-2.5">
+      {[0, 1, 2].map((dot) => (
+        <div
+          key={dot}
+          className="size-2 rounded-full bg-cyan-500 animate-bounce"
+          style={{
+            animationDelay: `${dot * 200}ms`,
+            animationDuration: "700ms",
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 export const ConversationHistory = ({
+  isLoading,
   messages,
 }: {
+  isLoading: boolean;
   messages: MessageItem[];
 }) => {
   useEffect(() => {
@@ -67,6 +86,12 @@ export const ConversationHistory = ({
           {item.content}
         </ChatItem>
       ))}
+
+      {isLoading && (
+        <ChatItem messageRole="system">
+          <TypingDots />
+        </ChatItem>
+      )}
     </div>
   );
 };
