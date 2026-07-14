@@ -48,7 +48,7 @@ const ChatItem = ({
           "wrap-anywhere",
         )}
       >
-        <p>{children}</p>
+        {children}
       </AppCard>
     </div>
   );
@@ -92,7 +92,7 @@ export const ConversationHistory = ({
           id={item.timestamp.toString()}
           messageRole={item.role}
         >
-          {item.content}
+          <p>{item.content}</p>
         </ChatItem>
       ))}
 
