@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { Bot } from "lucide-react";
 import type { ChatRole } from "@/shared/types";
 import { AppCard } from "../containers/AppCard";
+import { Helper } from "@/utils";
 
 export interface MessageItem {
   role: ChatRole;
@@ -11,16 +12,21 @@ export interface MessageItem {
 }
 
 const ChatItem = ({
+  id,
   messageRole,
   children,
 }: {
+  id?: string;
   messageRole: ChatRole;
   children: React.ReactNode;
 }) => {
   const isFromUser = messageRole === "user";
 
   return (
-    <div className={clsx("w-full flex", isFromUser ? "flex-row-reverse" : "")}>
+    <div
+      id={id}
+      className={clsx("w-full my-3 flex", isFromUser ? "flex-row-reverse" : "")}
+    >
       {!isFromUser && (
         <div className="pr-3">
           <div
@@ -36,7 +42,7 @@ const ChatItem = ({
       )}
       <AppCard
         className={clsx(
-          "px-4 py-2 mb-6",
+          "px-4 py-2",
           "max-w-lg rounded-2xl",
           "whitespace-pre-wrap",
           "wrap-anywhere",
@@ -73,16 +79,19 @@ export const ConversationHistory = ({
   messages: MessageItem[];
 }) => {
   useEffect(() => {
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: "smooth",
-    });
+    const lastMessage = messages.at(-1);
+    if (!lastMessage) return;
+    Helper.scrollToId(lastMessage.timestamp);
   }, [messages]);
 
   return (
     <div className="full-size">
       {messages.map((item) => (
-        <ChatItem key={item.timestamp} messageRole={item.role}>
+        <ChatItem
+          key={item.timestamp}
+          id={item.timestamp.toString()}
+          messageRole={item.role}
+        >
           {item.content}
         </ChatItem>
       ))}
