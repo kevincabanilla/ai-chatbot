@@ -1,5 +1,5 @@
 import { type HTMLAttributes } from "react";
-import clsx from "clsx";
+import { cn } from "@/libs/utils";
 
 export const AppCard = ({
   className,
@@ -8,7 +8,7 @@ export const AppCard = ({
 }: HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
-      className={clsx(
+      className={cn(
         "bg-bg-secondary",
         "border border-sky-300/20 hover:border-sky-300/40",
         className,

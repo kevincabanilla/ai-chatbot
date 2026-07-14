@@ -65,7 +65,7 @@ export const MainView = () => {
     <main>
       <div
         className={clsx(
-          "relative min-h-screen p-6 flex justify-center",
+          "relative min-h-screen px-3 py-6 flex justify-center",
           hasStarted ? "items-start" : "items-center",
         )}
       >
@@ -83,7 +83,7 @@ export const MainView = () => {
           <div
             className={clsx(
               hasStarted
-                ? "fixed inset-x-0 bottom-0 z-1 flex justify-center p-6"
+                ? "fixed inset-x-0 bottom-0 z-1 flex justify-center px-3 py-6"
                 : "",
             )}
           >

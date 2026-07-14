@@ -25,13 +25,18 @@ const ChatItem = ({
   return (
     <div
       id={id}
-      className={clsx("w-full my-3 flex", isFromUser ? "flex-row-reverse" : "")}
+      className={clsx(
+        "w-full my-3 flex",
+        isFromUser ? "pl-6 flex-row-reverse" : "pr-6",
+      )}
     >
       {!isFromUser && (
-        <div className="pr-3">
+        <div className="pr-2.5">
           <div
             className={clsx(
-              "h-10.5 w-10.5 p-2",
+              "w-7 md:w-10.5",
+              "h-7 md:h-10.5",
+              "p-1 md:p-2",
               "flex justify-center items-center",
               "rounded-full border border-accent/60 ",
             )}
@@ -46,6 +51,7 @@ const ChatItem = ({
           "max-w-lg rounded-2xl",
           "whitespace-pre-wrap",
           "wrap-anywhere",
+          isFromUser ? "rounded-tr-none bg-accent/30" : "rounded-tl-none",
         )}
       >
         {children}
@@ -92,7 +98,7 @@ export const ConversationHistory = ({
           id={item.timestamp.toString()}
           messageRole={item.role}
         >
-          <p>{item.content}</p>
+          <p className="text-sm md:text-base">{item.content}</p>
         </ChatItem>
       ))}
 

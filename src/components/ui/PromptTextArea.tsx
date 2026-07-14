@@ -46,7 +46,7 @@ export const PromptTextArea = ({
     <AppCard
       className={clsx(
         "rounded-4xl",
-        "p-2 w-full max-w-2xl flex flex-wrap gap-2",
+        "p-2 w-full md:max-w-2xl flex flex-wrap gap-2",
         isMultiRow ? "items-start" : "items-center",
       )}
     >
