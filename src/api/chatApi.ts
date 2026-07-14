@@ -1,14 +1,12 @@
-import { groq } from "./groq";
-import type { ChatCompletionMessage, ChatCompletionResponse } from "@/models";
+import axios from "axios";
+import type { ChatMessage, ChatResponse } from "@/shared/types";
 
-export async function chatCompletion(messages: ChatCompletionMessage[]) {
-  const response = await groq
-    .post("/chat/completions", {
-      model: "llama-3.3-70b-versatile",
-      messages,
-      temperature: 0.7,
-    })
-    .then((res) => res.data as ChatCompletionResponse);
+export async function sendChat(
+  messages: ChatMessage[],
+): Promise<ChatResponse | null> {
+  const response = await axios.post<ChatResponse | null>("/api/chat", {
+    messages,
+  });
 
-  return response.choices.map(x => x.message);
+  return response.data;
 }

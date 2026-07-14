@@ -1,18 +1,16 @@
-import type { ChatCompletionMessage } from "./chat-completion-message.interface";
+import type { ChatMessage } from "@/shared/types/chat";
 
-export interface ChatCompletionResponse {
+export interface GroqResponse {
   id: string;
   object: string;
   created: number;
   model: string;
-  choices: [
-    {
-      index: number;
-      message: ChatCompletionMessage;
-      logprobs: object | null;
-      finish_reason: string;
-    },
-  ];
+  choices: {
+    index: number;
+    message: ChatMessage;
+    logprobs: object | null;
+    finish_reason: string;
+  }[];
   usage: {
     queue_time: number;
     prompt_tokens: number;

@@ -9,7 +9,20 @@ function getTextareaRows(textarea: HTMLTextAreaElement) {
   return Math.ceil(textarea.scrollHeight / lineHeight);
 }
 
+export const scrollToId = (id: string | number) => {
+  const el = document.getElementById(
+    typeof id == "string" && id.startsWith("#") ? id.slice(1) : String(id),
+  );
+  if (!el) return;
+
+  el.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+};
+
 export const Helper = {
   pickRandom,
   getTextareaRows,
+  scrollToId,
 };

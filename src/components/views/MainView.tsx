@@ -1,46 +1,39 @@
+import { useState } from "react";
 import clsx from "clsx";
+import useSWRMutation from "swr/mutation";
+import type { ChatMessage, ChatResponse } from "@/shared/types";
+import { sendChat } from "@/api/chatApi";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/utils";
 import { useTypingAnimation } from "@/hooks";
 import { PromptTextArea } from "../ui/PromptTextArea";
-import { useState } from "react";
-import { ConversationHistory } from "../ui/ConversationHistory";
-import type { ChatCompletionMessage, MessageItem } from "@/models";
-import useSWRMutation from "swr/mutation";
-import { chatCompletion } from "@/api/chatApi";
-
-const currentTimestamp = Date.now();
+import {
+  ConversationHistory,
+  type MessageItem,
+} from "../ui/ConversationHistory";
 
 export const MainView = () => {
   const greeting = useTypingAnimation(Helper.pickRandom(GREETINGS));
 
-  const [messages, setMessages] = useState<MessageItem[]>([
-    {
-      role: "system",
-      content: "You are a helpful assistant.",
-      timestamp: currentTimestamp,
-      visible: false,
-    },
-  ]);
+  const [messages, setMessages] = useState<MessageItem[]>([]);
 
-  const hasStarted = messages.length > 1;
+  const hasStarted = messages.length > 0;
 
   const {
     trigger,
     isMutating: isLoading,
     error,
   } = useSWRMutation<
-    ChatCompletionMessage[], // Response type
+    ChatResponse | null, // Response type
     Error, // Error type
     string, // SWR key type
-    ChatCompletionMessage[] // Argument passed to trigger()
-  >("chat", (_, { arg }) => chatCompletion(arg));
+    ChatMessage[] // Argument passed to trigger()
+  >("chat", (_, { arg }) => sendChat(arg));
 
-  async function sendMessage(message: string) {
+  const sendMessage = async (message: string) => {
     const updatedMessages: MessageItem[] = [
       ...messages,
       {
-        visible: true,
         content: message,
         role: "user",
         timestamp: Date.now(),
@@ -49,30 +42,24 @@ export const MainView = () => {
 
     setMessages(updatedMessages);
 
-    const replies = await trigger(
-      updatedMessages.map((x) => ({
-        content: x.content,
-        role: x.role,
-      })),
+    const reply = await trigger(
+      updatedMessages.map((x) => ({ content: x.content, role: x.role })),
     );
 
-    if (replies.length === 0) return;
-
-    const reply = replies[0];
-
-    setMessages([
-      ...updatedMessages,
-      {
-        ...reply,
-        visible: true,
-        timestamp: Date.now(),
-      },
-    ]);
-
     if (error != null) {
-      console.log(error.message);
+      console.error(error.message);
+      return;
     }
-  }
+
+    if (!reply?.message?.content) return;
+
+    updatedMessages.push({
+      ...reply.message,
+      timestamp: Date.now(),
+    });
+
+    setMessages([...updatedMessages]);
+  };
 
   return (
     <main>
@@ -85,7 +72,7 @@ export const MainView = () => {
         <div className="w-full md:w-2xl">
           {hasStarted ? (
             <div className="h-full pb-14">
-              <ConversationHistory messages={messages} />
+              <ConversationHistory isLoading={isLoading} messages={messages} />
             </div>
           ) : (
             <div className="text-center p-5">
