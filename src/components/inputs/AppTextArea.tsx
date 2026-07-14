@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import clsx from "clsx";
+import { cn } from "@/libs/utils";
 
 export const AppTextArea = ({
   className,
@@ -20,7 +20,7 @@ export const AppTextArea = ({
       ref={textareaRef}
       autoFocus
       spellCheck
-      className={clsx(
+      className={cn(
         className,
         "max-h-80 resize-none align-middle",
         "border-0 outline-none focus:outline-none focus:ring-0",

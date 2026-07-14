@@ -1,7 +1,7 @@
 import { type ComponentPropsWithRef } from "react";
-import { cva, type VariantProps } from "class-variance-authority";
-import clsx from "clsx";
 import type { LucideIcon } from "lucide-react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/libs/utils";
 
 const appIconButtonVariants = cva(
   [
@@ -72,7 +72,7 @@ export const AppIconButton = ({
       ref={ref}
       type={type}
       aria-label={label}
-      className={clsx(
+      className={cn(
         appIconButtonVariants({
           variant,
           size,
