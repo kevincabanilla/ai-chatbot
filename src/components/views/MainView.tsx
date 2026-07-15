@@ -94,7 +94,7 @@ export const MainView = () => {
               }}
             />
           </div>
-          <div className="fixed inset-x-0 bottom-0 bg-bg-primary h-14 flex justify-center align-bottom" />
+          <div className="fixed inset-x-0 bottom-0 bg-bg-primary/90 backdrop-blur-xs h-14 flex justify-center align-bottom" />
         </div>
       </div>
     </main>
