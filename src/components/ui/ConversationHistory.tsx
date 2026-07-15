@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { Bot } from "lucide-react";
 import type { ChatRole } from "@/shared/types";
 import { AppCard } from "../containers/AppCard";
-import { Helper } from "@/utils";
+import { Helper } from "@/libs/helper";
 
 export interface MessageItem {
   role: ChatRole;

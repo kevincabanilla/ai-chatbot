@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent } from "react";
 import { Plus, Mic, ArrowUp } from "lucide-react";
-import { Helper } from "@/utils";
+import { Helper } from "@/libs/helper";
 import { AppCard } from "../containers/AppCard";
 import { AppTextArea } from "../inputs/AppTextArea";
 import { AppIconButton } from "../buttons/AppIconButton";

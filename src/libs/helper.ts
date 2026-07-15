@@ -1,15 +1,15 @@
-function pickRandom<T>(items: T[]): T {
+const pickRandom = <T>(items: T[]): T => {
   return items[Math.floor(Math.random() * items.length)];
-}
+};
 
-function getTextareaRows(textarea: HTMLTextAreaElement) {
+const getTextareaRows = (textarea: HTMLTextAreaElement) => {
   const styles = window.getComputedStyle(textarea);
   const lineHeight = parseFloat(styles.lineHeight);
 
   return Math.ceil(textarea.scrollHeight / lineHeight);
-}
+};
 
-export const scrollToId = (id: string | number) => {
+const scrollToId = (id: string | number) => {
   const el = document.getElementById(
     typeof id == "string" && id.startsWith("#") ? id.slice(1) : String(id),
   );

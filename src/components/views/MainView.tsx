@@ -4,7 +4,7 @@ import useSWRMutation from "swr/mutation";
 import type { ChatMessage, ChatResponse } from "@/shared/types";
 import { sendChat } from "@/api/chatApi";
 import { GREETINGS } from "@/constants/greetings";
-import { Helper } from "@/utils";
+import { Helper } from "@/libs/helper";
 import { useStore, useTypingAnimation } from "@/hooks";
 import { PromptTextArea } from "../ui/PromptTextArea";
 import {
