@@ -22,6 +22,15 @@ export const MainView = () => {
 
   useEffect(() => {
     setState({ messages: messages });
+
+    // nested update example:
+    // setState((prev) => ({
+    //   ...prev,
+    //   messages: [
+    //     ...prev.messages,
+    //     // insert new message
+    //   ],
+    // }));
   }, [messages, setState]);
 
   const {

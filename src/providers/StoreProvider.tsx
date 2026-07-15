@@ -19,11 +19,17 @@ export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
     () => ({
       state,
 
-      setState: (updates: Partial<Store>) => {
-        setState((prev) => ({
-          ...prev,
-          ...updates,
-        }));
+      setState: (updater) => {
+        setState((prev) => {
+          if (typeof updater === "function") {
+            return updater(prev);
+          }
+
+          return {
+            ...prev,
+            ...updater,
+          };
+        });
       },
 
       reset: () => {

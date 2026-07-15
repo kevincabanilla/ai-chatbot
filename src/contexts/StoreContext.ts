@@ -9,7 +9,7 @@ export interface Store {
 
 export interface StoreContextType {
   state: Store;
-  setState: (updates: Partial<Store>) => void;
+  setState: (updater: Partial<Store> | ((prev: Store) => Store)) => void;
   reset: () => void;
 }
 
