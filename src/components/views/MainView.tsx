@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import useSWRMutation from "swr/mutation";
 import type { ChatMessage, ChatResponse } from "@/shared/types";
 import { sendChat } from "@/api/chatApi";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/utils";
-import { useTypingAnimation } from "@/hooks";
+import { useStore, useTypingAnimation } from "@/hooks";
 import { PromptTextArea } from "../ui/PromptTextArea";
 import {
   ConversationHistory,
@@ -14,10 +14,15 @@ import {
 
 export const MainView = () => {
   const greeting = useTypingAnimation(Helper.pickRandom(GREETINGS));
+  const { state, setState } = useStore();
 
-  const [messages, setMessages] = useState<MessageItem[]>([]);
+  const [messages, setMessages] = useState<MessageItem[]>(state.messages);
 
   const hasStarted = messages.length > 0;
+
+  useEffect(() => {
+    setState({ messages: messages });
+  }, [messages, setState]);
 
   const {
     trigger,
