@@ -4,16 +4,16 @@ import clsx from "clsx";
 import { AppIconButton } from "../buttons/AppIconButton";
 
 export const TopToolbar = ({
-  isMobile,
-  setIsMobileOpen,
+  isVisible,
+  onOpenDrawer,
 }: {
-  isMobile: boolean;
-  setIsMobileOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isVisible: boolean;
+  onOpenDrawer: (shouldOpen: boolean) => void;
 }) => {
   return (
     <AnimatePresence>
       {/* Mobile header */}
-      {isMobile && (
+      {isVisible && (
         <motion.header
           className={clsx(
             "sticky top-0 h-16 z-50 flex items-center",
@@ -34,7 +34,7 @@ export const TopToolbar = ({
             label="Menu"
             icon={Menu}
             onClick={() => {
-              setIsMobileOpen(true);
+              onOpenDrawer(true);
             }}
           />
         </motion.header>

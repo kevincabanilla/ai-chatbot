@@ -1,26 +1,31 @@
 import { useState } from "react";
 import "./App.css";
 import { MEDIA_QUERIES, useMediaQuery } from "./hooks";
+import { StoreProvider } from "./providers/StoreProvider";
 import { MainView } from "./components";
 import { LeftNav } from "./components/views/LeftNav";
-import { StoreProvider } from "./providers/StoreProvider";
 import { TopToolbar } from "./components/views/TopToolbar";
 
 const App = () => {
   const isMobile = useMediaQuery(MEDIA_QUERIES.lg);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
     <StoreProvider>
       <div className="flex">
         <LeftNav
+          isCollapsed={isCollapsed}
           isMobile={isMobile}
-          isMobileOpen={isMobileOpen}
-          setIsMobileOpen={setIsMobileOpen}
+          setIsCollapsed={setIsCollapsed}
         />
 
         <div className="flex-1">
-          <TopToolbar isMobile={isMobile} setIsMobileOpen={setIsMobileOpen} />
+          <TopToolbar
+            isVisible={isMobile}
+            onOpenDrawer={(shouldOpen) => {
+              setIsCollapsed(!shouldOpen);
+            }}
+          />
           <MainView />
         </div>
       </div>
