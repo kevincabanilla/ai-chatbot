@@ -6,7 +6,7 @@ import { MainView, TopToolbar, LeftNav } from "./components/views";
 
 const App = () => {
   const isMobile = useMediaQuery(MEDIA_QUERIES.lg);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(isMobile);
 
   return (
     <StoreProvider>
