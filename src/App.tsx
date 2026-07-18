@@ -2,9 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import { MEDIA_QUERIES, useMediaQuery } from "./hooks";
 import { StoreProvider } from "./providers/StoreProvider";
-import { MainView } from "./components";
-import { LeftNav } from "./components/views/LeftNav";
-import { TopToolbar } from "./components/views/TopToolbar";
+import { MainView, TopToolbar, LeftNav } from "./components/views";
 
 const App = () => {
   const isMobile = useMediaQuery(MEDIA_QUERIES.lg);
