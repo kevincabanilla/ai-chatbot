@@ -12,11 +12,18 @@ export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
       className={cn(
         "h-full flex flex-col bg-bg-primary border-r border-accent/20",
         isMobile ? "absolute inset-y-0 left-0" : "sticky top-0",
-        isCollapsed ? "w-18 min-w-18" : "w-64 min-w-64",
+        // isCollapsed ? "w-18 min-w-18" : "w-64 min-w-64",
       )}
-      initial={{ x: "-100%" }}
-      animate={{ x: 0 }}
-      exit={{ x: "-100%" }}
+      initial={{ x: isMobile ? "-100%" : "0", width: isMobile ? 256 : 0 }}
+      animate={
+        isMobile
+          ? { x: 0 }
+          : {
+              width: isCollapsed ? 72 : 256,
+              minWidth: isCollapsed ? 72 : 256,
+            }
+      }
+      exit={{ x: "-100%" }} // Mobile only
       transition={{
         type: "spring",
         stiffness: 300,
