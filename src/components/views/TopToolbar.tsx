@@ -37,6 +37,10 @@ export const TopToolbar = ({
               onOpenDrawer(true);
             }}
           />
+
+          <h1 className="grow text-xl font-bold tracking-tight ml-3">
+            {import.meta.env.VITE_APP_TITLE}
+          </h1>
         </motion.header>
       )}
     </AnimatePresence>

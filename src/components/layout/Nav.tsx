@@ -70,7 +70,7 @@ const NavHeader = ({ isMobile, isCollapsed, setIsCollapsed }: NavProps) => {
       {!isCollapsed && (
         <>
           <h1 className="grow text-xl font-bold tracking-tight ml-3">
-            Chatbud
+            {import.meta.env.VITE_APP_TITLE}
           </h1>
 
           <AppIconButton
