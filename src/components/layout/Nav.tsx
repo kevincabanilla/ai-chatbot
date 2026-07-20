@@ -48,14 +48,14 @@ export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
 const NavHeader = ({ isMobile, isCollapsed, setIsCollapsed }: NavProps) => {
   const [isCollapseBtnHovered, setIsCollapseBtnHovered] = useState(false);
 
-  const updateIsCollapsed = () => {
+  const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
   return (
     <div className="flex items-center border-b border-accent/20 p-3">
       <AppIconButton
-        label="Minimize Nav"
+        label="Toggle Sidebar"
         variant="ghost"
         icon={!isCollapsed || !isCollapseBtnHovered ? Bot : PanelLeft}
         onMouseEnter={() => {
@@ -64,7 +64,9 @@ const NavHeader = ({ isMobile, isCollapsed, setIsCollapsed }: NavProps) => {
         onMouseLeave={() => {
           setIsCollapseBtnHovered(false);
         }}
-        onClick={updateIsCollapsed}
+        onClick={() => {
+          if (isCollapsed) toggleSidebar();
+        }}
       />
 
       {!isCollapsed && (
@@ -75,9 +77,9 @@ const NavHeader = ({ isMobile, isCollapsed, setIsCollapsed }: NavProps) => {
 
           <AppIconButton
             icon={isMobile ? X : PanelLeft}
-            label="Minimize Nav"
+            label="Toggle Sidebar"
             variant="ghost"
-            onClick={updateIsCollapsed}
+            onClick={toggleSidebar}
           />
         </>
       )}
