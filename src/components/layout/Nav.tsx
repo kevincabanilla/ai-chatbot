@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { motion } from "motion/react";
+import { motion, type Transition } from "motion/react";
 import { Bot, PanelLeft, Plus, Search, Settings, X } from "lucide-react";
 import { cn } from "@/libs/utils";
 import type { NavProps } from "@/interfaces";
 import { AppNavButton } from "../buttons/AppNavButton";
 import { AppIconButton } from "../buttons/AppIconButton";
+import { sidebarVariants } from "@/libs/animationVariants";
 
 export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
   return (
@@ -15,20 +16,9 @@ export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
         // isCollapsed ? "w-18 min-w-18" : "w-64 min-w-64",
       )}
       initial={{ x: isMobile ? "-100%" : "0", width: isMobile ? 256 : 0 }}
-      animate={
-        isMobile
-          ? { x: 0 }
-          : {
-              width: isCollapsed ? 72 : 256,
-              minWidth: isCollapsed ? 72 : 256,
-            }
-      }
+      animate={isMobile ? { x: 0 } : isCollapsed ? "collapsed" : "expanded"}
       exit={{ x: "-100%" }} // Mobile only
-      transition={{
-        type: "spring",
-        stiffness: 300,
-        damping: 40,
-      }}
+      variants={sidebarVariants}
     >
       {/* Logo */}
       <NavHeader
@@ -52,12 +42,21 @@ const NavHeader = ({ isMobile, isCollapsed, setIsCollapsed }: NavProps) => {
     setIsCollapsed(!isCollapsed);
   };
 
+  const headerTransition: Transition = {
+    duration: 0.1,
+    ease: "easeOut",
+  };
+
+  const HeaderIcon = !isCollapsed || !isCollapseBtnHovered ? Bot : PanelLeft;
+
   return (
-    <div className="flex items-center border-b border-accent/20 p-3">
-      <AppIconButton
-        label="Toggle Sidebar"
-        variant="ghost"
-        icon={!isCollapsed || !isCollapseBtnHovered ? Bot : PanelLeft}
+    <div className="flex items-center border-b border-accent/20 px-3 py-2">
+      <button
+        className={cn(
+          "flex items-center justify-center",
+          "rounded-xl px-3 py-2 text-sm cursor-pointer",
+          "transition-colors hover:bg-white/3",
+        )}
         onMouseEnter={() => {
           setIsCollapseBtnHovered(true);
         }}
@@ -67,22 +66,34 @@ const NavHeader = ({ isMobile, isCollapsed, setIsCollapsed }: NavProps) => {
         onClick={() => {
           if (isCollapsed) toggleSidebar();
         }}
-      />
+      >
+        <HeaderIcon className="shrink-0 p-0.5" />
+      </button>
 
-      {!isCollapsed && (
-        <>
-          <h1 className="grow text-xl font-bold tracking-tight ml-3">
-            {import.meta.env.VITE_APP_TITLE}
-          </h1>
+      <motion.div
+        className={cn(isCollapsed ? "hidden" : "grow flex items-center")}
+        variants={{
+          expanded: {
+            opacity: 1,
+            transition: headerTransition,
+          },
+          collapsed: {
+            opacity: 0,
+            transition: headerTransition,
+          },
+        }}
+      >
+        <h1 className="grow text-xl font-bold tracking-tight truncate">
+          {import.meta.env.VITE_APP_TITLE}
+        </h1>
 
-          <AppIconButton
-            icon={isMobile ? X : PanelLeft}
-            label="Toggle Sidebar"
-            variant="ghost"
-            onClick={toggleSidebar}
-          />
-        </>
-      )}
+        <AppIconButton
+          icon={isMobile ? X : PanelLeft}
+          label="Toggle Sidebar"
+          variant="ghost"
+          onClick={toggleSidebar}
+        />
+      </motion.div>
     </div>
   );
 };
