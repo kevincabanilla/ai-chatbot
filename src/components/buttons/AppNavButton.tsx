@@ -25,9 +25,10 @@ export const AppNavButton = ({
     >
       {Icon && <Icon className="shrink-0 p-0.5" />}
       <div
-        className={`truncate transition-all duration-300 ${
-          !collapsed ? "opacity-100" : "opacity-0"
-        }`}
+        className={cn(
+          "truncate transition-all duration-300",
+          !collapsed ? "opacity-100" : "opacity-0",
+        )}
       >
         {children}
       </div>
