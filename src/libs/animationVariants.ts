@@ -1,6 +1,6 @@
 import type { Transition, Variants } from "motion/react";
 
-const SIDEBAR_TRANSITION: Transition = {
+export const SIDEBAR_TRANSITION: Transition = {
   type: "spring",
   stiffness: 300,
   damping: 40,

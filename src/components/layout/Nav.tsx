@@ -5,7 +5,7 @@ import { cn } from "@/libs/utils";
 import type { NavProps } from "@/interfaces";
 import { AppNavButton } from "../buttons/AppNavButton";
 import { AppIconButton } from "../buttons/AppIconButton";
-import { sidebarVariants } from "@/libs/animationVariants";
+import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
 
 export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
   return (
@@ -18,6 +18,7 @@ export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
       initial={{ x: isMobile ? "-100%" : "0", width: isMobile ? 256 : 0 }}
       animate={isMobile ? { x: 0 } : isCollapsed ? "collapsed" : "expanded"}
       exit={{ x: "-100%" }} // Mobile only
+      transition={SIDEBAR_TRANSITION}
       variants={sidebarVariants}
     >
       {/* Logo */}
