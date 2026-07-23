@@ -11,4 +11,6 @@ export interface ChatRequest {
 
 export interface ChatResponse {
   message?: ChatMessage;
+  error?: string;
+  status?: number;
 }

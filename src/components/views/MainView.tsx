@@ -9,10 +9,13 @@ import { useStore, useTypingAnimation } from "@/hooks";
 import type { MessageItem } from "@/interfaces";
 import { PromptTextArea } from "../ui/PromptTextArea";
 import { ConversationHistory } from "../ui/ConversationHistory";
+import Toast from "../alerts/Toast";
 
 export const MainView = () => {
   const greeting = useTypingAnimation(Helper.pickRandom(GREETINGS));
   const { state, setState } = useStore();
+  const [showAlert, setShowAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [messages, setMessages] = useState<MessageItem[]>(state.messages);
 
@@ -51,6 +54,7 @@ export const MainView = () => {
         timestamp: Date.now(),
       },
     ];
+    setShowAlert(false);
 
     setMessages(updatedMessages);
 
@@ -61,6 +65,11 @@ export const MainView = () => {
     if (error != null) {
       console.error(error.message);
       return;
+    }
+
+    if (reply?.error) {
+      setErrorMessage(reply.error);
+      setShowAlert(true);
     }
 
     if (!reply?.message?.content) return;
@@ -107,6 +116,17 @@ export const MainView = () => {
           <div className="fixed inset-x-0 bottom-0 bg-bg-primary/90 backdrop-blur-xs h-14 flex justify-center align-bottom" />
         </div>
       </div>
+
+      <Toast
+        visible={showAlert}
+        type="error"
+        vertical="end"
+        onClose={() => {
+          setShowAlert(false);
+        }}
+      >
+        {errorMessage}
+      </Toast>
     </main>
   );
 };
