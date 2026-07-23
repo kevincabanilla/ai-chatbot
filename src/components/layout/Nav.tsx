@@ -12,7 +12,7 @@ export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
   return (
     <motion.aside
       className={cn(
-        "h-full flex flex-col bg-bg-primary border-r border-accent/20",
+        "h-full flex flex-col overflow-y-auto bg-bg-primary border-r border-accent/20",
         isMobile ? "absolute inset-y-0 left-0" : "sticky top-0",
         // isCollapsed ? "w-18 min-w-18" : "w-64 min-w-64",
       )}
