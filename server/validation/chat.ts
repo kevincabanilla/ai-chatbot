@@ -1,4 +1,4 @@
-import type { ChatMessage } from "@/shared/types";
+import type { ChatMessage } from "../../shared/types/chat.js";
 
 export class ChatValidationError extends Error {}
 

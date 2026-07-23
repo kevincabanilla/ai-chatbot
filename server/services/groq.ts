@@ -1,7 +1,7 @@
 import axios from "axios";
-import { AI_MODELS } from "../ai/models";
-import type { GroqResponse } from "../types";
-import type { ChatMessage } from "@/shared/types";
+import { AI_MODELS } from "../ai/models.js";
+import type { GroqResponse } from "../types/groq.js";
+import type { ChatMessage } from "../../shared/types/chat.js";
 
 const groqClient = axios.create({
   baseURL: "https://api.groq.com/openai/v1",

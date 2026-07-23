@@ -1,4 +1,4 @@
-import type { ChatMessage } from "@/shared/types/chat";
+import type { ChatMessage } from "../../shared/types/chat.js";
 
 export interface GroqResponse {
   id: string;

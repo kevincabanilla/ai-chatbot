@@ -1,9 +1,9 @@
-import type { ChatRequest, ChatResponse } from "@/shared/types";
-import { generateGroqResponse } from "../server/services/index.js";
+import type { ChatRequest, ChatResponse } from "../shared/types/chat.js";
+import { generateGroqResponse } from "../server/services/groq.js";
 import {
   ChatValidationError,
   validateChatMessages,
-} from "../server/validation/chat";
+} from "../server/validation/chat.js";
 
 export async function POST(request: Request) {
   let body: ChatRequest;
