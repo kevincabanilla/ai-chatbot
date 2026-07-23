@@ -1,5 +1,5 @@
 import type { ChatRequest, ChatResponse } from "@/shared/types";
-import { generateGroqResponse } from "../server/services";
+import { generateGroqResponse } from "../server/services/index.js";
 import {
   ChatValidationError,
   validateChatMessages,
