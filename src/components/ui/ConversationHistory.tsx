@@ -4,12 +4,7 @@ import { Bot } from "lucide-react";
 import type { ChatRole } from "@/shared/types";
 import { AppCard } from "../containers/AppCard";
 import { Helper } from "@/libs/helper";
-
-export interface MessageItem {
-  role: ChatRole;
-  content: string;
-  timestamp: number;
-}
+import type { MessageItem } from "@/interfaces";
 
 const ChatItem = ({
   id,

@@ -6,11 +6,9 @@ import { sendChat } from "@/api/chatApi";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/libs/helper";
 import { useStore, useTypingAnimation } from "@/hooks";
+import type { MessageItem } from "@/interfaces";
 import { PromptTextArea } from "../ui/PromptTextArea";
-import {
-  ConversationHistory,
-  type MessageItem,
-} from "../ui/ConversationHistory";
+import { ConversationHistory } from "../ui/ConversationHistory";
 
 export const MainView = () => {
   const greeting = useTypingAnimation(Helper.pickRandom(GREETINGS));
