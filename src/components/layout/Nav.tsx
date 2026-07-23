@@ -6,6 +6,7 @@ import type { NavProps } from "@/interfaces";
 import { AppNavButton } from "../buttons/AppNavButton";
 import { AppIconButton } from "../buttons/AppIconButton";
 import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
+import { useStore } from "@/hooks";
 
 export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
   return (
@@ -100,9 +101,20 @@ const NavHeader = ({ isMobile, isCollapsed, setIsCollapsed }: NavProps) => {
 };
 
 const NavActions = ({ isCollapsed }: { isCollapsed: boolean }) => {
+  const { state, setState } = useStore();
+
   return (
     <nav className="flex-1 p-3">
-      <AppNavButton collapsed={isCollapsed} icon={Plus}>
+      <AppNavButton
+        collapsed={isCollapsed}
+        icon={Plus}
+        onClick={() => {
+          setState((prev) => ({
+            ...prev,
+            currentConversationId: null,
+          }));
+        }}
+      >
         <span>New Chat</span>
       </AppNavButton>
 
