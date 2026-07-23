@@ -122,17 +122,30 @@ const NavActions = ({ isCollapsed }: { isCollapsed: boolean }) => {
         <span>Search Chat</span>
       </AppNavButton>
 
-      {!isCollapsed && (
+      {!isCollapsed && state.conversationOrder.length > 0 && (
         <div className="flex flex-col gap-1">
           <div className="p-2">
             <span className="text-xs font-medium">Recents</span>
           </div>
           <ul className="space-y-2">
-            <li>
-              <AppNavButton className="group">
-                <span>Some previous chat</span>
-              </AppNavButton>
-            </li>
+            {state.conversationOrder.map((x) => (
+              <li key={x}>
+                <AppNavButton
+                  className={cn(
+                    "group",
+                    x === state.currentConversationId ? "text-accent" : "",
+                  )}
+                  onClick={() => {
+                    setState((prev) => ({
+                      ...prev,
+                      currentConversationId: x,
+                    }));
+                  }}
+                >
+                  <span>{state.conversationsById[x].title}</span>
+                </AppNavButton>
+              </li>
+            ))}
           </ul>
         </div>
       )}
