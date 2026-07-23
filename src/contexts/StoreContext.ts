@@ -1,21 +1,25 @@
-import type { MessageItem } from "@/components";
 import { createContext } from "react";
+import type { Conversation } from "@/interfaces";
 
 const STORAGE_KEY = "app-store";
 
 export interface Store {
-  messages: MessageItem[];
+  conversationsById: Record<string, Conversation>;
+  conversationOrder: string[];
+  currentConversationId: string | null;
 }
+
+const defaultState: Store = {
+  conversationsById: {},
+  conversationOrder: [],
+  currentConversationId: null,
+};
 
 export interface StoreContextType {
   state: Store;
   setState: (updater: Partial<Store> | ((prev: Store) => Store)) => void;
   reset: () => void;
 }
-
-const defaultState: Store = {
-  messages: [],
-};
 
 export const loadState = (): Store => {
   try {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import clsx from "clsx";
 import useSWRMutation from "swr/mutation";
 import type { ChatMessage, ChatResponse } from "@/shared/types";
@@ -6,7 +6,7 @@ import { sendChat } from "@/api/chatApi";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/libs/helper";
 import { useStore, useTypingAnimation } from "@/hooks";
-import type { MessageItem } from "@/interfaces";
+import type { Conversation, MessageItem } from "@/interfaces";
 import { PromptTextArea } from "../ui/PromptTextArea";
 import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
@@ -17,22 +17,49 @@ export const MainView = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const [messages, setMessages] = useState<MessageItem[]>(state.messages);
+  const messages = !state.currentConversationId
+    ? []
+    : state.conversationsById[state.currentConversationId].messages;
 
   const hasStarted = messages.length > 0;
 
-  useEffect(() => {
-    setState({ messages: messages });
+  const appendMessage = (newMessage: MessageItem): void => {
+    setState((prev) => {
+      const currentId = prev.currentConversationId;
+      const currentConversation = !currentId
+        ? null
+        : prev.conversationsById[currentId];
 
-    // nested update example:
-    // setState((prev) => ({
-    //   ...prev,
-    //   messages: [
-    //     ...prev.messages,
-    //     // insert new message
-    //   ],
-    // }));
-  }, [messages, setState]);
+      if (!currentConversation) {
+        const conversation: Conversation = {
+          id: crypto.randomUUID(),
+          title: newMessage.content,
+          messages: [newMessage],
+        };
+
+        return {
+          ...prev,
+          conversationsById: {
+            ...prev.conversationsById,
+            [conversation.id]: conversation,
+          },
+          conversationOrder: [conversation.id, ...prev.conversationOrder],
+          currentConversationId: conversation.id,
+        };
+      }
+
+      return {
+        ...prev,
+        conversationsById: {
+          ...prev.conversationsById,
+          [currentConversation.id]: {
+            ...currentConversation,
+            messages: [...currentConversation.messages, newMessage],
+          },
+        },
+      };
+    });
+  };
 
   const {
     trigger,
@@ -46,20 +73,21 @@ export const MainView = () => {
   >("chat", (_, { arg }) => sendChat(arg));
 
   const sendMessage = async (message: string) => {
-    const updatedMessages: MessageItem[] = [
-      ...messages,
-      {
-        content: message,
-        role: "user",
-        timestamp: Date.now(),
-      },
-    ];
     setShowAlert(false);
 
-    setMessages(updatedMessages);
+    const newMessageItem: MessageItem = {
+      content: message,
+      role: "user",
+      timestamp: Date.now(),
+    };
+
+    appendMessage(newMessageItem);
 
     const reply = await trigger(
-      updatedMessages.map((x) => ({ content: x.content, role: x.role })),
+      [...messages, newMessageItem].map((x) => ({
+        content: x.content,
+        role: x.role,
+      })),
     );
 
     if (error != null) {
@@ -74,12 +102,10 @@ export const MainView = () => {
 
     if (!reply?.message?.content) return;
 
-    updatedMessages.push({
+    appendMessage({
       ...reply.message,
       timestamp: Date.now(),
     });
-
-    setMessages([...updatedMessages]);
   };
 
   return (
