@@ -12,7 +12,6 @@ import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
 
 export const MainView = () => {
-  const greeting = useTypingAnimation(Helper.pickRandom(GREETINGS));
   const { state, setState } = useStore();
   const [showAlert, setShowAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -123,7 +122,7 @@ export const MainView = () => {
             </div>
           ) : (
             <div className="text-center p-5">
-              <h1 className="text-lg md:text-3xl">{greeting}</h1>
+              <Greeting key={state.currentConversationId} />
             </div>
           )}
 
@@ -133,6 +132,7 @@ export const MainView = () => {
             )}
           >
             <PromptTextArea
+              key={state.currentConversationId}
               disabled={isLoading}
               onSubmit={(v) => {
                 void sendMessage(v);
@@ -155,4 +155,9 @@ export const MainView = () => {
       </Toast>
     </main>
   );
+};
+
+const Greeting = () => {
+  const greeting = useTypingAnimation(Helper.pickRandom(GREETINGS));
+  return <h1 className="text-lg md:text-3xl">{greeting}</h1>;
 };
