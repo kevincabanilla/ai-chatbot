@@ -9,6 +9,10 @@ import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
 import { useStore } from "@/hooks";
 
 export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
     <motion.aside
       className={cn(
@@ -26,10 +30,14 @@ export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
       <NavHeader
         isMobile={isMobile}
         isCollapsed={isCollapsed}
-        setIsCollapsed={setIsCollapsed}
+        onToggle={toggleSidebar}
       />
 
-      <NavActions isCollapsed={isCollapsed} />
+      <NavActions
+        isMobile={isMobile}
+        isCollapsed={isCollapsed}
+        onToggle={toggleSidebar}
+      />
 
       {/* Footer */}
       <NavFooter isCollapsed={isCollapsed} />
@@ -37,12 +45,16 @@ export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
   );
 }
 
-const NavHeader = ({ isMobile, isCollapsed, setIsCollapsed }: NavProps) => {
+const NavHeader = ({
+  isMobile,
+  isCollapsed,
+  onToggle,
+}: {
+  isMobile: boolean;
+  isCollapsed: boolean;
+  onToggle: () => void;
+}) => {
   const [isCollapseBtnHovered, setIsCollapseBtnHovered] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
 
   const headerTransition: Transition = {
     duration: 0.1,
@@ -68,7 +80,7 @@ const NavHeader = ({ isMobile, isCollapsed, setIsCollapsed }: NavProps) => {
             setIsCollapseBtnHovered(false);
           }}
           onClick={() => {
-            toggleSidebar();
+            onToggle();
             setIsCollapseBtnHovered(false);
           }}
         >
@@ -101,14 +113,22 @@ const NavHeader = ({ isMobile, isCollapsed, setIsCollapsed }: NavProps) => {
           icon={isMobile ? X : PanelLeft}
           label="Toggle Sidebar"
           variant="ghost"
-          onClick={toggleSidebar}
+          onClick={onToggle}
         />
       </motion.div>
     </div>
   );
 };
 
-const NavActions = ({ isCollapsed }: { isCollapsed: boolean }) => {
+const NavActions = ({
+  isMobile,
+  isCollapsed,
+  onToggle,
+}: {
+  isMobile: boolean;
+  isCollapsed: boolean;
+  onToggle: () => void;
+}) => {
   const { state, setState } = useStore();
 
   return (
@@ -121,6 +141,7 @@ const NavActions = ({ isCollapsed }: { isCollapsed: boolean }) => {
             ...prev,
             currentConversationId: null,
           }));
+          if (isMobile) onToggle();
         }}
       >
         <span>New Chat</span>
@@ -149,6 +170,7 @@ const NavActions = ({ isCollapsed }: { isCollapsed: boolean }) => {
                         ...prev,
                         currentConversationId: x,
                       }));
+                      if (isMobile) onToggle();
                     }}
                   >
                     <span>{state.conversationsById[x].title}</span>
