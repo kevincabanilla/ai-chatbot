@@ -58,6 +58,7 @@ export const PromptTextArea = ({
         className={clsx(
           isMultiRow ? "order-first basis-full p-4" : "flex-1 py-2",
         )}
+        autoFocus={!isMobile}
         value={prompt}
         onChange={onInputChange}
         onKeyDown={(e) => {

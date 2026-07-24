@@ -15,10 +15,27 @@ export const AppTextArea = ({
     textarea.style.height = `${textarea.scrollHeight}px`;
   }, [value]);
 
+  useEffect(() => {
+    const textarea = textareaRef.current;
+
+    const handleFocus = () => {
+      setTimeout(() => {
+        textarea?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 150);
+    };
+
+    textarea?.addEventListener("focus", handleFocus);
+    return () => {
+      textarea?.removeEventListener("focus", handleFocus);
+    };
+  }, []);
+
   return (
     <textarea
       ref={textareaRef}
-      autoFocus
       spellCheck
       className={cn(
         className,
