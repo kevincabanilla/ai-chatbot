@@ -4,8 +4,11 @@ import { cn } from "@/libs/utils";
 export const AppTextArea = ({
   className,
   value,
+  shouldScrollIntoView,
   ...props
-}: React.TextareaHTMLAttributes<HTMLTextAreaElement>) => {
+}: React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  shouldScrollIntoView: boolean;
+}) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -16,6 +19,8 @@ export const AppTextArea = ({
   }, [value]);
 
   useEffect(() => {
+    if (!shouldScrollIntoView) return;
+
     const textarea = textareaRef.current;
 
     const handleFocus = () => {
@@ -31,7 +36,7 @@ export const AppTextArea = ({
     return () => {
       textarea?.removeEventListener("focus", handleFocus);
     };
-  }, []);
+  }, [shouldScrollIntoView]);
 
   return (
     <textarea

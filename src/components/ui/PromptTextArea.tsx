@@ -60,6 +60,7 @@ export const PromptTextArea = ({
         )}
         autoFocus={!isMobile}
         value={prompt}
+        shouldScrollIntoView={isMobile}
         onChange={onInputChange}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey && !isMobile) {
