@@ -3,6 +3,7 @@ import { Bot } from "lucide-react";
 import type { ChatRole } from "@/shared/types";
 import { AppCard } from "../containers/AppCard";
 import type { MessageItem } from "@/interfaces";
+import { useStore } from "@/hooks";
 
 const ChatItem = ({
   id,
@@ -72,11 +73,15 @@ const TypingDots = () => {
 
 export const ConversationHistory = ({
   isLoading,
+  loadingId,
   messages,
 }: {
   isLoading: boolean;
+  loadingId: string;
   messages: MessageItem[];
 }) => {
+  const { state } = useStore();
+
   return (
     <div className="full-size">
       {messages.map((item) => (
@@ -89,11 +94,12 @@ export const ConversationHistory = ({
         </ChatItem>
       ))}
 
-      {isLoading && (
-        <ChatItem messageRole="system">
-          <TypingDots />
-        </ChatItem>
-      )}
+      {isLoading &&
+        (!loadingId || state.currentConversationId === loadingId) && (
+          <ChatItem messageRole="system">
+            <TypingDots />
+          </ChatItem>
+        )}
     </div>
   );
 };

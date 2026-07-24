@@ -14,6 +14,7 @@ import Toast from "../alerts/Toast";
 export const MainView = ({ isMobile }: { isMobile: boolean }) => {
   const { state, setState } = useStore();
   const [showAlert, setShowAlert] = useState(false);
+  const [loadingId, setLoadingId] = useState(""); // Used to identify converstations with pending response.
   const [errorMessage, setErrorMessage] = useState("");
 
   const messages = !state.currentConversationId
@@ -22,16 +23,19 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
 
   const hasStarted = messages.length > 0;
 
-  const appendMessage = (newMessage: MessageItem): void => {
+  const appendMessage = (
+    conversationId: string,
+    newMessage: MessageItem,
+  ): void => {
     setState((prev) => {
-      const currentId = prev.currentConversationId;
+      const currentId = conversationId;
       const currentConversation = !currentId
         ? null
         : prev.conversationsById[currentId];
 
       if (!currentConversation) {
         const conversation: Conversation = {
-          id: crypto.randomUUID(),
+          id: conversationId,
           title: newMessage.content,
           messages: [newMessage],
         };
@@ -78,13 +82,18 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
   const sendMessage = async (message: string) => {
     setShowAlert(false);
 
+    // save current to prevent misplacing of new messages.
+    const conversationId = state.currentConversationId ?? crypto.randomUUID();
+
+    setLoadingId(conversationId);
+
     const newMessageItem: MessageItem = {
       content: message,
       role: "user",
       timestamp: Date.now(),
     };
 
-    appendMessage(newMessageItem);
+    appendMessage(conversationId, newMessageItem);
 
     try {
       const reply = await trigger(
@@ -106,7 +115,7 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
 
       if (!reply?.message?.content) return;
 
-      appendMessage({
+      appendMessage(conversationId, {
         ...reply.message,
         timestamp: Date.now(),
       });
@@ -126,7 +135,11 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
         <div className="w-full md:w-2xl">
           {hasStarted ? (
             <div className="h-full">
-              <ConversationHistory isLoading={isLoading} messages={messages} />
+              <ConversationHistory
+                isLoading={isLoading}
+                loadingId={loadingId}
+                messages={messages}
+              />
             </div>
           ) : (
             <div className="text-center p-5">
