@@ -7,9 +7,11 @@ import { AppIconButton } from "../buttons/AppIconButton";
 import clsx from "clsx";
 
 export const PromptTextArea = ({
+  isMobile,
   disabled,
   onSubmit,
 }: {
+  isMobile: boolean;
   disabled: boolean;
   onSubmit: (value: string) => void;
 }) => {
@@ -59,7 +61,7 @@ export const PromptTextArea = ({
         value={prompt}
         onChange={onInputChange}
         onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
+          if (e.key === "Enter" && !e.shiftKey && !isMobile) {
             e.preventDefault();
             submit();
           }

@@ -24,7 +24,7 @@ const App = () => {
               setIsCollapsed(!shouldOpen);
             }}
           />
-          <MainView />
+          <MainView isMobile={isMobile} />
         </div>
       </div>
     </StoreProvider>

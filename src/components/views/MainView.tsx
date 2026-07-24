@@ -11,7 +11,7 @@ import { PromptTextArea } from "../ui/PromptTextArea";
 import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
 
-export const MainView = () => {
+export const MainView = ({ isMobile }: { isMobile: boolean }) => {
   const { state, setState } = useStore();
   const [showAlert, setShowAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -137,6 +137,7 @@ export const MainView = () => {
           >
             <PromptTextArea
               key={state.currentConversationId}
+              isMobile={isMobile}
               disabled={isLoading}
               onSubmit={(v) => {
                 void sendMessage(v);
