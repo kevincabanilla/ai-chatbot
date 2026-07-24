@@ -86,29 +86,33 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
 
     appendMessage(newMessageItem);
 
-    const reply = await trigger(
-      [...messages, newMessageItem].map((x) => ({
-        content: x.content,
-        role: x.role,
-      })),
-    );
+    try {
+      const reply = await trigger(
+        [...messages, newMessageItem].map((x) => ({
+          content: x.content,
+          role: x.role,
+        })),
+      );
 
-    if (error != null) {
-      console.error(error.message);
-      return;
+      if (error != null) {
+        console.error(error.message);
+        return;
+      }
+
+      if (reply?.error) {
+        setErrorMessage(reply.error);
+        setShowAlert(true);
+      }
+
+      if (!reply?.message?.content) return;
+
+      appendMessage({
+        ...reply.message,
+        timestamp: Date.now(),
+      });
+    } catch (err) {
+      console.error(err);
     }
-
-    if (reply?.error) {
-      setErrorMessage(reply.error);
-      setShowAlert(true);
-    }
-
-    if (!reply?.message?.content) return;
-
-    appendMessage({
-      ...reply.message,
-      timestamp: Date.now(),
-    });
   };
 
   return (
