@@ -21,8 +21,16 @@ const scrollToId = (id: string | number) => {
   });
 };
 
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
+
 export const Helper = {
   pickRandom,
   getTextareaRows,
   scrollToId,
+  scrollToTop,
 };

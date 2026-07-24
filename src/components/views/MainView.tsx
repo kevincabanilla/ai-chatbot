@@ -58,6 +58,10 @@ export const MainView = () => {
         },
       };
     });
+
+    requestAnimationFrame(() => {
+      Helper.scrollToId(newMessage.timestamp);
+    });
   };
 
   const {

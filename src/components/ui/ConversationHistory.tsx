@@ -1,9 +1,7 @@
-import { useEffect } from "react";
 import clsx from "clsx";
 import { Bot } from "lucide-react";
 import type { ChatRole } from "@/shared/types";
 import { AppCard } from "../containers/AppCard";
-import { Helper } from "@/libs/helper";
 import type { MessageItem } from "@/interfaces";
 
 const ChatItem = ({
@@ -79,12 +77,6 @@ export const ConversationHistory = ({
   isLoading: boolean;
   messages: MessageItem[];
 }) => {
-  useEffect(() => {
-    const lastMessage = messages.at(-1);
-    if (!lastMessage) return;
-    Helper.scrollToId(lastMessage.timestamp);
-  }, [messages]);
-
   return (
     <div className="full-size">
       {messages.map((item) => (

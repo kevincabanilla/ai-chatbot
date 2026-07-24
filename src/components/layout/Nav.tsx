@@ -7,6 +7,7 @@ import { AppNavButton } from "../buttons/AppNavButton";
 import { AppIconButton } from "../buttons/AppIconButton";
 import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
 import { useStore } from "@/hooks";
+import { Helper } from "@/libs/helper";
 
 export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
   const toggleSidebar = () => {
@@ -131,6 +132,11 @@ const NavActions = ({
 }) => {
   const { state, setState } = useStore();
 
+  const onNavigate = () => {
+    if (isMobile) onToggle();
+    Helper.scrollToTop();
+  };
+
   return (
     <nav className="flex-1 p-3">
       <AppNavButton
@@ -141,7 +147,7 @@ const NavActions = ({
             ...prev,
             currentConversationId: null,
           }));
-          if (isMobile) onToggle();
+          onNavigate();
         }}
       >
         <span>New Chat</span>
@@ -170,7 +176,7 @@ const NavActions = ({
                         ...prev,
                         currentConversationId: x,
                       }));
-                      if (isMobile) onToggle();
+                      onNavigate();
                     }}
                   >
                     <span>{state.conversationsById[x].title}</span>
