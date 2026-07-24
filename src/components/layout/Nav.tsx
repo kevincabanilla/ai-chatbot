@@ -50,27 +50,35 @@ const NavHeader = ({ isMobile, isCollapsed, setIsCollapsed }: NavProps) => {
   };
 
   const HeaderIcon = !isCollapsed || !isCollapseBtnHovered ? Bot : PanelLeft;
+  const HeaderIconClassName = cn(
+    "flex items-center justify-center",
+    "rounded-xl px-3 py-2 text-sm cursor-pointer",
+    "transition-colors hover:bg-white/3",
+  );
 
   return (
     <div className="flex items-center border-b border-accent/20 px-3 py-2">
-      <button
-        className={cn(
-          "flex items-center justify-center",
-          "rounded-xl px-3 py-2 text-sm cursor-pointer",
-          "transition-colors hover:bg-white/3",
-        )}
-        onMouseEnter={() => {
-          setIsCollapseBtnHovered(true);
-        }}
-        onMouseLeave={() => {
-          setIsCollapseBtnHovered(false);
-        }}
-        onClick={() => {
-          if (isCollapsed) toggleSidebar();
-        }}
-      >
-        <HeaderIcon className="shrink-0 p-0.5" />
-      </button>
+      {isCollapsed ? (
+        <button
+          className={HeaderIconClassName}
+          onMouseEnter={() => {
+            setIsCollapseBtnHovered(true);
+          }}
+          onMouseLeave={() => {
+            setIsCollapseBtnHovered(false);
+          }}
+          onClick={() => {
+            toggleSidebar();
+            setIsCollapseBtnHovered(false);
+          }}
+        >
+          <HeaderIcon className="shrink-0 p-0.5" />
+        </button>
+      ) : (
+        <a className={HeaderIconClassName} href={window.location.origin}>
+          <Bot className="shrink-0 p-0.5" />
+        </a>
+      )}
 
       <motion.div
         className={cn(isCollapsed ? "hidden" : "grow flex items-center")}
@@ -85,8 +93,8 @@ const NavHeader = ({ isMobile, isCollapsed, setIsCollapsed }: NavProps) => {
           },
         }}
       >
-        <h1 className="grow text-xl font-bold tracking-tight truncate">
-          {import.meta.env.VITE_APP_TITLE}
+        <h1 className="grow px-0.5 text-xl font-bold tracking-tight truncate">
+          <a href={window.location.origin}>{import.meta.env.VITE_APP_TITLE}</a>
         </h1>
 
         <AppIconButton
