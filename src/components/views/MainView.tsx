@@ -128,13 +128,13 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
     <main>
       <div
         className={clsx(
-          "relative min-h-screen px-3 flex justify-center",
-          hasStarted ? "items-start" : "items-center",
+          "relative min-h-screen px-3 flex flex-col items-center",
+          hasStarted ? "justify-start" : "justify-center",
         )}
       >
-        <div className="w-full md:w-2xl">
+        <div className="grow flex flex-col justify-center w-full md:w-2xl">
           {hasStarted ? (
-            <div className="h-full">
+            <div className="grow">
               <ConversationHistory
                 isLoading={isLoading}
                 loadingId={loadingId}
