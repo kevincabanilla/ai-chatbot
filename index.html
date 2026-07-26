@@ -5,6 +5,70 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>%VITE_APP_TITLE%</title>
+
+    <!-- SEO -->
+    <link rel="canonical" href="%VITE_BASE_URL%" />
+    <meta name="description" content="%VITE_APP_DESCRIPTION%" />
+    <meta name="keywords" content="%VITE_APP_KEYWORDS%" />
+    <meta name="author" content="%VITE_APP_AUTHOR%" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph (Facebook, LinkedIn, Discord, etc.) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="%VITE_APP_TITLE%" />
+    <meta property="og:description" content="%VITE_APP_OG_DESCRIPTION%." />
+    <meta property="og:url" content="%VITE_BASE_URL%" />
+    <meta property="og:image" content="%VITE_APP_OG_IMAGE%" />
+    <meta property="og:site_name" content="%VITE_APP_OG_SITE_NAME%" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="%VITE_APP_TITLE%" />
+    <meta name="twitter:description" content="%VITE_APP_OG_DESCRIPTION%" />
+    <meta name="twitter:image" content="%VITE_APP_OG_IMAGE%" />
+
+    <!-- Theme -->
+    <meta name="theme-color" content="%VITE_APP_THEME_COLOR%" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "%VITE_APP_OG_SITE_NAME%",
+        "url": "%VITE_BASE_URL%",
+        "applicationCategory": "BusinessApplication",
+        "applicationSubCategory": "AI Chatbot Assistant",
+        "operatingSystem": "Web",
+        "description": "%VITE_APP_DESCRIPTION%",
+        "image": "%VITE_APP_OG_IMAGE%",
+        "screenshot": "%VITE_APP_OG_IMAGE%",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "Your Company"
+        },
+        "publisher": {
+          "@type": "Person",
+          "name": "%VITE_APP_AUTHOR%",
+          "jobTitle": "%VITE_APP_AUTHOR_TITLE%"
+        },
+        "featureList": [
+          "AI chat",
+          "Code generation",
+          "Writing assistance",
+          "Research",
+          "Summarization",
+          "Brainstorming",
+          "Multilingual support"
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
