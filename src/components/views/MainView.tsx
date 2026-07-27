@@ -10,6 +10,7 @@ import type { Conversation, MessageItem } from "@/interfaces";
 import { PromptTextArea } from "../ui/PromptTextArea";
 import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
+import { AppScrollDownButton } from "../buttons/AppScrollDownButton";
 
 export const MainView = ({ isMobile }: { isMobile: boolean }) => {
   const { state, setState } = useStore();
@@ -152,8 +153,15 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
               hasStarted ? "sticky bottom-0 z-1 flex justify-center pb-6" : "",
             )}
           >
+            <div
+              key={`${state.currentConversationId}-scroll-down-btn`}
+              className="absolute inset-x-0 bottom-24 z-5 flex justify-center"
+            >
+              <AppScrollDownButton />
+            </div>
+
             <PromptTextArea
-              key={state.currentConversationId}
+              key={`${state.currentConversationId}-prompt-field`}
               isMobile={isMobile}
               disabled={isLoading}
               onSubmit={(v) => {
@@ -161,6 +169,7 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
               }}
             />
           </div>
+
           <div className="fixed inset-x-0 bottom-0 bg-bg-primary/90 backdrop-blur-xs h-14 flex justify-center align-bottom" />
         </div>
       </div>
