@@ -1,6 +1,6 @@
 import type { ChatMessage } from "../../shared/types/chat.js";
 
-export interface GroqResponse {
+export interface GroqChatCompletionResponse {
   id: string;
   object: string;
   created: number;
