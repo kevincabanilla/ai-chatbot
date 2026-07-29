@@ -8,10 +8,17 @@ import type { ChatMessage, ChatRequest } from "../../shared/types/chat.js";
 import type { AiModel } from "../../shared/types/model.js";
 import { handleGroqError } from "../handlers/groq.js";
 
+const {
+  GROQ_API_KEY,
+  GROQ_DEFAULT_MODEL,
+  GROQ_MAX_TOKENS,
+  GROQ_CHAT_TEMPERATURE,
+} = process.env;
+
 const groqClient = axios.create({
   baseURL: "https://api.groq.com/openai/v1",
   headers: {
-    Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+    Authorization: `Bearer ${GROQ_API_KEY}`,
     "Content-Type": "application/json",
   },
 });
@@ -25,10 +32,10 @@ export async function generateGroqResponse(
     const response = await groqClient.post<GroqChatCompletionResponse>(
       "/chat/completions",
       {
-        model: request.model ?? AI_MODELS.GROQ_CHAT,
+        model: request.model ?? GROQ_DEFAULT_MODEL ?? AI_MODELS.GROQ_CHAT,
+        temperature: Number(GROQ_CHAT_TEMPERATURE) || 1,
+        max_tokens: Number(GROQ_MAX_TOKENS) || 2048,
         messages,
-        temperature: 0.7,
-        max_tokens: 1000,
       },
     );
 
