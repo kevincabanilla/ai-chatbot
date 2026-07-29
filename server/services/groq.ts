@@ -4,7 +4,7 @@ import {
   type GroqGetModelsResponse,
   type GroqChatCompletionResponse,
 } from "../types/groq.js";
-import type { ChatMessage } from "../../shared/types/chat.js";
+import type { ChatMessage, ChatRequest } from "../../shared/types/chat.js";
 import type { AiModel } from "../../shared/types/model.js";
 import { handleGroqError } from "../handlers/groq.js";
 
@@ -17,15 +17,20 @@ const groqClient = axios.create({
 });
 
 export async function generateGroqResponse(
-  messages: ChatMessage[],
+  request: ChatRequest,
 ): Promise<ChatMessage> {
+  const messages = request.messages;
+
   try {
-    const response = await groqClient.post<GroqChatCompletionResponse>("/chat/completions", {
-      model: AI_MODELS.GROQ_CHAT,
-      messages,
-      temperature: 0.7,
-      max_tokens: 1000,
-    });
+    const response = await groqClient.post<GroqChatCompletionResponse>(
+      "/chat/completions",
+      {
+        model: request.model ?? AI_MODELS.GROQ_CHAT,
+        messages,
+        temperature: 0.7,
+        max_tokens: 1000,
+      },
+    );
 
     return response.data.choices[0].message;
   } catch (err) {

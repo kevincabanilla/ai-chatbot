@@ -6,6 +6,7 @@ export interface ChatMessage {
 }
 
 export interface ChatRequest {
+  model?: string;
   messages: ChatMessage[];
 }
 

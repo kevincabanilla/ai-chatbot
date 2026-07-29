@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   try {
     validateChatMessages(body.messages);
 
-    const reply = await generateGroqResponse(body.messages);
+    const reply = await generateGroqResponse(body);
 
     const response: ChatResponse = {
       message: reply,
