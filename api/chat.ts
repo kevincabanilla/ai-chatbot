@@ -4,6 +4,7 @@ import {
   ChatValidationError,
   validateChatMessages,
 } from "../server/validation/chat.js";
+import { GroqError } from "../server/handlers/groq.js";
 
 export async function POST(request: Request) {
   let body: ChatRequest;
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
 
     return Response.json(response);
   } catch (error) {
-    if (error instanceof ChatValidationError) {
+    if (error instanceof ChatValidationError || error instanceof GroqError) {
       return errorResponse(400, error.message);
     }
 

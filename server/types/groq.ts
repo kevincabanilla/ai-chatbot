@@ -23,3 +23,11 @@ export interface GroqResponse {
   system_fingerprint: string;
   x_groq: { id: string };
 }
+
+export interface GroqErrorResponse {
+  error: {
+    message: string; //"Invalid API Key";
+    type: string; //"invalid_request_error";
+    code: string;
+  };
+}
