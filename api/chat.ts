@@ -5,6 +5,7 @@ import {
   validateChatMessages,
 } from "../server/validation/chat.js";
 import { GroqError } from "../server/handlers/groq.js";
+import { errorResponse } from "../server/libs/util.js";
 
 export async function POST(request: Request) {
   let body: ChatRequest;
@@ -34,8 +35,4 @@ export async function POST(request: Request) {
 
     return errorResponse(500, "Internal server error");
   }
-}
-
-export function errorResponse(status: number, message: string) {
-  return Response.json({ error: message, status });
 }
