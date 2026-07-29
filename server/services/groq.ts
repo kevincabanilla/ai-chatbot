@@ -37,11 +37,13 @@ export async function getGroqModels(): Promise<AiModel[]> {
   try {
     const response = await groqClient.get<GroqGetModelsResponse>("/models");
 
-    const models: AiModel[] = response.data.data.map((x) => ({
-      id: x.id,
-      ownedBy: x.owned_by,
-      created: x.created,
-    }));
+    const models: AiModel[] = response.data.data
+      .filter((x) => x.active)
+      .map((x) => ({
+        id: x.id,
+        ownedBy: x.owned_by,
+        created: x.created,
+      }));
 
     return models;
   } catch (err) {
