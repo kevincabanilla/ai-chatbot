@@ -1,7 +1,11 @@
 import axios from "axios";
 import { AI_MODELS } from "../ai/models.js";
-import { type GroqResponse } from "../types/groq.js";
+import {
+  type GroqGetModelsResponse,
+  type GroqResponse,
+} from "../types/groq.js";
 import type { ChatMessage } from "../../shared/types/chat.js";
+import type { AiModel } from "../../shared/types/model.js";
 import { handleGroqError } from "../handlers/groq.js";
 
 const groqClient = axios.create({
@@ -24,6 +28,22 @@ export async function generateGroqResponse(
     });
 
     return response.data.choices[0].message;
+  } catch (err) {
+    handleGroqError(err);
+  }
+}
+
+export async function getGroqModels(): Promise<AiModel[]> {
+  try {
+    const response = await groqClient.get<GroqGetModelsResponse>("/models");
+
+    const models: AiModel[] = response.data.data.map((x) => ({
+      id: x.id,
+      ownedBy: x.owned_by,
+      created: x.created,
+    }));
+
+    return models;
   } catch (err) {
     handleGroqError(err);
   }
