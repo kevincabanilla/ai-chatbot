@@ -1,5 +1,4 @@
 import axios from "axios";
-import { AI_MODELS } from "../ai/models.js";
 import {
   type GroqGetModelsResponse,
   type GroqChatCompletionResponse,
@@ -32,7 +31,7 @@ export async function generateGroqResponse(
     const response = await groqClient.post<GroqChatCompletionResponse>(
       "/chat/completions",
       {
-        model: request.model ?? GROQ_DEFAULT_MODEL ?? AI_MODELS.GROQ_CHAT,
+        model: request.model ?? GROQ_DEFAULT_MODEL,
         temperature: Number(GROQ_CHAT_TEMPERATURE) || 1,
         max_tokens: Number(GROQ_MAX_TOKENS) || 2048,
         messages,
