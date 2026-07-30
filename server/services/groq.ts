@@ -6,7 +6,7 @@ import {
 import type { ChatMessage, ChatRequest } from "../../shared/types/chat.js";
 import type { AiModel } from "../../shared/types/model.js";
 import { handleGroqError } from "../handlers/groq.js";
-import { AI_SKILL, type AISkill } from "../ai/skills.js";
+import { AI_SKILL, type AISkill } from "../../shared/ai/skills.js";
 
 const {
   GROQ_API_KEY,
