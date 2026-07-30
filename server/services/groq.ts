@@ -6,6 +6,7 @@ import {
 import type { ChatMessage, ChatRequest } from "../../shared/types/chat.js";
 import type { AiModel } from "../../shared/types/model.js";
 import { handleGroqError } from "../handlers/groq.js";
+import { AI_SKILL, type AISkill } from "../ai/skills.js";
 
 const {
   GROQ_API_KEY,
@@ -25,7 +26,13 @@ const groqClient = axios.create({
 export async function generateGroqResponse(
   request: ChatRequest,
 ): Promise<ChatMessage> {
-  const messages = request.messages;
+  const messages = [
+    {
+      role: "system",
+      content: AI_SKILL[(request.skill ?? "DEFAULT") as AISkill],
+    } as ChatMessage,
+    ...request.messages,
+  ];
 
   try {
     const response = await groqClient.post<GroqChatCompletionResponse>(

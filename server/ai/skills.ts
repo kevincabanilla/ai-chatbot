@@ -5,4 +5,5 @@ export const AI_SKILL = {
     "You are an expert software engineer. Provide clean TypeScript solutions.",
 } as const;
 
-export type AISkill = (typeof AI_SKILL)[keyof typeof AI_SKILL];
+export type AISkill = keyof typeof AI_SKILL;
+export type AISkillValues = (typeof AI_SKILL)[AISkill];

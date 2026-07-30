@@ -7,6 +7,7 @@ export interface ChatMessage {
 
 export interface ChatRequest {
   model?: string;
+  skill?: string;
   messages: ChatMessage[];
 }
 
