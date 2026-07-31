@@ -7,12 +7,22 @@ export interface Store {
   conversationsById: Record<string, Conversation>;
   conversationOrder: string[];
   currentConversationId: string | null;
+  settings: {
+    initialized: boolean;
+    mode: string | null;
+    model: string | null;
+  };
 }
 
 const defaultState: Store = {
   conversationsById: {},
   conversationOrder: [],
   currentConversationId: null,
+  settings: {
+    initialized: false,
+    mode: "DEFAULT",
+    model: null,
+  },
 };
 
 export interface StoreContextType {
