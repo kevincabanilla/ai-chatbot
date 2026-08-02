@@ -7,16 +7,21 @@ import {
 } from "motion/react";
 import { ChevronDown } from "lucide-react";
 
+const SCROLL_THRESHOLD = 200;
+
 export const AppScrollDownButton = () => {
   const { scrollY } = useScroll();
   const [visible, setVisible] = useState(false);
 
+  const getWindowHeightOffset = () =>
+    window.innerHeight + window.innerHeight * 0.4;
+
   useEffect(() => {
     const update = () => {
       const canScroll =
-        document.documentElement.scrollHeight > window.innerHeight;
+        document.documentElement.scrollHeight > getWindowHeightOffset();
 
-      setVisible(canScroll && scrollY.get() < 200);
+      setVisible(canScroll && scrollY.get() < SCROLL_THRESHOLD);
     };
 
     update();
@@ -29,14 +34,14 @@ export const AppScrollDownButton = () => {
   }, [scrollY]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    setVisible(latest < 200);
+    setVisible(latest < SCROLL_THRESHOLD);
   });
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const canScroll =
-      document.documentElement.scrollHeight > window.innerHeight;
+      document.documentElement.scrollHeight > getWindowHeightOffset();
 
-    setVisible(canScroll && latest < 200);
+    setVisible(canScroll && latest < SCROLL_THRESHOLD);
   });
 
   const onScrollDown = () => {
