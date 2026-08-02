@@ -9,7 +9,12 @@ import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
 import { useStore } from "@/hooks";
 import { Helper } from "@/libs/helper";
 
-export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
+export function Nav({
+  isMobile,
+  isCollapsed,
+  setIsCollapsed,
+  onSettingsClicked,
+}: NavProps) {
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
@@ -41,7 +46,10 @@ export function Nav({ isMobile, isCollapsed, setIsCollapsed }: NavProps) {
       />
 
       {/* Footer */}
-      <NavFooter isCollapsed={isCollapsed} />
+      <NavFooter
+        isCollapsed={isCollapsed}
+        onSettingsClicked={onSettingsClicked}
+      />
     </motion.aside>
   );
 }
@@ -191,10 +199,20 @@ const NavActions = ({
   );
 };
 
-const NavFooter = ({ isCollapsed }: { isCollapsed: boolean }) => {
+const NavFooter = ({
+  isCollapsed,
+  onSettingsClicked,
+}: {
+  isCollapsed: boolean;
+  onSettingsClicked: () => void;
+}) => {
   return (
     <div className="border-t border-accent/20 p-3">
-      <AppNavButton collapsed={isCollapsed} icon={Settings}>
+      <AppNavButton
+        collapsed={isCollapsed}
+        icon={Settings}
+        onClick={onSettingsClicked}
+      >
         <span>Settings</span>
       </AppNavButton>
     </div>
