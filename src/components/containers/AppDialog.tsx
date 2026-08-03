@@ -25,7 +25,7 @@ export interface DialogProps
   extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof dialogVariants> {
   open: boolean;
   onClose: () => void;
-  children: ReactNode;
+  children?: ReactNode;
   closeOnOutside?: boolean;
 }
 

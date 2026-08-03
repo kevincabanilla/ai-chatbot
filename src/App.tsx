@@ -3,7 +3,7 @@ import "./App.css";
 import { MEDIA_QUERIES, useMediaQuery } from "./hooks";
 import { StoreProvider } from "./providers/StoreProvider";
 import { MainView, TopToolbar, LeftNav } from "./components/views";
-import { AppDialog } from "./components/containers/AppDialog";
+import { SettingsDialog } from "./components/ui/SettingsDialog";
 
 const App = () => {
   const isMobile = useMediaQuery(MEDIA_QUERIES.lg);
@@ -31,14 +31,12 @@ const App = () => {
           />
           <MainView isMobile={isMobile} />
 
-          <AppDialog
+          <SettingsDialog
             open={isSetingsOpen}
             onClose={() => {
               setIsSetingsOpen(false);
             }}
-          >
-            Test
-          </AppDialog>
+          />
         </div>
       </div>
     </StoreProvider>
