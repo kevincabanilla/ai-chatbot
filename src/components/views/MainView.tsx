@@ -98,6 +98,7 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
 
     try {
       const reply = await trigger({
+        model: state.settings.model ?? undefined,
         skill: state.settings.mode ?? undefined,
         messages: [...messages, newMessageItem].map((x) => ({
           content: x.content,
