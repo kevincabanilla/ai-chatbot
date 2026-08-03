@@ -1,7 +1,7 @@
 import { useState } from "react";
 import clsx from "clsx";
 import useSWRMutation from "swr/mutation";
-import type { ChatMessage, ChatResponse } from "@/shared/types";
+import type { ChatMessage, ChatResponse } from "@shared/types";
 import { sendChat } from "@/api/chatApi";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/libs/helper";

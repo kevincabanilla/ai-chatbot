@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { ChatMessage, ChatResponse } from "@/shared/types";
+import type { ChatMessage, ChatResponse } from "@shared/types";
 
 export async function sendChat(
   messages: ChatMessage[],

@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { Bot } from "lucide-react";
-import type { ChatRole } from "@/shared/types";
+import type { ChatRole } from "@shared/types";
 import { AppCard } from "../containers/AppCard";
 import type { MessageItem } from "@/interfaces";
 import { useStore } from "@/hooks";

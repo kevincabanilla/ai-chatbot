@@ -3,7 +3,7 @@
     "paths": {
       // Always update the alias in vite.config.ts when updating this.
       "@/*": ["./src/*"],
-      "@/shared/*": ["./shared/*"]
+      "@shared/*": ["./shared/*"]
     },
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "es2023",

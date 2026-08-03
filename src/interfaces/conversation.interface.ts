@@ -1,4 +1,4 @@
-import type { ChatRole } from "@/shared/types";
+import type { ChatRole } from "@shared/types";
 
 export interface MessageItem {
   role: ChatRole;
