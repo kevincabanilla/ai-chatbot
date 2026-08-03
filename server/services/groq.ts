@@ -26,10 +26,18 @@ const groqClient = axios.create({
 export async function generateGroqResponse(
   request: ChatRequest,
 ): Promise<ChatMessage> {
+  const skill = (
+    !request.skill || !Object.keys(AI_SKILL).some((key) => key == request.skill)
+      ? "DEFAULT"
+      : request.skill
+  ) as AISkill;
+
+  console.log(skill);
+
   const messages = [
     {
       role: "system",
-      content: AI_SKILL[(request.skill ?? "DEFAULT") as AISkill],
+      content: AI_SKILL[skill],
     } as ChatMessage,
     ...request.messages,
   ];
