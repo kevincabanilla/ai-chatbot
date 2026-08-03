@@ -1,7 +1,7 @@
 import { useState } from "react";
 import clsx from "clsx";
 import useSWRMutation from "swr/mutation";
-import type { ChatMessage, ChatResponse } from "@shared/types";
+import type { ChatRequest, ChatResponse } from "@shared/types";
 import { sendChat } from "@/api/chatApi";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/libs/helper";
@@ -77,7 +77,7 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
     ChatResponse | null, // Response type
     Error, // Error type
     string, // SWR key type
-    ChatMessage[] // Argument passed to trigger()
+    ChatRequest // Argument passed to trigger()
   >("chat", (_, { arg }) => sendChat(arg));
 
   const sendMessage = async (message: string) => {
@@ -97,12 +97,13 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
     appendMessage(conversationId, newMessageItem);
 
     try {
-      const reply = await trigger(
-        [...messages, newMessageItem].map((x) => ({
+      const reply = await trigger({
+        skill: state.settings.mode ?? undefined,
+        messages: [...messages, newMessageItem].map((x) => ({
           content: x.content,
           role: x.role,
         })),
-      );
+      });
 
       if (error != null) {
         console.error(error.message);

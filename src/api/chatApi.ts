@@ -1,12 +1,10 @@
 import axios from "axios";
-import type { ChatMessage, ChatResponse } from "@shared/types";
+import type { ChatRequest, ChatResponse } from "@shared/types";
 
 export async function sendChat(
-  messages: ChatMessage[],
+  request: ChatRequest,
 ): Promise<ChatResponse | null> {
-  const response = await axios.post<ChatResponse | null>("/api/chat", {
-    messages,
-  });
+  const response = await axios.post<ChatResponse | null>("/api/chat", request);
 
   return response.data;
 }
