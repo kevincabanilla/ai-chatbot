@@ -32,8 +32,6 @@ export async function generateGroqResponse(
       : request.skill
   ) as AISkill;
 
-  console.log(skill);
-
   const messages = [
     {
       role: "system",
