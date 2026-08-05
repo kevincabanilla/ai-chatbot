@@ -176,7 +176,7 @@ const NavActions = ({
               return (
                 <li key={x}>
                   <AppNavButton
-                    className={cn("group", isActive ? "text-accent" : "")}
+                    className={cn("group", isActive && "text-accent")}
                     onClick={() => {
                       if (isActive) return;
 

@@ -152,7 +152,7 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
 
           <div
             className={clsx(
-              hasStarted ? "sticky bottom-0 z-1 flex justify-center pb-6" : "",
+              hasStarted && "sticky bottom-0 z-1 flex justify-center pb-6",
             )}
           >
             <div
