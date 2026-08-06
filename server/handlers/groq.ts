@@ -18,6 +18,8 @@ export function handleGroqError(error: unknown): never {
   const status = error.response.status;
   const { error: groqError } = error.response.data as GroqErrorResponse;
 
+  console.error(error);
+
   switch (status) {
     case 400:
       throw new GroqError(groqError.message || "Invalid request.");
