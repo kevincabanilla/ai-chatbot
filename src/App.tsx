@@ -29,7 +29,12 @@ const App = () => {
               setIsCollapsed(!shouldOpen);
             }}
           />
-          <MainView isMobile={isMobile} />
+          <MainView
+            isMobile={isMobile}
+            openSettings={() => {
+              setIsSetingsOpen(true);
+            }}
+          />
 
           <SettingsDialog
             open={isSetingsOpen}

@@ -12,7 +12,13 @@ import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
 import { AppScrollDownButton } from "../buttons/AppScrollDownButton";
 
-export const MainView = ({ isMobile }: { isMobile: boolean }) => {
+export const MainView = ({
+  isMobile,
+  openSettings,
+}: {
+  isMobile: boolean;
+  openSettings: () => void;
+}) => {
   const { state, setState } = useStore();
   const [showAlert, setShowAlert] = useState(false);
   const [loadingId, setLoadingId] = useState(""); // Used to identify converstations with pending response.
@@ -157,7 +163,7 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
 
           <div
             className={clsx(
-              hasStarted && "sticky bottom-0 z-1 flex justify-center pb-6",
+              hasStarted && "sticky bottom-0 z-1 flex flex-col justify-center",
             )}
           >
             <div
@@ -175,6 +181,25 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
                 void sendMessage(v);
               }}
             />
+
+            <div
+              className={clsx(
+                "px-6 py-1 text-sm flex gap-2",
+                hasStarted && "justify-center",
+              )}
+            >
+              <span className="text-white/60">
+                {currentConversation?.model ?? state.settings.model}
+              </span>
+              {!hasStarted && (
+                <button
+                  className="cursor-pointer hover:text-accent"
+                  onClick={openSettings}
+                >
+                  Change
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="fixed inset-x-0 bottom-0 bg-bg-primary/90 backdrop-blur-xs h-14 flex justify-center align-bottom" />
