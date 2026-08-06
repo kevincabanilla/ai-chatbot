@@ -18,9 +18,11 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
   const [loadingId, setLoadingId] = useState(""); // Used to identify converstations with pending response.
   const [errorMessage, setErrorMessage] = useState("");
 
-  const messages = !state.currentConversationId
-    ? []
-    : state.conversationsById[state.currentConversationId].messages;
+  const currentConversation: Conversation | null = !state.currentConversationId
+    ? null
+    : state.conversationsById[state.currentConversationId];
+
+  const messages = currentConversation?.messages ?? [];
 
   const hasStarted = messages.length > 0;
 
@@ -34,11 +36,13 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
         ? null
         : prev.conversationsById[currentId];
 
+      // new conversation
       if (!currentConversation) {
         const conversation: Conversation = {
           id: conversationId,
           title: newMessage.content,
           messages: [newMessage],
+          model: state.settings.model,
         };
 
         return {
@@ -52,6 +56,7 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
         };
       }
 
+      // update existing.
       return {
         ...prev,
         conversationsById: {
@@ -98,7 +103,7 @@ export const MainView = ({ isMobile }: { isMobile: boolean }) => {
 
     try {
       const reply = await trigger({
-        model: state.settings.model ?? undefined,
+        model: currentConversation?.model ?? state.settings.model ?? undefined,
         skill: state.settings.mode ?? undefined,
         messages: [...messages, newMessageItem].map((x) => ({
           content: x.content,
