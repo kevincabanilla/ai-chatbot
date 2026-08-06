@@ -9,8 +9,8 @@ import { handleGroqError } from "../handlers/groq.js";
 import { AI_SKILL, type AISkill } from "../../shared/ai/skills.js";
 
 const {
+  VITE_DEFAULT_AI_MODEL,
   GROQ_API_KEY,
-  GROQ_DEFAULT_MODEL,
   GROQ_MAX_TOKENS,
   GROQ_CHAT_TEMPERATURE,
 } = process.env;
@@ -44,7 +44,7 @@ export async function generateGroqResponse(
     const response = await groqClient.post<GroqChatCompletionResponse>(
       "/chat/completions",
       {
-        model: request.model ?? GROQ_DEFAULT_MODEL,
+        model: request.model ?? VITE_DEFAULT_AI_MODEL ?? "groq/compound",
         temperature: Number(GROQ_CHAT_TEMPERATURE) || 1,
         max_tokens: Number(GROQ_MAX_TOKENS) || 2048,
         messages,

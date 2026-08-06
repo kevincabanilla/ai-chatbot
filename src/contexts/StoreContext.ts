@@ -21,7 +21,7 @@ const defaultState: Store = {
   settings: {
     initialized: false,
     mode: "DEFAULT",
-    model: null,
+    model: import.meta.env.VITE_DEFAULT_AI_MODEL || null,
   },
 };
 
