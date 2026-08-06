@@ -7,7 +7,7 @@ import { cn } from "@/libs/utils";
 
 const comboboxVariants = cva(
   [
-    "w-full flex items-center justify-between rounded-lg border",
+    "w-full flex items-center justify-between border",
     "bg-bg-secondary px-3 py-2 text-sm",
     "outline-none transition-colors",
     "focus-visible:ring-2",
@@ -154,6 +154,7 @@ export const AppCombobox = ({
             variant,
             size,
           }),
+          open ? "rounded-t-lg" : "rounded-lg",
           className,
         )}
       >
@@ -167,11 +168,11 @@ export const AppCombobox = ({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-2 w-full rounded-lg border border-accent/30 bg-bg-secondary shadow-lg">
-          <div className="border-b border-accent/30 p-2">
+        <div className="absolute z-50 w-full rounded-b-lg border border-t-0 border-accent/30 bg-bg-secondary shadow-lg">
+          <div className="border-b border-accent/30 p-3">
             <input
               ref={inputRef}
-              className="w-full rounded-md border border-accent/30 bg-transparent p-2 text-sm outline-none"
+              className="w-full rounded-md bg-transparent text-sm outline-none"
               placeholder={searchPlaceholder}
               value={query}
               onChange={(e) => {
