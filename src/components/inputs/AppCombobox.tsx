@@ -16,8 +16,8 @@ const comboboxVariants = cva(
   {
     variants: {
       variant: {
-        normal: "border-accent/60",
-        outline: "border-accent/60 bg-transparent",
+        normal: "border-accent/30",
+        outline: "border-accent/30 bg-transparent",
       },
       size: {
         sm: "h-8 text-xs",
@@ -167,11 +167,11 @@ export const AppCombobox = ({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-2 w-full rounded-lg border border-accent/60 bg-bg-secondary shadow-lg">
-          <div className="border-b border-accent/60 p-2">
+        <div className="absolute z-50 mt-2 w-full rounded-lg border border-accent/30 bg-bg-secondary shadow-lg">
+          <div className="border-b border-accent/30 p-2">
             <input
               ref={inputRef}
-              className="w-full rounded-md border border-accent/60 bg-transparent p-2 text-sm outline-none"
+              className="w-full rounded-md border border-accent/30 bg-transparent p-2 text-sm outline-none"
               placeholder={searchPlaceholder}
               value={query}
               onChange={(e) => {
@@ -198,7 +198,7 @@ export const AppCombobox = ({
                   aria-selected={active}
                   className={cn(
                     "flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm transition-colors",
-                    highlighted === index && "bg-accent/40",
+                    highlighted === index && "bg-accent/20",
                     active && "font-medium text-accent",
                     option.disabled && "pointer-events-none opacity-50",
                   )}
