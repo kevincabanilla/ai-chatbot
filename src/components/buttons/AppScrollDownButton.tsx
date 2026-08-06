@@ -6,6 +6,7 @@ import {
   useScroll,
 } from "motion/react";
 import { ChevronDown } from "lucide-react";
+import { cn } from "@/libs/utils";
 
 const SCROLL_THRESHOLD = 200;
 
@@ -54,29 +55,36 @@ export const AppScrollDownButton = () => {
   };
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.button
-          className="p-3 rounded-full bg-bg-secondary border border-accent/20 cursor-pointer"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{
-            opacity: 1,
-            y: [0, 8, 0],
-          }}
-          exit={{ opacity: 0, y: 16 }}
-          transition={{
-            opacity: { duration: 0.4 },
-            y: {
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            },
-          }}
-          onClick={onScrollDown}
-        >
-          <ChevronDown size={16} />
-        </motion.button>
+    <div
+      className={cn(
+        "absolute inset-x-0 bottom-24 z-5 flex justify-center",
+        !visible && "pointer-events-none",
       )}
-    </AnimatePresence>
+    >
+      <AnimatePresence>
+        {visible && (
+          <motion.button
+            className="p-3 rounded-full bg-bg-secondary border border-accent/20 cursor-pointer"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{
+              opacity: 1,
+              y: [0, 8, 0],
+            }}
+            exit={{ opacity: 0, y: 16 }}
+            transition={{
+              opacity: { duration: 0.4 },
+              y: {
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              },
+            }}
+            onClick={onScrollDown}
+          >
+            <ChevronDown size={16} />
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };

@@ -166,12 +166,9 @@ export const MainView = ({
               hasStarted && "sticky bottom-0 z-1 flex flex-col justify-center",
             )}
           >
-            <div
+            <AppScrollDownButton
               key={`${state.currentConversationId}-scroll-down-btn`}
-              className="absolute inset-x-0 bottom-24 z-5 flex justify-center"
-            >
-              <AppScrollDownButton />
-            </div>
+            />
 
             <PromptTextArea
               key={`${state.currentConversationId}-prompt-field`}
