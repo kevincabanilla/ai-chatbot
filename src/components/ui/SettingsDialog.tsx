@@ -112,7 +112,7 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
               )}
             </div>
             <span className="text-white/30 text-xs">
-              This will only apply to new converstations.
+              This will only apply to new conversations.
             </span>
           </div>
         </div>

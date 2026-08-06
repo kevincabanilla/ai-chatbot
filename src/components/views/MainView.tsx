@@ -21,7 +21,7 @@ export const MainView = ({
 }) => {
   const { state, setState } = useStore();
   const [showAlert, setShowAlert] = useState(false);
-  const [loadingId, setLoadingId] = useState(""); // Used to identify converstations with pending response.
+  const [loadingId, setLoadingId] = useState(""); // Used to identify conversations with pending response.
   const [errorMessage, setErrorMessage] = useState("");
 
   const currentConversation: Conversation | null = !state.currentConversationId
