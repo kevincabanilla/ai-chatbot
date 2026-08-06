@@ -46,7 +46,7 @@ export interface ComboboxProps extends VariantProps<typeof comboboxVariants> {
   searchPlaceholder?: string;
   options: ComboboxOption[];
   ref?: Ref<HTMLButtonElement>;
-  value?: string;
+  value?: string | null;
   onValueChange?: (value: string) => void;
 }
 
@@ -65,7 +65,7 @@ export const AppCombobox = ({
 }: ComboboxProps) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [highlighted, setHighlighted] = useState(0);
+  const [highlighted, setHighlighted] = useState(-1);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -103,8 +103,8 @@ export const AppCombobox = ({
     };
   }, []);
 
-  const select = (option: ComboboxOption) => {
-    if (option.disabled) return;
+  const select = (option?: ComboboxOption | null) => {
+    if (!option || option.disabled) return;
 
     onValueChange?.(option.value);
 
