@@ -8,11 +8,15 @@ import { useStore } from "@/hooks";
 const ChatItem = ({
   id,
   messageRole,
+  failed,
   children,
+  onRetry,
 }: {
   id?: string;
   messageRole: ChatRole;
+  failed?: boolean | null;
   children: React.ReactNode;
+  onRetry?: () => void;
 }) => {
   const isFromUser = messageRole === "user";
 
@@ -39,17 +43,27 @@ const ChatItem = ({
           </div>
         </div>
       )}
-      <AppCard
-        className={clsx(
-          "px-4 py-2",
-          "max-w-lg rounded-2xl",
-          "whitespace-pre-wrap",
-          "wrap-anywhere",
-          isFromUser ? "rounded-tr-none bg-accent/30" : "rounded-tl-none",
+
+      <div className="flex gap-2">
+        {isFromUser && failed && (
+          <button className="cursor-pointer text-sm italic text-rose-500/80  hover:text-rose-500" onClick={onRetry}>
+            Retry
+          </button>
         )}
-      >
-        {children}
-      </AppCard>
+
+        <AppCard
+          className={clsx(
+            "px-4 py-2",
+            "max-w-lg rounded-2xl",
+            "whitespace-pre-wrap",
+            "wrap-anywhere",
+            isFromUser ? "rounded-tr-none" : "rounded-tl-none",
+            isFromUser && (!failed ? "bg-accent/30" : "bg-rose-500/20"),
+          )}
+        >
+          {children}
+        </AppCard>
+      </div>
     </div>
   );
 };
@@ -75,10 +89,12 @@ export const ConversationHistory = ({
   isLoading,
   loadingId,
   messages,
+  onRetry,
 }: {
   isLoading: boolean;
   loadingId: string;
   messages: MessageItem[];
+  onRetry: () => void;
 }) => {
   const { state } = useStore();
 
@@ -89,6 +105,8 @@ export const ConversationHistory = ({
           key={item.timestamp}
           id={item.timestamp.toString()}
           messageRole={item.role}
+          failed={item.failed}
+          onRetry={onRetry}
         >
           <p className="text-sm md:text-base">{item.content}</p>
         </ChatItem>
