@@ -32,6 +32,12 @@ export const MainView = ({
 
   const hasStarted = messages.length > 0;
 
+  const scrollToId = (id: string | number) => {
+    requestAnimationFrame(() => {
+      Helper.scrollToId(id);
+    });
+  };
+
   const appendMessage = (
     conversationId: string,
     newMessage: MessageItem,
@@ -75,8 +81,35 @@ export const MainView = ({
       };
     });
 
-    requestAnimationFrame(() => {
-      Helper.scrollToId(newMessage.timestamp);
+    scrollToId(newMessage.timestamp);
+  };
+
+  const updateLastMessage = (
+    conversationId: string,
+    updater: (msg: MessageItem) => MessageItem,
+  ) => {
+    setState((prev) => {
+      const conversation: Conversation = prev.conversationsById[conversationId];
+
+      if (/* !conversation || */ conversation.messages.length === 0) {
+        return prev;
+      }
+
+      const messages = [...conversation.messages];
+      const lastIndex = messages.length - 1;
+
+      messages[lastIndex] = updater(messages[lastIndex]);
+
+      return {
+        ...prev,
+        conversationsById: {
+          ...prev.conversationsById,
+          [conversationId]: {
+            ...conversation,
+            messages,
+          },
+        },
+      };
     });
   };
 
@@ -91,7 +124,7 @@ export const MainView = ({
     ChatRequest // Argument passed to trigger()
   >("chat", (_, { arg }) => sendChat(arg));
 
-  const sendMessage = async (message: string) => {
+  const sendMessage = async (message?: string) => {
     setShowAlert(false);
 
     // save current to prevent misplacing of new messages.
@@ -99,19 +132,35 @@ export const MainView = ({
 
     setLoadingId(conversationId);
 
-    const newMessageItem: MessageItem = {
-      content: message,
-      role: "user",
-      timestamp: Date.now(),
-    };
+    const newMessages = [...messages];
 
-    appendMessage(conversationId, newMessageItem);
+    if (!message) {
+      // retry is clicked.
+      // reset the last message failed flag to false.
+      updateLastMessage(conversationId, (msg) => {
+        scrollToId(msg.timestamp);
+        return {
+          ...msg,
+          failed: false,
+        };
+      });
+    } else {
+      const newMessageItem: MessageItem = {
+        conversationId: conversationId,
+        content: message,
+        role: "user",
+        timestamp: Date.now(),
+      };
+
+      appendMessage(conversationId, newMessageItem);
+      newMessages.push(newMessageItem);
+    }
 
     try {
       const reply = await trigger({
         model: currentConversation?.model ?? state.settings.model ?? undefined,
         skill: state.settings.mode ?? undefined,
-        messages: [...messages, newMessageItem].map((x) => ({
+        messages: newMessages.map((x) => ({
           content: x.content,
           role: x.role,
         })),
@@ -119,18 +168,31 @@ export const MainView = ({
 
       if (error != null) {
         console.error(error.message);
+        setErrorMessage("Something went wrong. Please try again later.");
+        setShowAlert(true);
         return;
       }
 
       if (reply?.error) {
+        // display error message
         setErrorMessage(reply.error);
         setShowAlert(true);
+
+        // set the last message to failed
+        // this will display Retry button to allow retry.
+        updateLastMessage(conversationId, (msg) => {
+          return {
+            ...msg,
+            failed: true,
+          };
+        });
       }
 
       if (!reply?.message?.content) return;
 
       appendMessage(conversationId, {
         ...reply.message,
+        conversationId: conversationId,
         timestamp: Date.now(),
       });
     } catch (err) {
@@ -153,6 +215,9 @@ export const MainView = ({
                 isLoading={isLoading}
                 loadingId={loadingId}
                 messages={messages}
+                onRetry={() => {
+                  void sendMessage();
+                }}
               />
             </div>
           ) : (
