@@ -46,7 +46,10 @@ const ChatItem = ({
 
       <div className="flex gap-2">
         {isFromUser && failed && (
-          <button className="cursor-pointer text-sm italic text-rose-500/80  hover:text-rose-500" onClick={onRetry}>
+          <button
+            className="cursor-pointer text-sm italic text-rose-500/80  hover:text-rose-500"
+            onClick={onRetry}
+          >
             Retry
           </button>
         )}
@@ -100,12 +103,12 @@ export const ConversationHistory = ({
 
   return (
     <div className="full-size">
-      {messages.map((item) => (
+      {messages.map((item, i) => (
         <ChatItem
           key={item.timestamp}
           id={item.timestamp.toString()}
           messageRole={item.role}
-          failed={item.failed}
+          failed={item.failed && i == messages.length - 1}
           onRetry={onRetry}
         >
           <p className="text-sm md:text-base">{item.content}</p>
