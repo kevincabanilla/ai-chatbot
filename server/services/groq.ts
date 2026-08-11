@@ -6,7 +6,8 @@ import {
 import type { ChatMessage, ChatRequest } from "../../shared/types/chat.js";
 import type { AiModel } from "../../shared/types/model.js";
 import { handleGroqError } from "../handlers/groq.js";
-import { AI_SKILL, type AISkill } from "../../shared/ai/skills.js";
+import { type AISkill } from "../../shared/ai/skills.js";
+import aiSkills from "../data/skills.json";
 
 const {
   VITE_DEFAULT_AI_MODEL,
@@ -27,15 +28,15 @@ export async function generateGroqResponse(
   request: ChatRequest,
 ): Promise<ChatMessage> {
   const skill = (
-    !request.skill || !Object.keys(AI_SKILL).some((key) => key == request.skill)
-      ? "DEFAULT"
+    !request.skill || !Object.keys(aiSkills).some((key) => key == request.skill)
+      ? "GENERAL"
       : request.skill
   ) as AISkill;
 
   const messages = [
     {
       role: "system",
-      content: AI_SKILL[skill],
+      content: JSON.stringify(aiSkills[skill]),
     } as ChatMessage,
     ...request.messages,
   ];

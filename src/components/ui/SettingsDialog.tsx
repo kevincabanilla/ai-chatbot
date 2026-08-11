@@ -15,7 +15,7 @@ import { AppCard } from "../containers/AppCard";
 import { AppCombobox, type ComboboxOption } from "../inputs/AppCombobox";
 
 const LUCIDE_ICON: Record<AISkill, LucideIcon> = {
-  DEFAULT: BrainCircuit,
+  GENERAL: BrainCircuit,
   CODING: CodeXml,
 };
 

@@ -20,7 +20,7 @@ const defaultState: Store = {
   currentConversationId: null,
   settings: {
     initialized: false,
-    mode: "DEFAULT",
+    mode: "GENERAL",
     model: import.meta.env.VITE_DEFAULT_AI_MODEL || null,
   },
 };
