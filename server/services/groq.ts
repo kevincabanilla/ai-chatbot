@@ -7,7 +7,7 @@ import type { ChatMessage, ChatRequest } from "../../shared/types/chat.js";
 import type { AiModel } from "../../shared/types/model.js";
 import { handleGroqError } from "../handlers/groq.js";
 import { type AISkill } from "../../shared/ai/skills.js";
-import aiSkills from "../data/skills.json";
+import aiSkills from "../data/skills.json" with { type: "json" };
 
 const {
   VITE_DEFAULT_AI_MODEL,
