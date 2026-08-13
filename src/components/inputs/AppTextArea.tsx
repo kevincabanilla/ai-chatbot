@@ -7,7 +7,7 @@ export const AppTextArea = ({
   shouldScrollIntoView,
   ...props
 }: React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
-  shouldScrollIntoView: boolean;
+  shouldScrollIntoView?: boolean;
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
