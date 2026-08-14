@@ -1,11 +1,12 @@
 import { useState } from "react";
+import clsx from "clsx";
 import { useStore } from "@/hooks";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 import AppButton from "../buttons/AppButton";
 import { AppCard } from "../containers/AppCard";
 
 export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
-  const { state } = useStore();
+  const { state, setState } = useStore();
   const [searchVal, setSearchVal] = useState("");
 
   const results = state.conversationOrder
@@ -13,11 +14,20 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
     .filter((x) => x.messages.some((m) => m.content.includes(searchVal)));
 
   const closeDialog = () => {
+    setSearchVal("");
     onClose();
   };
 
+  const onSelectConversation = (id: string) => {
+    setState((prev) => ({
+      ...prev,
+      currentConversationId: id,
+    }));
+    closeDialog();
+  };
+
   return (
-    <AppDialog onClose={closeDialog} {...props}>
+    <AppDialog size="lg" onClose={closeDialog} {...props}>
       <div className="flex flex-col gap-6 p-6">
         <div className="text-xl">
           <h1>Search</h1>
@@ -28,6 +38,17 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
           <div className="flex flex-col gap-1">
             <input
               autoFocus
+              placeholder="What do you want to search?"
+              className={clsx(
+                "block w-full rounded-lg border border-accent/40 bg-bg-secondary px-4 py-3 text-sm",
+                "placeholder:text-gray-400",
+                "outline-none",
+                "transition",
+                "hover:border-accent/60",
+                "focus:border-accent",
+                "focus:ring-4 focus:ring-blue-500/10",
+                "disabled:cursor-not-allowed disabled:bg-gray-100",
+              )}
               value={searchVal}
               onChange={(e) => {
                 const inputValue = e.target.value;
@@ -42,22 +63,31 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
           </div>
 
           {/* Result list */}
-          <div className="flex flex-col gap-1">
-            <span className="text-accent">Results:</span>
-            <div className="">
-              {results.map((x) => (
-                <>
-                  <AppCard className="rounded-xl">{x.title}</AppCard>
-                </>
-              ))}
-
-              {searchVal && results.length === 0 && (
-                <div>
-                  <span>No results.</span>
-                </div>
-              )}
+          {searchVal && (
+            <div className="flex flex-col gap-1">
+              <span className="text-accent">Results:</span>
+              <div className="max-h-64 overflow-y-auto">
+                {results.length > 0 ? (
+                  results.map((x) => (
+                    <>
+                      <AppCard
+                        className="rounded-md p-3 my-3"
+                        onClick={() => {
+                          onSelectConversation(x.id);
+                        }}
+                      >
+                        {x.title}
+                      </AppCard>
+                    </>
+                  ))
+                ) : (
+                  <div>
+                    <span>No results.</span>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="flex justify-between">
