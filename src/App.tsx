@@ -4,11 +4,13 @@ import { MEDIA_QUERIES, useMediaQuery } from "./hooks";
 import { StoreProvider } from "./providers/StoreProvider";
 import { MainView, TopToolbar, LeftNav } from "./components/views";
 import { SettingsDialog } from "./components/ui/SettingsDialog";
+import { SearchDialog } from "./components/ui/SearchDialog";
 
 const App = () => {
   const isMobile = useMediaQuery(MEDIA_QUERIES.lg);
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
   const [isSetingsOpen, setIsSetingsOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
     <StoreProvider>
@@ -17,6 +19,9 @@ const App = () => {
           isCollapsed={isCollapsed}
           isMobile={isMobile}
           setIsCollapsed={setIsCollapsed}
+          onSearchClicked={() => {
+            setIsSearchOpen(true);
+          }}
           onSettingsClicked={() => {
             setIsSetingsOpen(true);
           }}
@@ -33,6 +38,13 @@ const App = () => {
             isMobile={isMobile}
             openSettings={() => {
               setIsSetingsOpen(true);
+            }}
+          />
+
+          <SearchDialog
+            open={isSearchOpen}
+            onClose={() => {
+              setIsSearchOpen(false);
             }}
           />
 
