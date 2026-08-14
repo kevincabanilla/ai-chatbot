@@ -13,6 +13,7 @@ export function Nav({
   isMobile,
   isCollapsed,
   setIsCollapsed,
+  onSearchClicked,
   onSettingsClicked,
 }: NavProps) {
   const toggleSidebar = () => {
@@ -43,6 +44,7 @@ export function Nav({
         isMobile={isMobile}
         isCollapsed={isCollapsed}
         onToggle={toggleSidebar}
+        onSearchClicked={onSearchClicked}
       />
 
       {/* Footer */}
@@ -133,10 +135,12 @@ const NavActions = ({
   isMobile,
   isCollapsed,
   onToggle,
+  onSearchClicked,
 }: {
   isMobile: boolean;
   isCollapsed: boolean;
   onToggle: () => void;
+  onSearchClicked: () => void;
 }) => {
   const { state, setState } = useStore();
 
@@ -161,7 +165,11 @@ const NavActions = ({
         <span>New Chat</span>
       </AppNavButton>
 
-      <AppNavButton collapsed={isCollapsed} icon={Search}>
+      <AppNavButton
+        collapsed={isCollapsed}
+        icon={Search}
+        onClick={onSearchClicked}
+      >
         <span>Search Chat</span>
       </AppNavButton>
 
