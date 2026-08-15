@@ -12,7 +12,7 @@ import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
 import { AppScrollDownButton } from "../buttons/AppScrollDownButton";
 
-export const MainView = () => {
+export default function MainView() {
   const { isMobile, openSettings } = useAppContext();
   const { state, setState } = useStore();
   const [showAlert, setShowAlert] = useState(false);
@@ -276,7 +276,7 @@ export const MainView = () => {
       </Toast>
     </main>
   );
-};
+}
 
 const Greeting = () => {
   const greeting = useTypingAnimation(Helper.pickRandom(GREETINGS));

@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { RouterProvider } from "react-router";
+import { routes } from "./router/routes";
 import "./App.css";
 import { MEDIA_QUERIES, useMediaQuery } from "./hooks";
 import { StoreProvider } from "./providers/StoreProvider";
-import { MainView, TopToolbar, LeftNav } from "./components/views";
+import { TopToolbar, LeftNav } from "./components/views";
 import { SettingsDialog } from "./components/ui/SettingsDialog";
 import { SearchDialog } from "./components/ui/SearchDialog";
 import { AppContext } from "./contexts/AppContext";
@@ -44,7 +46,7 @@ const App = () => {
               },
             }}
           >
-            <MainView />
+            <RouterProvider router={routes} />
           </AppContext.Provider>
 
           <SearchDialog
