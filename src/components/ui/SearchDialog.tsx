@@ -54,35 +54,31 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
                 const inputValue = e.target.value;
                 setSearchVal(inputValue);
               }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  // search();
-                }
-              }}
             />
           </div>
 
           {/* Result list */}
           {searchVal && (
             <div className="flex flex-col gap-1">
-              <span className="text-accent">Results:</span>
               <div className="max-h-64 overflow-y-auto">
                 {results.length > 0 ? (
-                  results.map((x) => (
-                    <>
+                  <>
+                    <span className="text-accent">Results:</span>
+                    {results.map((x) => (
                       <AppCard
-                        className="rounded-md p-3 my-3"
+                        key={x.id}
+                        className="rounded-md p-3 my-3 cursor-pointer"
                         onClick={() => {
                           onSelectConversation(x.id);
                         }}
                       >
                         {x.title}
                       </AppCard>
-                    </>
-                  ))
+                    ))}
+                  </>
                 ) : (
-                  <div>
-                    <span>No results.</span>
+                  <div className="mt-5 italic text-center text-white/60">
+                    <h2>No results.</h2>
                   </div>
                 )}
               </div>
