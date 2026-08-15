@@ -54,6 +54,7 @@ export const MainView = ({
           id: conversationId,
           title: newMessage.content,
           messages: [newMessage],
+          mode: state.settings.mode,
           model: state.settings.model,
         };
 
@@ -159,7 +160,7 @@ export const MainView = ({
     try {
       const reply = await trigger({
         model: currentConversation?.model ?? state.settings.model ?? undefined,
-        skill: state.settings.mode ?? undefined,
+        skill: currentConversation?.mode ?? state.settings.mode ?? undefined,
         messages: newMessages.map((x) => ({
           content: x.content,
           role: x.role,
@@ -251,7 +252,7 @@ export const MainView = ({
               )}
             >
               <span className="text-white/60">
-                {currentConversation?.model ?? state.settings.model}
+                {`${currentConversation?.mode ?? state.settings.mode} - ${currentConversation?.model ?? state.settings.model}`}
               </span>
               {!hasStarted && (
                 <button

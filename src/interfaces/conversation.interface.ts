@@ -12,5 +12,6 @@ export interface Conversation {
   id: string;
   title: string;
   messages: MessageItem[];
+  mode?: string | null;
   model?: string | null;
 }
