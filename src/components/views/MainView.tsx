@@ -5,20 +5,15 @@ import type { ChatRequest, ChatResponse } from "@shared/types";
 import { sendChat } from "@/api/chatApi";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/libs/helper";
-import { useStore, useTypingAnimation } from "@/hooks";
+import { useAppContext, useStore, useTypingAnimation } from "@/hooks";
 import type { Conversation, MessageItem } from "@/interfaces";
 import { PromptTextArea } from "../ui/PromptTextArea";
 import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
 import { AppScrollDownButton } from "../buttons/AppScrollDownButton";
 
-export const MainView = ({
-  isMobile,
-  openSettings,
-}: {
-  isMobile: boolean;
-  openSettings: () => void;
-}) => {
+export const MainView = () => {
+  const { isMobile, openSettings } = useAppContext();
   const { state, setState } = useStore();
   const [showAlert, setShowAlert] = useState(false);
   const [loadingId, setLoadingId] = useState(""); // Used to identify conversations with pending response.

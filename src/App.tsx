@@ -5,6 +5,7 @@ import { StoreProvider } from "./providers/StoreProvider";
 import { MainView, TopToolbar, LeftNav } from "./components/views";
 import { SettingsDialog } from "./components/ui/SettingsDialog";
 import { SearchDialog } from "./components/ui/SearchDialog";
+import { AppContext } from "./contexts/AppContext";
 
 const App = () => {
   const isMobile = useMediaQuery(MEDIA_QUERIES.lg);
@@ -34,12 +35,17 @@ const App = () => {
               setIsCollapsed(!shouldOpen);
             }}
           />
-          <MainView
-            isMobile={isMobile}
-            openSettings={() => {
-              setIsSetingsOpen(true);
+
+          <AppContext.Provider
+            value={{
+              isMobile,
+              openSettings: () => {
+                setIsSetingsOpen(true);
+              },
             }}
-          />
+          >
+            <MainView />
+          </AppContext.Provider>
 
           <SearchDialog
             open={isSearchOpen}
