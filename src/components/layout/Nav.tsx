@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { motion, type Transition } from "motion/react";
 import { Bot, PanelLeft, Plus, Search, Settings, X } from "lucide-react";
 import { cn } from "@/libs/utils";
@@ -8,6 +9,7 @@ import { AppIconButton } from "../buttons/AppIconButton";
 import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
 import { useStore } from "@/hooks";
 import { Helper } from "@/libs/helper";
+import { QUERY_PARAM, useGetQueryParam } from "@/hooks/useGetQueryParam";
 
 export function Nav({
   isMobile,
@@ -142,6 +144,7 @@ const NavActions = ({
   onToggle: () => void;
   onSearchClicked: () => void;
 }) => {
+  const currentConversationId = useGetQueryParam("c");
   const { state, setState } = useStore();
 
   const onNavigate = () => {
@@ -178,13 +181,22 @@ const NavActions = ({
           <div className="p-2">
             <span className="text-xs font-medium">Recents</span>
           </div>
+
           <ul className="space-y-2">
             {state.conversationOrder.map((x) => {
-              const isActive = x === state.currentConversationId;
+              const isActive = x === currentConversationId;
               return (
                 <li key={x}>
-                  <AppNavButton
-                    className={cn("group", isActive && "text-accent")}
+                  <Link
+                    to={`/?${QUERY_PARAM.ChatId}=${x}`}
+                    className={cn(
+                      "group truncate",
+                      isActive && "text-accent",
+                      "w-full flex items-center gap-3",
+                      "rounded-lg px-3 py-2",
+                      "text-sm transition-colors",
+                      "hover:bg-white/5 hover:text-accent",
+                    )}
                     onClick={() => {
                       if (isActive) return;
 
@@ -196,7 +208,7 @@ const NavActions = ({
                     }}
                   >
                     <span>{state.conversationsById[x].title}</span>
-                  </AppNavButton>
+                  </Link>
                 </li>
               );
             })}
