@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { RouterProvider } from "react-router";
+import { BrowserRouter, RouterProvider } from "react-router";
 import { routes } from "./router/routes";
 import "./App.css";
 import { MEDIA_QUERIES, useMediaQuery } from "./hooks";
@@ -18,6 +18,7 @@ const App = () => {
   return (
     <StoreProvider>
       <div className="flex">
+        <BrowserRouter>
         <LeftNav
           isCollapsed={isCollapsed}
           isMobile={isMobile}
@@ -29,6 +30,7 @@ const App = () => {
             setIsSetingsOpen(true);
           }}
         />
+        </BrowserRouter>
 
         <div className="flex-1">
           <TopToolbar
