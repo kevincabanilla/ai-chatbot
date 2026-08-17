@@ -19,17 +19,24 @@ const App = () => {
     <StoreProvider>
       <div className="flex">
         <BrowserRouter>
-        <LeftNav
-          isCollapsed={isCollapsed}
-          isMobile={isMobile}
-          setIsCollapsed={setIsCollapsed}
-          onSearchClicked={() => {
-            setIsSearchOpen(true);
-          }}
-          onSettingsClicked={() => {
-            setIsSetingsOpen(true);
-          }}
-        />
+          <LeftNav
+            isCollapsed={isCollapsed}
+            isMobile={isMobile}
+            setIsCollapsed={setIsCollapsed}
+            onSearchClicked={() => {
+              setIsSearchOpen(true);
+            }}
+            onSettingsClicked={() => {
+              setIsSetingsOpen(true);
+            }}
+          />
+
+          <SearchDialog
+            open={isSearchOpen}
+            onClose={() => {
+              setIsSearchOpen(false);
+            }}
+          />
         </BrowserRouter>
 
         <div className="flex-1">
@@ -50,13 +57,6 @@ const App = () => {
           >
             <RouterProvider router={routes} />
           </AppContext.Provider>
-
-          <SearchDialog
-            open={isSearchOpen}
-            onClose={() => {
-              setIsSearchOpen(false);
-            }}
-          />
 
           <SettingsDialog
             open={isSetingsOpen}

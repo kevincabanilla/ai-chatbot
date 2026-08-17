@@ -11,17 +11,20 @@ import { PromptTextArea } from "../ui/PromptTextArea";
 import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
 import { AppScrollDownButton } from "../buttons/AppScrollDownButton";
+import { useGetQueryParam } from "@/hooks/useGetQueryParam";
 
 export default function MainView() {
+  const currentConversationId = useGetQueryParam("c");
   const { isMobile, openSettings } = useAppContext();
   const { state, setState } = useStore();
+
   const [showAlert, setShowAlert] = useState(false);
   const [loadingId, setLoadingId] = useState(""); // Used to identify conversations with pending response.
   const [errorMessage, setErrorMessage] = useState("");
 
-  const currentConversation: Conversation | null = !state.currentConversationId
+  const currentConversation: Conversation | null = !currentConversationId
     ? null
-    : state.conversationsById[state.currentConversationId];
+    : state.conversationsById[currentConversationId];
 
   const messages = currentConversation?.messages ?? [];
 
@@ -60,7 +63,6 @@ export default function MainView() {
             [conversation.id]: conversation,
           },
           conversationOrder: [conversation.id, ...prev.conversationOrder],
-          currentConversationId: conversation.id,
         };
       }
 
@@ -124,7 +126,7 @@ export default function MainView() {
     setShowAlert(false);
 
     // save current to prevent misplacing of new messages.
-    const conversationId = state.currentConversationId ?? crypto.randomUUID();
+    const conversationId = currentConversationId ?? crypto.randomUUID();
 
     setLoadingId(conversationId);
 
@@ -208,6 +210,7 @@ export default function MainView() {
           {hasStarted ? (
             <div className="grow">
               <ConversationHistory
+                currentConversationId={currentConversationId}
                 isLoading={isLoading}
                 loadingId={loadingId}
                 messages={messages}
@@ -218,7 +221,7 @@ export default function MainView() {
             </div>
           ) : (
             <div className="text-center p-5">
-              <Greeting key={state.currentConversationId} />
+              <Greeting key={currentConversationId} />
             </div>
           )}
 
@@ -228,11 +231,11 @@ export default function MainView() {
             )}
           >
             <AppScrollDownButton
-              key={`${state.currentConversationId}-scroll-down-btn`}
+              key={`${currentConversationId}-scroll-down-btn`}
             />
 
             <PromptTextArea
-              key={`${state.currentConversationId}-prompt-field`}
+              key={`${currentConversationId}-prompt-field`}
               isMobile={isMobile}
               disabled={isLoading}
               onSubmit={(v) => {

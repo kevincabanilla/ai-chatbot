@@ -146,7 +146,7 @@ const NavActions = ({
   onSearchClicked: () => void;
 }) => {
   const currentConversationId = useGetQueryParam("c");
-  const { state, setState } = useStore();
+  const { state } = useStore();
 
   const onNavigate = () => {
     if (isMobile) onToggle();
@@ -159,13 +159,7 @@ const NavActions = ({
         to={`/`}
         collapsed={isCollapsed}
         icon={Plus}
-        onClick={() => {
-          setState((prev) => ({
-            ...prev,
-            currentConversationId: null,
-          }));
-          onNavigate();
-        }}
+        onClick={onNavigate}
       >
         <span>New Chat</span>
       </AppNavLink>
@@ -194,11 +188,6 @@ const NavActions = ({
                     className={cn("group", isActive && "text-accent")}
                     onClick={() => {
                       if (isActive) return;
-
-                      setState((prev) => ({
-                        ...prev,
-                        currentConversationId: x,
-                      }));
                       onNavigate();
                     }}
                   >

@@ -1,12 +1,14 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import clsx from "clsx";
 import { useStore } from "@/hooks";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 import AppButton from "../buttons/AppButton";
 import { AppCard } from "../containers/AppCard";
+import { QUERY_PARAM } from "@/hooks/useGetQueryParam";
 
 export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
-  const { state, setState } = useStore();
+  const { state } = useStore();
   const [searchVal, setSearchVal] = useState("");
 
   const results = state.conversationOrder
@@ -16,14 +18,6 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
   const closeDialog = () => {
     setSearchVal("");
     onClose();
-  };
-
-  const onSelectConversation = (id: string) => {
-    setState((prev) => ({
-      ...prev,
-      currentConversationId: id,
-    }));
-    closeDialog();
   };
 
   return (
@@ -65,15 +59,15 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
                   <>
                     <span className="text-accent">Results:</span>
                     {results.map((x) => (
-                      <AppCard
+                      <Link
                         key={x.id}
-                        className="rounded-md p-3 my-3 cursor-pointer"
-                        onClick={() => {
-                          onSelectConversation(x.id);
-                        }}
+                        to={`/?${QUERY_PARAM.ChatId}=${x.id}`}
+                        onClick={closeDialog}
                       >
-                        {x.title}
-                      </AppCard>
+                        <AppCard className="rounded-md p-3 my-3 cursor-pointer">
+                          {x.title}
+                        </AppCard>
+                      </Link>
                     ))}
                   </>
                 ) : (

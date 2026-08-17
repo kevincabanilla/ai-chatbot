@@ -6,7 +6,7 @@ const STORAGE_KEY = "app-store";
 export interface Store {
   conversationsById: Record<string, Conversation>;
   conversationOrder: string[];
-  currentConversationId: string | null;
+  // currentConversationId: string | null; // removed, this will now come from the url query.
   settings: {
     initialized: boolean;
     mode: string | null;
@@ -17,7 +17,6 @@ export interface Store {
 const defaultState: Store = {
   conversationsById: {},
   conversationOrder: [],
-  currentConversationId: null,
   settings: {
     initialized: false,
     mode: "GENERAL",
