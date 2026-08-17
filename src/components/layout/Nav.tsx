@@ -10,6 +10,7 @@ import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
 import { useStore } from "@/hooks";
 import { Helper } from "@/libs/helper";
 import { QUERY_PARAM, useGetQueryParam } from "@/hooks/useGetQueryParam";
+import { AppNavLink } from "../buttons/AppNavLink";
 
 export function Nav({
   isMobile,
@@ -100,9 +101,9 @@ const NavHeader = ({
           <HeaderIcon className="shrink-0 p-0.5" />
         </button>
       ) : (
-        <a className={HeaderIconClassName} href={window.location.origin}>
+        <Link to={"/"} className={HeaderIconClassName}>
           <Bot className="shrink-0 p-0.5" />
-        </a>
+        </Link>
       )}
 
       <motion.div
@@ -154,7 +155,8 @@ const NavActions = ({
 
   return (
     <nav className="flex-1 p-3">
-      <AppNavButton
+      <AppNavLink
+        to={`/`}
         collapsed={isCollapsed}
         icon={Plus}
         onClick={() => {
@@ -166,7 +168,7 @@ const NavActions = ({
         }}
       >
         <span>New Chat</span>
-      </AppNavButton>
+      </AppNavLink>
 
       <AppNavButton
         collapsed={isCollapsed}
@@ -187,16 +189,9 @@ const NavActions = ({
               const isActive = x === currentConversationId;
               return (
                 <li key={x}>
-                  <Link
+                  <AppNavLink
                     to={`/?${QUERY_PARAM.ChatId}=${x}`}
-                    className={cn(
-                      "group truncate",
-                      isActive && "text-accent",
-                      "w-full flex items-center gap-3",
-                      "rounded-lg px-3 py-2",
-                      "text-sm transition-colors",
-                      "hover:bg-white/5 hover:text-accent",
-                    )}
+                    className={cn("group", isActive && "text-accent")}
                     onClick={() => {
                       if (isActive) return;
 
@@ -208,7 +203,7 @@ const NavActions = ({
                     }}
                   >
                     <span>{state.conversationsById[x].title}</span>
-                  </Link>
+                  </AppNavLink>
                 </li>
               );
             })}
