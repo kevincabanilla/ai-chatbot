@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import clsx from "clsx";
 import useSWRMutation from "swr/mutation";
 import type { ChatRequest, ChatResponse } from "@shared/types";
@@ -11,9 +12,10 @@ import { PromptTextArea } from "../ui/PromptTextArea";
 import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
 import { AppScrollDownButton } from "../buttons/AppScrollDownButton";
-import { useGetQueryParam } from "@/hooks/useGetQueryParam";
+import { QUERY_PARAM, useGetQueryParam } from "@/hooks/useGetQueryParam";
 
 export default function MainView() {
+  const navigate = useNavigate();
   const currentConversationId = useGetQueryParam("c");
   const { isMobile, openSettings } = useAppContext();
   const { state, setState } = useStore();
@@ -127,6 +129,13 @@ export default function MainView() {
 
     // save current to prevent misplacing of new messages.
     const conversationId = currentConversationId ?? crypto.randomUUID();
+
+    if (!currentConversationId) {
+      await navigate({
+        pathname: "/",
+        search: `?${QUERY_PARAM.ChatId}=${conversationId}`,
+      });
+    }
 
     setLoadingId(conversationId);
 
