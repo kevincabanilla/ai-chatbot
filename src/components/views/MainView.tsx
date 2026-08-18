@@ -128,9 +128,10 @@ export default function MainView() {
     setShowAlert(false);
 
     // save current to prevent misplacing of new messages.
-    const conversationId = currentConversationId ?? crypto.randomUUID();
+    let conversationId = currentConversationId ?? "";
 
-    if (!currentConversationId) {
+    if (!currentConversation) {
+      conversationId = crypto.randomUUID();
       await navigate({
         pathname: "/",
         search: `?${QUERY_PARAM.ChatId}=${conversationId}`,
