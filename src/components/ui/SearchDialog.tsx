@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router";
+import { CheckCircle } from "lucide-react";
 import clsx from "clsx";
 import { useStore } from "@/hooks";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 import AppButton from "../buttons/AppButton";
 import { AppCard } from "../containers/AppCard";
-import { QUERY_PARAM } from "@/hooks/useGetQueryParam";
+import { QUERY_PARAM, useGetQueryParam } from "@/hooks/useGetQueryParam";
 
 export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
   const { state } = useStore();
   const [searchVal, setSearchVal] = useState("");
+  const currentConversationId = useGetQueryParam("c");
 
   const results = state.conversationOrder
     .map((key) => state.conversationsById[key])
@@ -64,8 +66,15 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
                         to={`/?${QUERY_PARAM.ChatId}=${x.id}`}
                         onClick={closeDialog}
                       >
-                        <AppCard className="rounded-md p-3 my-3 cursor-pointer">
-                          {x.title}
+                        <AppCard className="flex items-center rounded-md p-3 my-3 cursor-pointer">
+                          <div className="truncate">{x.title}</div>
+
+                          {x.id === currentConversationId && (
+                            <CheckCircle
+                              size={16}
+                              className="ml-1 shrink-0 text-green-500"
+                            />
+                          )}
                         </AppCard>
                       </Link>
                     ))}
