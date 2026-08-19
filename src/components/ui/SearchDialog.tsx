@@ -15,7 +15,11 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
 
   const results = state.conversationOrder
     .map((key) => state.conversationsById[key])
-    .filter((x) => x.messages.some((m) => m.content.includes(searchVal)));
+    .filter((x) =>
+      x.messages.some((m) =>
+        m.content.toLowerCase().includes(searchVal.toLocaleLowerCase()),
+      ),
+    );
 
   const closeDialog = () => {
     setSearchVal("");
