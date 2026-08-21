@@ -115,7 +115,7 @@ public/               Static assets, including the social preview image
 2. Add `GROQ_API_KEY` under the project's Environment Variables.
 3. Set `VITE_BASE_URL` to the public deployment URL, such as `https://your-chatbudd.vercel.app`.
 4. Optionally set the model and response tuning variables listed above.
-5. Deploy. Vercel will build with `npm run build` and expose the functions under `/api`.
+5. Deploy by running `vercel` (preview) or `vercel --prod`. Vercel will build with `npm run build` and expose the functions under `/api`.
 
 ## Contributing
 
