@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { motion, type Transition } from "motion/react";
-import { Bot, PanelLeft, Plus, Search, Settings, X } from "lucide-react";
+import { Bot, PanelLeft, Plus, Search, Settings, X, XIcon } from "lucide-react";
 import { cn } from "@/libs/utils";
 import type { NavProps } from "@/interfaces";
 import { AppNavButton } from "../buttons/AppNavButton";
@@ -185,13 +185,26 @@ const NavActions = ({
                 <li key={x}>
                   <AppNavLink
                     to={`/?${QUERY_PARAM.ChatId}=${x}`}
-                    className={cn("group", isActive && "text-accent")}
+                    className={cn("group relative", isActive && "text-accent")}
                     onClick={() => {
                       if (isActive) return;
                       onNavigate();
                     }}
                   >
                     <span>{state.conversationsById[x].title}</span>
+
+                    <button
+                      type="button"
+                      className="absolute right-1 hidden size-5 items-center justify-center rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground group-hover:flex"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // close/delete conversation here
+                      }}
+                      aria-label="Close conversation"
+                    >
+                      <XIcon />
+                    </button>
                   </AppNavLink>
                 </li>
               );
