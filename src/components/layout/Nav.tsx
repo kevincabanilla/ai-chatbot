@@ -7,10 +7,11 @@ import type { NavProps } from "@/interfaces";
 import { AppNavButton } from "../buttons/AppNavButton";
 import { AppIconButton } from "../buttons/AppIconButton";
 import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
-import { useStore } from "@/hooks";
+import { useStateManager } from "@/hooks";
 import { Helper } from "@/libs/helper";
 import { QUERY_PARAM, useGetQueryParam } from "@/hooks/useGetQueryParam";
 import { AppNavLink } from "../buttons/AppNavLink";
+import { AppConfirmDialog } from "../containers/AppConfirmDialog";
 
 export function Nav({
   isMobile,
@@ -146,11 +147,20 @@ const NavActions = ({
   onSearchClicked: () => void;
 }) => {
   const currentConversationId = useGetQueryParam("c");
-  const { state } = useStore();
+  const { state, deleteConversation } = useStateManager();
+  const [showConfirmDeletion, setShowConfirmDeletion] = useState(false);
+  const [conversationToDelete, setConversationToDelete] = useState<
+    string | null
+  >(null);
 
   const onNavigate = () => {
     if (isMobile) onToggle();
     Helper.scrollToTop();
+  };
+
+  const onCloseConfirmDeletion = () => {
+    setShowConfirmDeletion(false);
+    setConversationToDelete(null);
   };
 
   return (
@@ -179,12 +189,12 @@ const NavActions = ({
           </div>
 
           <ul className="space-y-2">
-            {state.conversationOrder.map((x) => {
-              const isActive = x === currentConversationId;
+            {state.conversationOrder.map((cid) => {
+              const isActive = cid === currentConversationId;
               return (
-                <li key={x}>
+                <li key={cid}>
                   <AppNavLink
-                    to={`/?${QUERY_PARAM.ChatId}=${x}`}
+                    to={`/?${QUERY_PARAM.ChatId}=${cid}`}
                     className={cn("group relative", isActive && "text-accent")}
                     onClick={() => {
                       if (isActive) return;
@@ -192,7 +202,7 @@ const NavActions = ({
                     }}
                   >
                     <div className="grow truncate transition-all duration-300">
-                      <span>{state.conversationsById[x].title}</span>
+                      <span>{state.conversationsById[cid].title}</span>
                     </div>
 
                     <button
@@ -205,7 +215,8 @@ const NavActions = ({
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        // close/delete conversation here
+                        setConversationToDelete(cid);
+                        setShowConfirmDeletion(true);
                       }}
                       aria-label="Close conversation"
                     >
@@ -218,6 +229,25 @@ const NavActions = ({
           </ul>
         </div>
       )}
+
+      <AppConfirmDialog
+        dialogTitle="Delete this conversatiion?"
+        open={showConfirmDeletion}
+        onConfirm={() => {
+          deleteConversation(conversationToDelete ?? "");
+          onCloseConfirmDeletion();
+        }}
+        onDecline={onCloseConfirmDeletion}
+        onClose={onCloseConfirmDeletion}
+      >
+        <div>
+          {conversationToDelete && (
+            <p>{state.conversationsById[conversationToDelete].title}</p>
+          )}
+
+          <span className="text-xs text-white/20">This cannot be undone.</span>
+        </div>
+      </AppConfirmDialog>
     </nav>
   );
 };
