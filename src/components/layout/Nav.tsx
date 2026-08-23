@@ -191,11 +191,17 @@ const NavActions = ({
                       onNavigate();
                     }}
                   >
-                    <span>{state.conversationsById[x].title}</span>
+                    <div className="grow truncate transition-all duration-300">
+                      <span>{state.conversationsById[x].title}</span>
+                    </div>
 
                     <button
                       type="button"
-                      className="absolute right-1 hidden size-5 items-center justify-center rounded-sm text-muted-foreground hover:bg-muted hover:text-foreground group-hover:flex"
+                      className={cn(
+                        "hidden shrink-0 items-center justify-center",
+                        "size-5 rounded-sm text-muted-foreground cursor-pointer",
+                        "hover:bg-rose-500/20 hover:text-rose-500 group-hover:flex",
+                      )}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
