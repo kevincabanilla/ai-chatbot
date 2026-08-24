@@ -4,4 +4,5 @@ export interface NavProps {
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
   onSearchClicked: () => void;
   onSettingsClicked: () => void;
+  onDeleteConversation: (cid: string) => void;
 }

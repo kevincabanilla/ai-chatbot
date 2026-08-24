@@ -11,7 +11,6 @@ import { useStateManager } from "@/hooks";
 import { Helper } from "@/libs/helper";
 import { QUERY_PARAM, useGetQueryParam } from "@/hooks/useGetQueryParam";
 import { AppNavLink } from "../buttons/AppNavLink";
-import { AppConfirmDialog } from "../containers/AppConfirmDialog";
 
 export function Nav({
   isMobile,
@@ -19,6 +18,7 @@ export function Nav({
   setIsCollapsed,
   onSearchClicked,
   onSettingsClicked,
+  onDeleteConversation,
 }: NavProps) {
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -49,6 +49,7 @@ export function Nav({
         isCollapsed={isCollapsed}
         onToggle={toggleSidebar}
         onSearchClicked={onSearchClicked}
+        onDeleteConversation={onDeleteConversation}
       />
 
       {/* Footer */}
@@ -140,27 +141,20 @@ const NavActions = ({
   isCollapsed,
   onToggle,
   onSearchClicked,
+  onDeleteConversation,
 }: {
   isMobile: boolean;
   isCollapsed: boolean;
   onToggle: () => void;
   onSearchClicked: () => void;
+  onDeleteConversation: (cid: string) => void;
 }) => {
   const currentConversationId = useGetQueryParam("c");
-  const { state, deleteConversation } = useStateManager();
-  const [showConfirmDeletion, setShowConfirmDeletion] = useState(false);
-  const [conversationToDelete, setConversationToDelete] = useState<
-    string | null
-  >(null);
+  const { state } = useStateManager();
 
   const onNavigate = () => {
     if (isMobile) onToggle();
     Helper.scrollToTop();
-  };
-
-  const onCloseConfirmDeletion = () => {
-    setShowConfirmDeletion(false);
-    setConversationToDelete(null);
   };
 
   return (
@@ -233,8 +227,7 @@ const NavActions = ({
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          setConversationToDelete(cid);
-                          setShowConfirmDeletion(true);
+                          onDeleteConversation(cid);
                         }}
                         aria-label="Close conversation"
                       >
@@ -248,25 +241,6 @@ const NavActions = ({
           </ul>
         </div>
       )}
-
-      <AppConfirmDialog
-        dialogTitle="Delete this conversatiion?"
-        open={showConfirmDeletion}
-        onConfirm={() => {
-          deleteConversation(conversationToDelete ?? "");
-          onCloseConfirmDeletion();
-        }}
-        onDecline={onCloseConfirmDeletion}
-        onClose={onCloseConfirmDeletion}
-      >
-        <div>
-          {conversationToDelete && (
-            <p>{state.conversationsById[conversationToDelete].title}</p>
-          )}
-
-          <span className="text-xs text-white/20">This cannot be undone.</span>
-        </div>
-      </AppConfirmDialog>
     </nav>
   );
 };

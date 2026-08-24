@@ -32,6 +32,7 @@ export default function AppLayout() {
         onSettingsClicked={() => {
           setIsSettingsOpen(true);
         }}
+        onDeleteConversation={onDeleteConversation}
       />
 
       <SearchDialog
