@@ -10,7 +10,7 @@ import {
   QUERY_PARAM,
   useAppContext,
   useGetQueryParam,
-  useStore,
+  useStateManager,
   useTypingAnimation,
 } from "@/hooks";
 import type { Conversation, MessageItem } from "@/interfaces";
@@ -23,7 +23,7 @@ export default function MainView() {
   const navigate = useNavigate();
   const currentConversationId = useGetQueryParam("c");
   const { isMobile, openSettings } = useAppContext();
-  const { state, setState } = useStore();
+  const { state, appendMessage, updateLastMessage } = useStateManager();
 
   const [showAlert, setShowAlert] = useState(false);
   const [loadingId, setLoadingId] = useState(""); // Used to identify conversations with pending response.
@@ -40,81 +40,6 @@ export default function MainView() {
   const scrollToId = (id: string | number) => {
     requestAnimationFrame(() => {
       Helper.scrollToId(id);
-    });
-  };
-
-  const appendMessage = (
-    conversationId: string,
-    newMessage: MessageItem,
-  ): void => {
-    setState((prev) => {
-      const currentId = conversationId;
-      const currentConversation = !currentId
-        ? null
-        : prev.conversationsById[currentId];
-
-      // new conversation
-      if (!currentConversation) {
-        const conversation: Conversation = {
-          id: conversationId,
-          title: newMessage.content,
-          messages: [newMessage],
-          mode: state.settings.mode,
-          model: state.settings.model,
-        };
-
-        return {
-          ...prev,
-          conversationsById: {
-            ...prev.conversationsById,
-            [conversation.id]: conversation,
-          },
-          conversationOrder: [conversation.id, ...prev.conversationOrder],
-        };
-      }
-
-      // update existing.
-      return {
-        ...prev,
-        conversationsById: {
-          ...prev.conversationsById,
-          [currentConversation.id]: {
-            ...currentConversation,
-            messages: [...currentConversation.messages, newMessage],
-          },
-        },
-      };
-    });
-
-    scrollToId(newMessage.timestamp);
-  };
-
-  const updateLastMessage = (
-    conversationId: string,
-    updater: (msg: MessageItem) => MessageItem,
-  ) => {
-    setState((prev) => {
-      const conversation: Conversation = prev.conversationsById[conversationId];
-
-      if (/* !conversation || */ conversation.messages.length === 0) {
-        return prev;
-      }
-
-      const messages = [...conversation.messages];
-      const lastIndex = messages.length - 1;
-
-      messages[lastIndex] = updater(messages[lastIndex]);
-
-      return {
-        ...prev,
-        conversationsById: {
-          ...prev.conversationsById,
-          [conversationId]: {
-            ...conversation,
-            messages,
-          },
-        },
-      };
     });
   };
 
@@ -165,7 +90,9 @@ export default function MainView() {
         timestamp: Date.now(),
       };
 
-      appendMessage(conversationId, newMessageItem);
+      appendMessage(conversationId, newMessageItem, () => {
+        scrollToId(newMessageItem.timestamp);
+      });
       newMessages.push(newMessageItem);
     }
 
@@ -203,11 +130,19 @@ export default function MainView() {
 
       if (!reply?.message?.content) return;
 
-      appendMessage(conversationId, {
-        ...reply.message,
-        conversationId: conversationId,
-        timestamp: Date.now(),
-      });
+      const timestamp = Date.now();
+
+      appendMessage(
+        conversationId,
+        {
+          ...reply.message,
+          conversationId: conversationId,
+          timestamp,
+        },
+        () => {
+          scrollToId(timestamp);
+        },
+      );
     } catch (err) {
       console.error(err);
     }
