@@ -193,36 +193,55 @@ const NavActions = ({
               const isActive = cid === currentConversationId;
               return (
                 <li key={cid}>
-                  <AppNavLink
-                    to={`/?${QUERY_PARAM.ChatId}=${cid}`}
-                    className={cn("group relative", isActive && "text-accent")}
-                    onClick={() => {
-                      if (isActive) return;
-                      onNavigate();
-                    }}
+                  <motion.div
+                    initial="rest"
+                    whileHover="hover"
+                    className="group"
                   >
-                    <div className="grow truncate transition-all duration-300">
-                      <span>{state.conversationsById[cid].title}</span>
-                    </div>
-
-                    <button
-                      type="button"
-                      className={cn(
-                        "hidden shrink-0 items-center justify-center",
-                        "size-5 rounded-sm text-muted-foreground cursor-pointer",
-                        "hover:bg-rose-500/20 hover:text-rose-500 group-hover:flex",
-                      )}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setConversationToDelete(cid);
-                        setShowConfirmDeletion(true);
+                    <AppNavLink
+                      to={`/?${QUERY_PARAM.ChatId}=${cid}`}
+                      className={cn("relative", isActive && "text-accent")}
+                      onClick={() => {
+                        if (isActive) return;
+                        onNavigate();
                       }}
-                      aria-label="Close conversation"
                     >
-                      <XIcon />
-                    </button>
-                  </AppNavLink>
+                      <div className="grow truncate">
+                        <span>{state.conversationsById[cid].title}</span>
+                      </div>
+
+                      <motion.button
+                        variants={{
+                          rest: {
+                            opacity: 0,
+                            scale: 0.8,
+                          },
+                          hover: {
+                            opacity: 1,
+                            scale: 1,
+                            transition: {
+                              delay: 0.15,
+                              duration: 0.15,
+                            },
+                          },
+                        }}
+                        className={cn(
+                          "shrink-0 size-5 rounded-sm cursor-pointer",
+                          "hidden group-hover:flex items-center justify-center",
+                          "bg-transparent hover:text-rose-500",
+                        )}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setConversationToDelete(cid);
+                          setShowConfirmDeletion(true);
+                        }}
+                        aria-label="Close conversation"
+                      >
+                        <XIcon />
+                      </motion.button>
+                    </AppNavLink>
+                  </motion.div>
                 </li>
               );
             })}
