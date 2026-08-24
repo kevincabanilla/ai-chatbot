@@ -5,12 +5,20 @@ import { TopToolbar, LeftNav } from "@/components/views";
 import { SearchDialog } from "@/components/ui/SearchDialog";
 import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import { AppContext } from "@/contexts/AppContext";
+import { DeleteConversationDialog } from "../ui/DeleteConversationDialog";
 
 export default function AppLayout() {
   const isMobile = useMediaQuery(MEDIA_QUERIES.lg);
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [deleteConversationId, setDeleteConversationId] = useState("");
+
+  const onDeleteConversation = (cid: string) => {
+    setDeleteConversationId(cid);
+    setIsDeleteOpen(true);
+  };
 
   return (
     <div className="flex">
@@ -39,6 +47,7 @@ export default function AppLayout() {
           onOpenDrawer={(shouldOpen) => {
             setIsCollapsed(!shouldOpen);
           }}
+          onDeleteConversation={onDeleteConversation}
         />
 
         <AppContext.Provider
@@ -56,6 +65,14 @@ export default function AppLayout() {
           open={isSettingsOpen}
           onClose={() => {
             setIsSettingsOpen(false);
+          }}
+        />
+
+        <DeleteConversationDialog
+          conversationId={deleteConversationId}
+          open={isDeleteOpen}
+          onClose={() => {
+            setIsDeleteOpen(false);
           }}
         />
       </div>

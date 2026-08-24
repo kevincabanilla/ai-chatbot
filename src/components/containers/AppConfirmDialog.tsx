@@ -5,8 +5,8 @@ export interface AppConfirmDialogProps extends DialogProps {
   dialogTitle?: string | null;
   confirmButtonText?: string | null;
   declineButtonText?: string | null;
-  onConfirm: () => void;
-  onDecline: () => void;
+  onConfirm?: () => void;
+  onDecline?: () => void;
 }
 
 export const AppConfirmDialog = ({
