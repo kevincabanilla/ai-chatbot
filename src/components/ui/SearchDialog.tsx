@@ -2,11 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { CheckCircle } from "lucide-react";
 import clsx from "clsx";
-import { useStore } from "@/hooks";
+import { QUERY_PARAM, useGetQueryParam, useStore } from "@/hooks";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 import AppButton from "../buttons/AppButton";
 import { AppCard } from "../containers/AppCard";
-import { QUERY_PARAM, useGetQueryParam } from "@/hooks/useGetQueryParam";
 
 export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
   const { state } = useStore();

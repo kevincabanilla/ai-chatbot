@@ -7,9 +7,8 @@ import type { NavProps } from "@/interfaces";
 import { AppNavButton } from "../buttons/AppNavButton";
 import { AppIconButton } from "../buttons/AppIconButton";
 import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
-import { useStateManager } from "@/hooks";
+import { QUERY_PARAM, useGetQueryParam, useStateManager } from "@/hooks";
 import { Helper } from "@/libs/helper";
-import { QUERY_PARAM, useGetQueryParam } from "@/hooks/useGetQueryParam";
 import { AppNavLink } from "../buttons/AppNavLink";
 
 export function Nav({

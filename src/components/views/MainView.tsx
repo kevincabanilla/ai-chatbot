@@ -6,13 +6,18 @@ import type { ChatRequest, ChatResponse } from "@shared/types";
 import { sendChat } from "@/api/chatApi";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/libs/helper";
-import { useAppContext, useStore, useTypingAnimation } from "@/hooks";
+import {
+  QUERY_PARAM,
+  useAppContext,
+  useGetQueryParam,
+  useStore,
+  useTypingAnimation,
+} from "@/hooks";
 import type { Conversation, MessageItem } from "@/interfaces";
 import { PromptTextArea } from "../ui/PromptTextArea";
 import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
 import { AppScrollDownButton } from "../buttons/AppScrollDownButton";
-import { QUERY_PARAM, useGetQueryParam } from "@/hooks/useGetQueryParam";
 
 export default function MainView() {
   const navigate = useNavigate();
