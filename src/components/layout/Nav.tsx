@@ -26,7 +26,7 @@ export function Nav({
   return (
     <motion.aside
       className={cn(
-        "h-full flex flex-col overflow-y-auto bg-bg-primary border-r border-accent/20",
+        "h-full max-h-full flex flex-col overflow-hidden bg-bg-primary border-r border-accent/20",
         isMobile ? "absolute inset-y-0 left-0" : "sticky top-0",
         // isCollapsed ? "w-18 min-w-18" : "w-64 min-w-64",
       )}
@@ -157,7 +157,7 @@ const NavActions = ({
   };
 
   return (
-    <nav className="flex-1 p-3">
+    <nav className="min-h-0 flex flex-col flex-1 p-3">
       <AppNavLink
         to={`/`}
         collapsed={isCollapsed}
@@ -176,12 +176,12 @@ const NavActions = ({
       </AppNavButton>
 
       {!isCollapsed && state.conversationOrder.length > 0 && (
-        <div className="flex flex-col gap-1">
-          <div className="p-2">
+        <div className="flex flex-col flex-1 min-h-0 mt-1">
+          <div className="shrink-0 p-2">
             <span className="text-xs font-medium">Recents</span>
           </div>
 
-          <ul className="space-y-2">
+          <ul className="space-y-2 min-h-0 flex-1 overflow-y-auto pr-1">
             {state.conversationOrder.map((cid) => {
               const isActive = cid === currentConversationId;
               return (
