@@ -3,6 +3,12 @@ import { Bot } from "lucide-react";
 import type { ChatRole } from "@shared/types";
 import { AppCard } from "../containers/AppCard";
 import type { MessageItem } from "@/interfaces";
+import { motion } from "motion/react";
+import {
+  staggerContainer,
+  staggerItemLeft,
+  staggerItemRight,
+} from "@/libs/animationVariants";
 
 const ChatItem = ({
   id,
@@ -20,7 +26,8 @@ const ChatItem = ({
   const isFromUser = messageRole === "user";
 
   return (
-    <div
+    <motion.div
+      variants={isFromUser ? staggerItemRight : staggerItemLeft}
       id={id}
       className={clsx(
         "w-full my-3 flex",
@@ -66,7 +73,7 @@ const ChatItem = ({
           {children}
         </AppCard>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -101,7 +108,13 @@ export const ConversationHistory = ({
   onRetry: () => void;
 }) => {
   return (
-    <div className="full-size">
+    <motion.div
+      key={currentConversationId}
+      variants={staggerContainer}
+      initial="hidden"
+      animate="visible"
+      className="full-size"
+    >
       {messages.map((item, i) => (
         <ChatItem
           key={item.timestamp}
@@ -119,6 +132,6 @@ export const ConversationHistory = ({
           <TypingDots />
         </ChatItem>
       )}
-    </div>
+    </motion.div>
   );
 };
