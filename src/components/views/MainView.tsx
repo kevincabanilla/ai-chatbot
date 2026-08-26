@@ -194,10 +194,7 @@ export default function MainView() {
             />
 
             <div
-              className={clsx(
-                "px-6 py-1 text-sm flex gap-2",
-                hasStarted && "justify-center",
-              )}
+              className={clsx("px-6 py-1 text-sm flex gap-2 justify-center")}
             >
               <span className="text-white/60">
                 {`${currentConversation?.mode ?? state.settings.mode} - ${currentConversation?.model ?? state.settings.model}`}
