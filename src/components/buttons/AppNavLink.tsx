@@ -29,7 +29,7 @@ export const AppNavLink = ({
     >
       {Icon && <Icon className="shrink-0 p-0.5" />}
       <div
-        className={cn("flex w-full", !collapsed ? "opacity-100" : "opacity-0")}
+        className={cn("flex w-full truncate", !collapsed ? "opacity-100" : "opacity-0")}
       >
         {children}
       </div>
