@@ -4,7 +4,7 @@
 
 > Your AI assistant buddy for thoughtful answers, coding help, research, and everyday tasks.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-your--chatbudd.vercel.app-3fa4f0?style=flat-square)](https://your-chatbudd.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-your--chatbudd.vercel.app-3fa4f0?style=flat-square)](https://chatbudd-ai.vercel.app/)
 [![Repository](https://img.shields.io/badge/Repository-GitHub-181717?style=flat-square&logo=github)](https://github.com/kevincabanilla/ai-chatbot)
 [![Report an issue](https://img.shields.io/badge/Report%20an%20issue-GitHub%20Issues-e5534b?style=flat-square)](https://github.com/kevincabanilla/ai-chatbot/issues)
 
@@ -71,14 +71,14 @@ The client-side `VITE_*` values are exposed to the browser, so never put secrets
 | Variable                | Required        | Purpose                                | Example                            |
 | ----------------------- | --------------- | -------------------------------------- | ---------------------------------- |
 | `GROQ_API_KEY`          | Yes             | Authenticates requests to Groq         | `gsk_...`                          |
-| `VITE_BASE_URL`         | Yes for deploys | Canonical site and social metadata URL | `https://your-chatbudd.vercel.app` |
+| `VITE_BASE_URL`         | Yes for deploys | Canonical site and social metadata URL | `https://chatbudd-ai.vercel.app` |
 | `VITE_DEFAULT_AI_MODEL` | No              | Default model for new conversations    | `openai/gpt-oss-120b`              |
 | `GROQ_MAX_TOKENS`       | No              | Maximum response tokens                | `1000`                             |
 | `GROQ_CHAT_TEMPERATURE` | No              | Response sampling temperature          | `0.7`                              |
 | `VITE_APP_TITLE`        | No              | Browser and Open Graph title           | `Chatbudd`                         |
 | `VITE_APP_DESCRIPTION`  | No              | SEO description                        | `Your AI assistant buddy.`         |
 
-For local development, use `VITE_BASE_URL=http://localhost:3000`. The checked-in production configuration currently points to `https://your-chatbudd.vercel.app`; update that value when the deployment domain changes.
+For local development, use `VITE_BASE_URL=http://localhost:3000`. The checked-in production configuration currently points to `https://chatbudd-ai.vercel.app`; update that value when the deployment domain changes.
 
 ## Scripts
 
@@ -113,7 +113,7 @@ public/               Static assets, including the social preview image
 
 1. Import the repository into Vercel. The project is already configured for Vite in `vercel.json`.
 2. Add `GROQ_API_KEY` under the project's Environment Variables.
-3. Set `VITE_BASE_URL` to the public deployment URL, such as `https://your-chatbudd.vercel.app`.
+3. Set `VITE_BASE_URL` to the public deployment URL, such as `https://chatbudd-ai.vercel.app`.
 4. Optionally set the model and response tuning variables listed above.
 5. Deploy by running `vercel` (preview) or `vercel --prod`. Vercel will build with `npm run build` and expose the functions under `/api`.
 
