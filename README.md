@@ -4,7 +4,7 @@
 
 > Your AI assistant buddy for thoughtful answers, coding help, research, and everyday tasks.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-your--chatbudd.vercel.app-3fa4f0?style=flat-square)](https://chatbudd-ai.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-chatbudd--ai.vercel.app-3fa4f0?style=flat-square)](https://chatbudd-ai.vercel.app/)
 [![Repository](https://img.shields.io/badge/Repository-GitHub-181717?style=flat-square&logo=github)](https://github.com/kevincabanilla/ai-chatbot)
 [![Report an issue](https://img.shields.io/badge/Report%20an%20issue-GitHub%20Issues-e5534b?style=flat-square)](https://github.com/kevincabanilla/ai-chatbot/issues)
 
