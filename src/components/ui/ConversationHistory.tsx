@@ -9,6 +9,7 @@ import {
   staggerItemLeft,
   staggerItemRight,
 } from "@/libs/animationVariants";
+import MarkdownContent from "./MarkdownContent";
 
 const ChatItem = ({
   id,
@@ -123,7 +124,11 @@ export const ConversationHistory = ({
           failed={item.failed && i == messages.length - 1}
           onRetry={onRetry}
         >
-          <p className="text-sm md:text-base">{item.content}</p>
+          {item.role === "user" ? (
+            <p className="text-sm md:text-base">{item.content}</p>
+          ) : (
+            <MarkdownContent content={item.content} />
+          )}
         </ChatItem>
       ))}
 
