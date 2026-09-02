@@ -5,7 +5,7 @@ import { cn } from "@/libs/utils";
 
 const appButtonStyles = cva(
   [
-    "text-accent/90",
+    "text-accent/90 rounded-lg",
     "font-semibold",
     "backdrop-blur-md",
     "transition-all duration-300 ease-out",

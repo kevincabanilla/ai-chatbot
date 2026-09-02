@@ -141,7 +141,7 @@ const ModeItem = ({
   return (
     <AppCard
       className={clsx(
-        "relative h-46 p-6",
+        "relative h-46 p-6 rounded-lg",
         "grow flex flex-col justify-center items-center gap-4",
         "text-accent cursor-pointer select-none",
       )}
