@@ -64,7 +64,7 @@ const ChatItem = ({
         <AppCard
           className={clsx(
             "px-4 py-2",
-            "max-w-lg rounded-2xl",
+            "max-w-lg lg:max-w-xl xl:max-w-3xl rounded-2xl",
             "whitespace-pre-wrap",
             "wrap-anywhere",
             isFromUser ? "rounded-tr-none" : "rounded-tl-none",
