@@ -1,8 +1,10 @@
+import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Copy } from "lucide-react";
+import { Check, Copy } from "lucide-react";
+import clsx from "clsx";
 
 export default function MarkdownContent({ content }: { content: string }) {
   return (
@@ -114,20 +116,44 @@ export default function MarkdownContent({ content }: { content: string }) {
 }
 
 function CodeBlock({ language, code }: { language: string; code: string }) {
+  const [copied, setCopied] = useState(false);
+
   const copyCode = async () => {
-    await navigator.clipboard.writeText(code);
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Failed to copy code:", error);
+    }
   };
 
   return (
     <div className="overflow-hidden rounded-lg bg-bg-primary">
       <div className="flex items-center justify-between px-3 py-2 text-xs text-gray-400">
-        <span className="font-mono">{language}</span>
+        <span className="text-sm font-mono">{language}</span>
 
         <button
-          onClick={void copyCode}
-          className="rounded-md p-2 hover:bg-white/5 hover:text-white"
+          className={clsx(
+            "flex gap-2 rounded-md p-2 cursor-pointer",
+            "bg-white/3 hover:bg-white/8",
+            copied ? "text-green-400" : "hover:text-white",
+          )}
+          onClick={() => void copyCode()}
         >
-          <Copy size={16} />
+          {copied ? (
+            <>
+              <Check size={16} />
+              <span>Copied</span>
+            </>
+          ) : (
+            <>
+              <Copy size={16} />
+              <span>Copy</span>
+            </>
+          )}
         </button>
       </div>
 
