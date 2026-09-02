@@ -66,8 +66,7 @@ export default function MarkdownContent({ content }: { content: string }) {
                 className="rounded bg-gray-700 px-1.5 py-0.5 font-mono text-[0.9em]"
                 {...props}
               >
-                {" "}
-                {children}{" "}
+                {children}
               </code>
             );
           },
