@@ -2,6 +2,8 @@
 
 @theme {
   --font-sans: "Geist Variable", "Geist", system-ui, -apple-system, sans-serif;
+  --font-mono:
+    "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
 
   --color-bg-primary: #22252b;
   --color-bg-secondary: #292c34;

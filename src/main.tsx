@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import "@fontsource-variable/geist/wght.css";
 import "@fontsource-variable/geist/wght-italic.css";
+import "@fontsource-variable/jetbrains-mono";
 import App from "./App.tsx";
 
 const rootElement = document.getElementById("root");
