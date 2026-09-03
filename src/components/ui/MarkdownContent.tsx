@@ -131,9 +131,9 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
   };
 
   return (
-    <div className="overflow-hidden rounded-lg bg-bg-primary">
+    <div className="overflow-hidden rounded-lg bg-bg-primary border border-gray-500">
       <div className="flex items-center justify-between px-3 py-2 text-xs text-gray-400">
-        <span className="text-sm font-mono">{language}</span>
+        <span className="md:text-sm font-mono">{language}</span>
 
         <button
           className={clsx(
@@ -158,6 +158,7 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
       </div>
 
       <SyntaxHighlighter
+        showLineNumbers
         language={language}
         style={oneDark}
         customStyle={{
