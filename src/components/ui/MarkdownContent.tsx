@@ -167,6 +167,13 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
           fontSize: "14px",
           background: "transparent",
         }}
+        codeTagProps={{
+          className: clsx("block w-0", `language-${language}`),
+          style: {
+            ...oneDark['code[class*="language-"]'],
+            ...oneDark[`code[class*="language-${language}"]`],
+          },
+        }}
       >
         {code}
       </SyntaxHighlighter>
