@@ -36,7 +36,7 @@ const ChatItem = ({
       )}
     >
       {!isFromUser && (
-        <div className="pr-2.5">
+        <div className="hidden md:block pr-2.5">
           <div
             className={clsx(
               "w-7 md:w-10.5",
