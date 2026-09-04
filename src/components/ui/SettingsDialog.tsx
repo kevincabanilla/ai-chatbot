@@ -111,9 +111,10 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
                 </div>
               )}
             </div>
-            <span className="text-white/30 text-xs">
-              This will only apply to new conversations.
-            </span>
+          </div>
+
+          <div className="w-full mt-1 text-white/30 text-xs">
+            <span>New changes only apply to new conversations.</span>
           </div>
         </div>
 
