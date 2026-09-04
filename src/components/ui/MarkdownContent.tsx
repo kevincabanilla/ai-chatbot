@@ -90,7 +90,7 @@ export default function MarkdownContent({ content }: { content: string }) {
 
           table: ({ children }) => (
             <div className="my-2 overflow-x-auto text-xs md:text-sm xl:text-base">
-              <table className="min-w-175 border-collapse border border-gray-400">
+              <table className="min-w-full border-collapse border border-gray-400">
                 {children}
               </table>
             </div>
