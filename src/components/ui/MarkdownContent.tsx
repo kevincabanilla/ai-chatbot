@@ -89,8 +89,8 @@ export default function MarkdownContent({ content }: { content: string }) {
           ),
 
           table: ({ children }) => (
-            <div className="my-2 overflow-x-auto">
-              <table className="min-w-full border-collapse border border-gray-400">
+            <div className="my-2 overflow-x-auto text-xs md:text-sm xl:text-base">
+              <table className="min-w-175 border-collapse border border-gray-400">
                 {children}
               </table>
             </div>
@@ -131,7 +131,7 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
   };
 
   return (
-    <div className="overflow-hidden rounded-lg bg-bg-primary border border-gray-500">
+    <div className="overflow-hidden rounded-lg bg-bg-primary border border-gray-600">
       <div className="flex items-center justify-between px-3 py-2 text-xs text-gray-400">
         <span className="md:text-sm font-mono">{language}</span>
 
