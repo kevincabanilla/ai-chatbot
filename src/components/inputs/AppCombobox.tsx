@@ -41,6 +41,7 @@ export interface ComboboxOption {
 export interface ComboboxProps extends VariantProps<typeof comboboxVariants> {
   className?: string;
   disabled?: boolean;
+  autofocus?: boolean;
   emptyMessage?: string;
   placeholder?: string;
   searchPlaceholder?: string;
@@ -53,6 +54,7 @@ export interface ComboboxProps extends VariantProps<typeof comboboxVariants> {
 export const AppCombobox = ({
   className,
   disabled,
+  autofocus,
   emptyMessage = "No results.",
   placeholder = "Select...",
   searchPlaceholder = "Search...",
@@ -81,10 +83,10 @@ export const AppCombobox = ({
   const selected = options.find((o) => o.value === value);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || !autofocus) return;
 
     inputRef.current?.focus();
-  }, [open]);
+  }, [open, autofocus]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
