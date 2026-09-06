@@ -27,32 +27,57 @@ const groqClient = axios.create({
 export async function generateGroqResponse(
   request: ChatRequest,
 ): Promise<ChatMessage> {
-  const skill = (
-    !request.skill || !Object.keys(aiSkills).some((key) => key == request.skill)
-      ? "GENERAL"
-      : request.skill
-  ) as AISkill;
-
-  const messages = [
-    {
-      role: "system",
-      content: JSON.stringify(aiSkills[skill]),
-    } as ChatMessage,
-    ...request.messages,
-  ];
+  const payload = createChatCompletionPayload(request);
 
   try {
     const response = await groqClient.post<GroqChatCompletionResponse>(
       "/chat/completions",
-      {
-        model: request.model ?? VITE_DEFAULT_AI_MODEL ?? "groq/compound",
-        temperature: Number(GROQ_CHAT_TEMPERATURE) || 1,
-        max_tokens: Number(GROQ_MAX_TOKENS) || 2048,
-        messages,
-      },
+      payload,
     );
 
     return response.data.choices[0].message;
+  } catch (err) {
+    handleGroqError(err);
+  }
+}
+
+export async function streamGroqResponse(
+  request: ChatRequest,
+): Promise<ReadableStream<Uint8Array>> {
+  const payload = createChatCompletionPayload(request);
+  const abortController = new AbortController();
+
+  try {
+    const response = await groqClient.post<AsyncIterable<Uint8Array>>(
+      "/chat/completions",
+      {
+        ...payload,
+        stream: true,
+      },
+      {
+        responseType: "stream",
+        signal: abortController.signal,
+      },
+    );
+
+    const upstream = response.data;
+
+    return new ReadableStream<Uint8Array>({
+      async start(controller) {
+        try {
+          for await (const chunk of upstream) {
+            controller.enqueue(chunk);
+          }
+
+          controller.close();
+        } catch (error) {
+          controller.error(error);
+        }
+      },
+      cancel() {
+        abortController.abort();
+      },
+    });
   } catch (err) {
     handleGroqError(err);
   }
@@ -74,4 +99,27 @@ export async function getGroqModels(): Promise<AiModel[]> {
   } catch (err) {
     handleGroqError(err);
   }
+}
+
+function createChatCompletionPayload(request: ChatRequest) {
+  const skill = (
+    !request.skill || !Object.keys(aiSkills).some((key) => key == request.skill)
+      ? "GENERAL"
+      : request.skill
+  ) as AISkill;
+
+  const messages = [
+    {
+      role: "system",
+      content: JSON.stringify(aiSkills[skill]),
+    } as ChatMessage,
+    ...request.messages,
+  ];
+
+  return {
+    model: request.model ?? VITE_DEFAULT_AI_MODEL ?? "groq/compound",
+    temperature: Number(GROQ_CHAT_TEMPERATURE) || 1,
+    max_tokens: Number(GROQ_MAX_TOKENS) || 2048,
+    messages,
+  };
 }
