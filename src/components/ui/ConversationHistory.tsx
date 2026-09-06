@@ -51,7 +51,7 @@ const ChatItem = ({
         </div>
       )}
 
-      <div className="flex gap-2">
+      <div className="flex min-w-0 max-w-full gap-2">
         {isFromUser && failed && (
           <button
             className="cursor-pointer text-sm italic text-rose-500/80  hover:text-rose-500"
@@ -63,7 +63,7 @@ const ChatItem = ({
 
         <AppCard
           className={clsx(
-            "px-4 py-2",
+            "min-w-0 max-w-full px-4 py-2",
             "max-w-lg lg:max-w-xl xl:max-w-3xl rounded-2xl",
             "whitespace-pre-wrap",
             "wrap-anywhere",

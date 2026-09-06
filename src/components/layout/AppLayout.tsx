@@ -42,7 +42,7 @@ export default function AppLayout() {
         }}
       />
 
-      <div className="flex-1">
+      <div className="min-w-0 flex-1">
         <TopToolbar
           isVisible={isMobile}
           onOpenDrawer={(shouldOpen) => {
