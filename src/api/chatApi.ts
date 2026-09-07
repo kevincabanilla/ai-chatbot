@@ -8,3 +8,18 @@ export async function sendChat(
 
   return response.data;
 }
+
+export async function streamChat(
+  request: ChatRequest,
+): Promise<ReadableStream<Uint8Array>> {
+  const response = await axios.post<ReadableStream<Uint8Array>>(
+    "/api/chat-stream",
+    request,
+    {
+      adapter: "fetch",
+      responseType: "stream",
+    },
+  );
+
+  return response.data;
+}
