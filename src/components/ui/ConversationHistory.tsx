@@ -83,15 +83,12 @@ const ChatItem = ({
 export const ConversationHistory = ({
   currentConversationId,
   loadingId,
-  isLoading,
-  isStreaming,
   messages,
   onRetry,
 }: {
   currentConversationId: string | null;
   loadingId: string;
   isLoading: boolean;
-  isStreaming: boolean;
   messages: MessageItem[];
   onRetry: () => void;
 }) => {
@@ -105,6 +102,7 @@ export const ConversationHistory = ({
     >
       {messages.map((item, i) => {
         const isLastMessage = i === messages.length - 1;
+        const isConversationLoading = currentConversationId === loadingId;
 
         return (
           <ChatItem
@@ -118,19 +116,20 @@ export const ConversationHistory = ({
               <p className="text-sm md:text-base">{item.content}</p>
             ) : (
               <>
-                <MarkdownContent content={item.content} />
-                {isStreaming && isLastMessage && <ParagraphSkeletonLoader />}
+                {item.content && <MarkdownContent content={item.content} />}
+
+                {isLastMessage &&
+                  isConversationLoading &&
+                  (!item.content ? (
+                    <TypingDots />
+                  ) : (
+                    <ParagraphSkeletonLoader />
+                  ))}
               </>
             )}
           </ChatItem>
         );
       })}
-
-      {isLoading && (!loadingId || currentConversationId === loadingId) && (
-        <ChatItem messageRole="system">
-          <TypingDots />
-        </ChatItem>
-      )}
     </motion.div>
   );
 };

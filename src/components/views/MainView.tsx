@@ -28,7 +28,6 @@ export default function MainView() {
   const [showAlert, setShowAlert] = useState(false);
   const [loadingId, setLoadingId] = useState(""); // Used to identify conversations with pending response.
   const [errorMessage, setErrorMessage] = useState("");
-  const [isStreaming, setIsStreaming] = useState(false);
 
   const currentConversation: Conversation | null = !currentConversationId
     ? null
@@ -93,19 +92,8 @@ export default function MainView() {
       newMessages.push(newMessageItem);
     }
 
-    setIsStreaming(true);
-
     try {
-      const stream = await trigger({
-        model: currentConversation?.model ?? state.settings.model ?? undefined,
-        skill: currentConversation?.mode ?? state.settings.mode ?? undefined,
-        messages: newMessages.map((x) => ({
-          content: x.content,
-          role: x.role,
-        })),
-      });
-
-      const timestamp = Date.now();
+      const timestamp = Date.now() + 1;
 
       appendMessage(
         conversationId,
@@ -119,6 +107,15 @@ export default function MainView() {
           scrollToId(timestamp);
         },
       );
+
+      const stream = await trigger({
+        model: currentConversation?.model ?? state.settings.model ?? undefined,
+        skill: currentConversation?.mode ?? state.settings.mode ?? undefined,
+        messages: newMessages.map((x) => ({
+          content: x.content,
+          role: x.role,
+        })),
+      });
 
       const reader = stream.getReader();
       const decoder = new TextDecoder();
@@ -178,7 +175,7 @@ export default function MainView() {
         failed: true,
       }));
     } finally {
-      setIsStreaming(false);
+      setLoadingId("");
     }
   };
 
@@ -197,7 +194,6 @@ export default function MainView() {
                 currentConversationId={currentConversationId}
                 loadingId={loadingId}
                 isLoading={isLoading}
-                isStreaming={isStreaming}
                 messages={messages}
                 onRetry={() => {
                   void sendMessage();
