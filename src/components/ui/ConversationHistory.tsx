@@ -102,7 +102,7 @@ export const ConversationHistory = ({
     >
       {messages.map((item, i) => {
         const isLastMessage = i === messages.length - 1;
-        const isConversationLoading = currentConversationId === loadingId;
+        const showLoaders = isLastMessage && currentConversationId == loadingId;
 
         return (
           <ChatItem
@@ -118,8 +118,7 @@ export const ConversationHistory = ({
               <>
                 {item.content && <MarkdownContent content={item.content} />}
 
-                {isLastMessage &&
-                  isConversationLoading &&
+                {showLoaders &&
                   (!item.content ? (
                     <TypingDots />
                   ) : (
