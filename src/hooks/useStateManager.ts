@@ -14,6 +14,7 @@ export interface StateManager extends StoreContextType {
     conversationId: string,
     updater: (msg: MessageItem) => MessageItem,
   ) => void;
+  deleteMessage: (messageId: string, conversationId: string) => void;
   deleteConversation: (id: string) => void;
 }
 
@@ -115,6 +116,33 @@ export function useStateManager(): StateManager {
     });
   };
 
+  const deleteMessage = (messageId: string, conversationId: string) => {
+    setState((prev) => {
+      const conversation = !conversationId
+        ? null
+        : prev.conversationsById[conversationId];
+
+      if (!conversation || conversation.messages.length === 0) {
+        return prev;
+      }
+
+      const filteredMessages = conversation.messages.filter(
+        (x) => x.messageId !== messageId,
+      );
+
+      return {
+        ...prev,
+        conversationsById: {
+          ...prev.conversationsById,
+          [conversationId]: {
+            ...conversation,
+            messages: [...filteredMessages],
+          },
+        },
+      };
+    });
+  };
+
   const deleteConversation = (id: string) => {
     setState((prev) => {
       // const { [id]: _, ...conversationsById } = prev.conversationsById;
@@ -135,6 +163,7 @@ export function useStateManager(): StateManager {
     isConverstationExists,
     appendMessage,
     updateMessage,
+    deleteMessage,
     deleteConversation,
   };
 }
