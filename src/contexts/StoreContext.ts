@@ -11,6 +11,7 @@ export interface Store {
     initialized: boolean;
     mode: string | null;
     model: string | null;
+    streamResponse?: boolean;
   };
 }
 
@@ -21,6 +22,7 @@ const defaultState: Store = {
     initialized: false,
     mode: "GENERAL",
     model: import.meta.env.VITE_DEFAULT_AI_MODEL || null,
+    streamResponse: false,
   },
 };
 

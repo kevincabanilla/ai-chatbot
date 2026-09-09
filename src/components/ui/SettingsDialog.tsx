@@ -35,6 +35,9 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
   const { state, setState } = useStore();
   const [selectedMode, setSelectedMode] = useState(state.settings.mode);
   const [aiModel, setAiModel] = useState(state.settings.model);
+  const [streamResponse, setStreamResponse] = useState(
+    state.settings.streamResponse ?? false,
+  );
 
   const {
     data,
@@ -58,6 +61,7 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
         ...prev.settings,
         mode: selectedMode,
         model: aiModel,
+        streamResponse,
       },
     }));
     onClose();
@@ -66,6 +70,7 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
   const closeDialog = () => {
     setSelectedMode(state.settings.mode);
     setAiModel(state.settings.model);
+    setStreamResponse(state.settings.streamResponse ?? false);
     onClose();
   };
 
@@ -112,6 +117,18 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
               )}
             </div>
           </div>
+
+          <label className="flex items-center gap-3 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              className="accent-accent"
+              checked={streamResponse}
+              onChange={(event) => {
+                setStreamResponse(event.target.checked);
+              }}
+            />
+            <span>Stream responses</span>
+          </label>
 
           <div className="w-full mt-1 text-white/30 text-xs">
             <span>New changes only apply to new conversations.</span>
