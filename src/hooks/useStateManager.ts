@@ -9,7 +9,8 @@ export interface StateManager extends StoreContextType {
     newMessage: MessageItem,
     callback?: () => void,
   ) => void;
-  updateLastMessage: (
+  updateMessage: (
+    messageId: string,
     conversationId: string,
     updater: (msg: MessageItem) => MessageItem,
   ) => void;
@@ -70,24 +71,36 @@ export function useStateManager(): StateManager {
     if (import.meta.env.DEV) console.log("message added: ", newMessage);
   };
 
-  const updateLastMessage = (
+  const updateMessage = (
+    messageId: string,
     conversationId: string,
     updater: (msg: MessageItem) => MessageItem,
   ) => {
     setState((prev) => {
-      const conversation: Conversation = prev.conversationsById[conversationId];
+      const conversation = !conversationId
+        ? null
+        : prev.conversationsById[conversationId];
 
-      if (/* !conversation || */ conversation.messages.length === 0) {
+      if (!conversation || conversation.messages.length === 0) {
+        return prev;
+      }
+
+      const messageIndex = conversation.messages.findIndex(
+        (x) => x.messageId === messageId,
+      );
+
+      // Message not found
+      if (messageIndex === -1) {
         return prev;
       }
 
       const messages = [...conversation.messages];
-      const lastIndex = messages.length - 1;
+      const message = messages[messageIndex];
 
-      messages[lastIndex] = updater(messages[lastIndex]);
-
-      if (import.meta.env.DEV)
-        console.log("message updated: ", messages[lastIndex]);
+      messages[messageIndex] = {
+        ...message,
+        ...updater({ ...message }),
+      };
 
       return {
         ...prev,
@@ -121,7 +134,7 @@ export function useStateManager(): StateManager {
     reset,
     isConverstationExists,
     appendMessage,
-    updateLastMessage,
+    updateMessage,
     deleteConversation,
   };
 }
