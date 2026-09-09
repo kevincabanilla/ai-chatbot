@@ -3,6 +3,7 @@ export type ChatRole = "user" | "system" | "developer" | "assistant";
 export interface ChatMessage {
   role: ChatRole;
   content: string;
+  reasoning?: string | null;
 }
 
 export interface ChatRequest {
