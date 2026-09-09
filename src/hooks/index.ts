@@ -1,4 +1,5 @@
 export * from "./useAppContext";
+export * from "./useChat";
 export * from "./useChatStream";
 export * from "./useGetQueryParam";
 export * from "./useKeyboardOffset";
