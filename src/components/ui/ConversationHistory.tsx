@@ -103,8 +103,9 @@ export const ConversationHistory = ({
   onRetry,
 }: {
   currentConversationId: string | null;
-  isLoading: boolean;
   loadingId: string;
+  isLoading: boolean;
+  isStreaming: boolean;
   messages: MessageItem[];
   onRetry: () => void;
 }) => {

@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import clsx from "clsx";
 import useSWRMutation from "swr/mutation";
-import type { ChatRequest, ChatResponse } from "@shared/types";
-import { sendChat } from "@/api/chatApi";
+import type { ChatRequest } from "@shared/types";
+import { streamChat } from "@/api/chatApi";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/libs/helper";
 import {
@@ -28,6 +28,7 @@ export default function MainView() {
   const [showAlert, setShowAlert] = useState(false);
   const [loadingId, setLoadingId] = useState(""); // Used to identify conversations with pending response.
   const [errorMessage, setErrorMessage] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
 
   const currentConversation: Conversation | null = !currentConversationId
     ? null
@@ -43,16 +44,12 @@ export default function MainView() {
     });
   };
 
-  const {
-    trigger,
-    isMutating: isLoading,
-    error,
-  } = useSWRMutation<
-    ChatResponse | null, // Response type
+  const { trigger, isMutating: isLoading } = useSWRMutation<
+    ReadableStream<Uint8Array>, // Response type
     Error, // Error type
     string, // SWR key type
     ChatRequest // Argument passed to trigger()
-  >("chat", (_, { arg }) => sendChat(arg));
+  >("chat", (_, { arg }) => streamChat(arg));
 
   const sendMessage = async (message?: string) => {
     setShowAlert(false);
@@ -96,8 +93,10 @@ export default function MainView() {
       newMessages.push(newMessageItem);
     }
 
+    setIsStreaming(true);
+
     try {
-      const reply = await trigger({
+      const stream = await trigger({
         model: currentConversation?.model ?? state.settings.model ?? undefined,
         skill: currentConversation?.mode ?? state.settings.mode ?? undefined,
         messages: newMessages.map((x) => ({
@@ -106,36 +105,13 @@ export default function MainView() {
         })),
       });
 
-      if (error != null) {
-        console.error(error.message);
-        setErrorMessage("Something went wrong. Please try again later.");
-        setShowAlert(true);
-        return;
-      }
-
-      if (reply?.error) {
-        // display error message
-        setErrorMessage(reply.error);
-        setShowAlert(true);
-
-        // set the last message to failed
-        // this will display Retry button to allow retry.
-        updateLastMessage(conversationId, (msg) => {
-          return {
-            ...msg,
-            failed: true,
-          };
-        });
-      }
-
-      if (!reply?.message?.content) return;
-
       const timestamp = Date.now();
 
       appendMessage(
         conversationId,
         {
-          ...reply.message,
+          role: "assistant",
+          content: "",
           conversationId: conversationId,
           timestamp,
         },
@@ -143,8 +119,66 @@ export default function MainView() {
           scrollToId(timestamp);
         },
       );
+
+      const reader = stream.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let doneReading = false;
+
+      const processLine = (line: string) => {
+        const data = line.trim();
+
+        if (!data.startsWith("data:")) return;
+
+        const payload = data.slice("data:".length).trim();
+
+        if (payload === "[DONE]") {
+          return;
+        }
+
+        try {
+          const chunk = JSON.parse(payload) as {
+            choices?: { delta?: { content?: string } }[];
+          };
+          const content = chunk.choices?.[0]?.delta?.content;
+
+          if (content) {
+            updateLastMessage(conversationId, (msg) => ({
+              ...msg,
+              content: msg.content + content,
+            }));
+            scrollToId(timestamp);
+          }
+        } catch (error) {
+          console.error("Invalid stream chunk", error);
+        }
+      };
+
+      while (!doneReading) {
+        const { done, value } = await reader.read();
+
+        doneReading = done;
+
+        buffer += decoder.decode(value, { stream: !done });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        lines.forEach(processLine);
+
+        if (done) {
+          processLine(buffer);
+          break;
+        }
+      }
     } catch (err) {
       console.error(err);
+      setErrorMessage("Something went wrong. Please try again later.");
+      setShowAlert(true);
+      updateLastMessage(conversationId, (msg) => ({
+        ...msg,
+        failed: true,
+      }));
+    } finally {
+      setIsStreaming(false);
     }
   };
 
@@ -161,8 +195,9 @@ export default function MainView() {
             <div className="grow">
               <ConversationHistory
                 currentConversationId={currentConversationId}
-                isLoading={isLoading}
                 loadingId={loadingId}
+                isLoading={isLoading}
+                isStreaming={isStreaming}
                 messages={messages}
                 onRetry={() => {
                   void sendMessage();
