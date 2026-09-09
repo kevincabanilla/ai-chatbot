@@ -1,6 +1,7 @@
 import type { ChatRole } from "@shared/types";
 
 export interface MessageItem {
+  messageId: string;
   conversationId: string;
   role: ChatRole;
   content: string;
@@ -15,4 +16,6 @@ export interface Conversation {
   messages: MessageItem[];
   mode?: string | null;
   model?: string | null;
+  hasError?: boolean | null;
+  errorMessage?: string | null;
 }
