@@ -127,7 +127,7 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
                 setStreamResponse(event.target.checked);
               }}
             />
-            <span>Stream responses</span>
+            <span>Stream responses (Beta)</span>
           </label>
 
           <div className="w-full mt-1 text-white/30 text-xs">
