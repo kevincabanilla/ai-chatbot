@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import clsx from "clsx";
+import type { ChatMessage } from "@shared/types";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/libs/helper";
 import {
   QUERY_PARAM,
   useAppContext,
+  useChat,
   useChatStream,
   useGetQueryParam,
   useStateManager,
@@ -27,7 +29,10 @@ export default function MainView() {
   const [loadingId, setLoadingId] = useState(""); // Used to identify conversations with pending response.
   const [errorMessage, setErrorMessage] = useState("");
 
-  const { streamMessage, isLoading } = useChatStream();
+  const { sendChatMessage, isMutating: isChatLoading } = useChat();
+  const { streamMessage, isMutating: isStreaming } = useChatStream();
+  const streamResponse = state.settings.streamResponse ?? false;
+  const isLoading = streamResponse ? isStreaming : isChatLoading;
 
   const currentConversation: Conversation | null = !currentConversationId
     ? null
@@ -101,24 +106,30 @@ export default function MainView() {
         },
       );
 
-      await streamMessage(
-        {
-          model:
-            currentConversation?.model ?? state.settings.model ?? undefined,
-          skill: currentConversation?.mode ?? state.settings.mode ?? undefined,
-          messages: newMessages.map((x) => ({
-            content: x.content,
-            role: x.role,
-          })),
-        },
-        (content) => {
-          updateLastMessage(conversationId, (msg) => ({
-            ...msg,
-            content: msg.content + content,
-          }));
-          scrollToId(timestamp);
-        },
-      );
+      const chatRequest = {
+        model: currentConversation?.model ?? state.settings.model ?? undefined,
+        skill: currentConversation?.mode ?? state.settings.mode ?? undefined,
+        messages: newMessages.map((x) => ({
+          content: x.content,
+          role: x.role,
+        })),
+      };
+
+      const updateContent = (newContent: ChatMessage) => {
+        updateLastMessage(conversationId, (msg) => ({
+          ...msg,
+          ...newContent,
+          // timestamp: Date.now(), future update
+          content: msg.content + newContent.content,
+        }));
+        scrollToId(timestamp);
+      };
+
+      if (streamResponse) {
+        await streamMessage(chatRequest, updateContent);
+      } else {
+        await sendChatMessage(chatRequest, updateContent);
+      }
     } catch (err) {
       console.error(err);
       setErrorMessage("Something went wrong. Please try again later.");

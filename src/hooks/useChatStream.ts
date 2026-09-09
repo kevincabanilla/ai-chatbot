@@ -1,5 +1,5 @@
 import useSWRMutation from "swr/mutation";
-import type { ChatRequest } from "@shared/types";
+import type { ChatMessage, ChatRequest } from "@shared/types";
 import { streamChat } from "@/api/chatApi";
 
 export function useChatStream() {
@@ -8,11 +8,11 @@ export function useChatStream() {
     Error, // Error type
     string, // SWR key type
     ChatRequest // Argument passed to trigger()
-  >("chat", (_, { arg }) => streamChat(arg));
+  >("chat-stream", (_, { arg }) => streamChat(arg));
 
   const streamMessage = async (
     request: ChatRequest,
-    onUpdateContent: (content: string) => void,
+    onUpdateContent: (content: ChatMessage) => void,
   ) => {
     const stream = await trigger(request);
     const reader = stream.getReader();
@@ -35,7 +35,7 @@ export function useChatStream() {
         };
         const content = chunk.choices?.[0]?.delta?.content;
 
-        if (content) onUpdateContent(content);
+        if (content) onUpdateContent({ content } as ChatMessage);
       } catch (error) {
         console.error("Invalid stream chunk", error);
       }
@@ -58,5 +58,5 @@ export function useChatStream() {
     }
   };
 
-  return { streamMessage, isLoading: isMutating };
+  return { streamMessage, isMutating };
 }
