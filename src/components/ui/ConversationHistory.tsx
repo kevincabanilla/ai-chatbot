@@ -10,17 +10,21 @@ import {
   staggerItemRight,
 } from "@/libs/animationVariants";
 import MarkdownContent from "./MarkdownContent";
+import { TypingDots } from "../common/TypingDots";
+import ParagraphSkeletonLoader from "../common/ParagraphSkeletonLoader";
 
 const ChatItem = ({
   id,
   messageRole,
   failed,
+  showRetry,
   children,
   onRetry,
 }: {
   id?: string;
   messageRole: ChatRole;
-  failed?: boolean | null;
+  failed?: boolean;
+  showRetry?: boolean | null;
   children: React.ReactNode;
   onRetry?: () => void;
 }) => {
@@ -52,59 +56,46 @@ const ChatItem = ({
       )}
 
       <div className="flex min-w-0 max-w-full gap-2">
-        {isFromUser && failed && (
-          <button
-            className="cursor-pointer text-sm italic text-rose-500/80  hover:text-rose-500"
-            onClick={onRetry}
-          >
-            Retry
-          </button>
-        )}
-
         <AppCard
           className={clsx(
             "min-w-0 max-w-full px-4 py-2",
             "max-w-lg lg:max-w-xl xl:max-w-3xl rounded-2xl",
-            "whitespace-pre-wrap",
-            "wrap-anywhere",
+            "whitespace-pre-wrap wrap-anywhere",
+            "transition-colors",
             isFromUser ? "rounded-tr-none" : "rounded-tl-none",
-            isFromUser && (!failed ? "bg-accent/30" : "bg-rose-500/20"),
+            !failed && !showRetry
+              ? isFromUser && "bg-accent/30"
+              : "bg-rose-500/20",
           )}
         >
           {children}
         </AppCard>
       </div>
-    </motion.div>
-  );
-};
 
-const TypingDots = () => {
-  return (
-    <div className="flex gap-2 p-2.5">
-      {[0, 1, 2].map((dot) => (
-        <div
-          key={dot}
-          className="size-2 rounded-full bg-cyan-500 animate-bounce"
-          style={{
-            animationDelay: `${dot * 200}ms`,
-            animationDuration: "700ms",
-          }}
-        />
-      ))}
-    </div>
+      {showRetry && (
+        <button
+          className="mx-2 cursor-pointer text-sm italic text-rose-500/80  hover:text-rose-500"
+          onClick={onRetry}
+        >
+          Retry
+        </button>
+      )}
+    </motion.div>
   );
 };
 
 export const ConversationHistory = ({
   currentConversationId,
-  isLoading,
   loadingId,
+  showRetry,
+  errorMessage,
   messages,
   onRetry,
 }: {
   currentConversationId: string | null;
-  isLoading: boolean;
   loadingId: string;
+  showRetry?: boolean | null;
+  errorMessage?: string | null;
   messages: MessageItem[];
   onRetry: () => void;
 }) => {
@@ -116,25 +107,40 @@ export const ConversationHistory = ({
       animate="visible"
       className="full-size"
     >
-      {messages.map((item, i) => (
-        <ChatItem
-          key={item.timestamp}
-          id={item.timestamp.toString()}
-          messageRole={item.role}
-          failed={item.failed && i == messages.length - 1}
-          onRetry={onRetry}
-        >
-          {item.role === "user" ? (
-            <p className="text-sm md:text-base">{item.content}</p>
-          ) : (
-            <MarkdownContent content={item.content} />
-          )}
-        </ChatItem>
-      ))}
+      {messages.map((item, i) => {
+        const isFromUser = item.role === "user";
+        const isLastMessage = i === messages.length - 1;
+        const showLoaders = isLastMessage && currentConversationId == loadingId;
 
-      {isLoading && (!loadingId || currentConversationId === loadingId) && (
-        <ChatItem messageRole="system">
-          <TypingDots />
+        return (
+          <ChatItem
+            key={item.messageId || item.timestamp}
+            id={item.messageId}
+            messageRole={item.role}
+            showRetry={isLastMessage && showRetry}
+            onRetry={onRetry}
+          >
+            {isFromUser ? (
+              <p className="text-sm md:text-base">{item.content}</p>
+            ) : (
+              <>
+                {item.content && <MarkdownContent content={item.content} />}
+
+                {showLoaders &&
+                  (!item.content ? (
+                    <TypingDots />
+                  ) : (
+                    <ParagraphSkeletonLoader />
+                  ))}
+              </>
+            )}
+          </ChatItem>
+        );
+      })}
+
+      {showRetry && errorMessage && (
+        <ChatItem messageRole="system" failed>
+          <span className="text-sm md:text-base">{errorMessage}</span>
         </ChatItem>
       )}
     </motion.div>

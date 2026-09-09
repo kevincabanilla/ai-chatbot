@@ -35,6 +35,9 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
   const { state, setState } = useStore();
   const [selectedMode, setSelectedMode] = useState(state.settings.mode);
   const [aiModel, setAiModel] = useState(state.settings.model);
+  const [streamResponse, setStreamResponse] = useState(
+    state.settings.streamResponse ?? false,
+  );
 
   const {
     data,
@@ -58,6 +61,7 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
         ...prev.settings,
         mode: selectedMode,
         model: aiModel,
+        streamResponse,
       },
     }));
     onClose();
@@ -66,6 +70,7 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
   const closeDialog = () => {
     setSelectedMode(state.settings.mode);
     setAiModel(state.settings.model);
+    setStreamResponse(state.settings.streamResponse ?? false);
     onClose();
   };
 
@@ -113,8 +118,27 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
             </div>
           </div>
 
-          <div className="w-full mt-1 text-white/30 text-xs">
-            <span>New changes only apply to new conversations.</span>
+          <div className="w-full mt-1 mb-2 text-white/30 text-xs">
+            <span>
+              New modifications from above will only apply to new conversations.
+            </span>
+          </div>
+
+          <div className={clsx("flex", streamResponse && "text-accent")}>
+            <label
+              className="flex items-center gap-2 text-sm cursor-pointer"
+              title="AI will send partial replies as soon as they become available."
+            >
+              <input
+                type="checkbox"
+                className="accent-accent"
+                checked={streamResponse}
+                onChange={(event) => {
+                  setStreamResponse(event.target.checked);
+                }}
+              />
+              <span>Stream responses (Beta)</span>
+            </label>
           </div>
         </div>
 

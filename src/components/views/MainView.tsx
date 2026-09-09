@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import clsx from "clsx";
-import useSWRMutation from "swr/mutation";
-import type { ChatRequest, ChatResponse } from "@shared/types";
-import { sendChat } from "@/api/chatApi";
+import type { ChatMessage } from "@shared/types";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/libs/helper";
 import {
   QUERY_PARAM,
   useAppContext,
+  useChat,
+  useChatStream,
   useGetQueryParam,
   useStateManager,
   useTypingAnimation,
@@ -23,11 +23,22 @@ export default function MainView() {
   const navigate = useNavigate();
   const currentConversationId = useGetQueryParam("c");
   const { isMobile, openSettings } = useAppContext();
-  const { state, appendMessage, updateLastMessage } = useStateManager();
+  const {
+    state,
+    appendMessage,
+    updateMessage,
+    deleteMessage,
+    updateConversation,
+  } = useStateManager();
 
   const [showAlert, setShowAlert] = useState(false);
   const [loadingId, setLoadingId] = useState(""); // Used to identify conversations with pending response.
   const [errorMessage, setErrorMessage] = useState("");
+
+  const { sendChatMessage, isMutating: isChatLoading } = useChat();
+  const { streamMessage, isMutating: isStreaming } = useChatStream();
+  const streamResponse = state.settings.streamResponse ?? false;
+  const isLoading = streamResponse ? isStreaming : isChatLoading;
 
   const currentConversation: Conversation | null = !currentConversationId
     ? null
@@ -42,17 +53,6 @@ export default function MainView() {
       Helper.scrollToId(id);
     });
   };
-
-  const {
-    trigger,
-    isMutating: isLoading,
-    error,
-  } = useSWRMutation<
-    ChatResponse | null, // Response type
-    Error, // Error type
-    string, // SWR key type
-    ChatRequest // Argument passed to trigger()
-  >("chat", (_, { arg }) => sendChat(arg));
 
   const sendMessage = async (message?: string) => {
     setShowAlert(false);
@@ -72,18 +72,22 @@ export default function MainView() {
 
     const newMessages = [...messages];
 
+    if (currentConversation?.hasError || currentConversation?.errorMessage) {
+      // reset the conversation's hasError to false and errorMessage to null.
+      updateConversation(conversationId, (conv) => ({
+        ...conv,
+        hasError: false,
+        errorMessage: null,
+      }));
+    }
+
     if (!message) {
-      // retry is clicked.
-      // reset the last message failed flag to false.
-      updateLastMessage(conversationId, (msg) => {
-        scrollToId(msg.timestamp);
-        return {
-          ...msg,
-          failed: false,
-        };
-      });
+      // retry is clicked. scroll to the last message
+      const lastMessageId = currentConversation?.messages.at(-1)?.messageId;
+      if (lastMessageId) scrollToId(lastMessageId);
     } else {
       const newMessageItem: MessageItem = {
+        messageId: crypto.randomUUID(),
         conversationId: conversationId,
         content: message,
         role: "user",
@@ -91,60 +95,68 @@ export default function MainView() {
       };
 
       appendMessage(conversationId, newMessageItem, () => {
-        scrollToId(newMessageItem.timestamp);
+        scrollToId(newMessageItem.messageId);
       });
       newMessages.push(newMessageItem);
     }
 
+    const aiResponseMessageId = crypto.randomUUID();
+
     try {
-      const reply = await trigger({
+      appendMessage(
+        conversationId,
+        {
+          messageId: aiResponseMessageId,
+          role: "assistant",
+          content: "",
+          conversationId: conversationId,
+          timestamp: Date.now(),
+        },
+        () => {
+          scrollToId(aiResponseMessageId);
+        },
+      );
+
+      const chatRequest = {
         model: currentConversation?.model ?? state.settings.model ?? undefined,
         skill: currentConversation?.mode ?? state.settings.mode ?? undefined,
         messages: newMessages.map((x) => ({
           content: x.content,
           role: x.role,
         })),
-      });
+      };
 
-      if (error != null) {
-        console.error(error.message);
-        setErrorMessage("Something went wrong. Please try again later.");
-        setShowAlert(true);
-        return;
+      const updateContent = (newContent: ChatMessage) => {
+        updateMessage(aiResponseMessageId, conversationId, (msg) => ({
+          ...msg,
+          ...newContent,
+          timestamp: Date.now(),
+          content: msg.content + newContent.content,
+        }));
+        scrollToId(aiResponseMessageId);
+      };
+
+      if (streamResponse) {
+        await streamMessage(chatRequest, updateContent);
+      } else {
+        await sendChatMessage(chatRequest, updateContent);
       }
-
-      if (reply?.error) {
-        // display error message
-        setErrorMessage(reply.error);
-        setShowAlert(true);
-
-        // set the last message to failed
-        // this will display Retry button to allow retry.
-        updateLastMessage(conversationId, (msg) => {
-          return {
-            ...msg,
-            failed: true,
-          };
-        });
-      }
-
-      if (!reply?.message?.content) return;
-
-      const timestamp = Date.now();
-
-      appendMessage(
-        conversationId,
-        {
-          ...reply.message,
-          conversationId: conversationId,
-          timestamp,
-        },
-        () => {
-          scrollToId(timestamp);
-        },
-      );
     } catch (err) {
       console.error(err);
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again later.";
+      setErrorMessage(errorMessage);
+      setShowAlert(true);
+      deleteMessage(aiResponseMessageId, conversationId);
+      updateConversation(conversationId, (conv) => ({
+        ...conv,
+        hasError: true,
+        errorMessage: errorMessage,
+      }));
+    } finally {
+      setLoadingId("");
     }
   };
 
@@ -161,8 +173,9 @@ export default function MainView() {
             <div className="grow">
               <ConversationHistory
                 currentConversationId={currentConversationId}
-                isLoading={isLoading}
                 loadingId={loadingId}
+                showRetry={currentConversation?.hasError}
+                errorMessage={currentConversation?.errorMessage}
                 messages={messages}
                 onRetry={() => {
                   void sendMessage();
@@ -217,7 +230,7 @@ export default function MainView() {
       <Toast
         visible={showAlert}
         type="error"
-        vertical="end"
+        vertical="start"
         onClose={() => {
           setShowAlert(false);
         }}

@@ -25,7 +25,7 @@ const toastStyles = cva(
         info: ["text-blue-300 bg-blue-300/8 border-blue-300/15"],
         success: ["text-green-500 bg-green-500/8 border-green-500/15"],
         warning: ["text-amber-400 bg-amber-400/8 border-amber-400/15"],
-        error: ["text-rose-500 bg-rose-500/8 border-rose-500/15"],
+        error: ["text-white/90 bg-rose-500/80 border-rose-500"],
       },
       horizontal: {
         start: "left-8",

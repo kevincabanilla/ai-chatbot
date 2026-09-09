@@ -8,11 +8,11 @@ import clsx from "clsx";
 
 export default function MarkdownContent({ content }: { content: string }) {
   return (
-    <div className="text-sm leading-6 md:text-base">
+    <div className="text-sm leading-5 md:text-base">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          p: ({ children }) => <p className="mb-3 last:mb-0">{children}</p>,
+          p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
 
           h1: ({ children }) => (
             <h1 className="font-bold text-2xl">{children}</h1>
