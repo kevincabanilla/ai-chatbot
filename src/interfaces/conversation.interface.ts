@@ -5,6 +5,7 @@ export interface MessageItem {
   role: ChatRole;
   content: string;
   timestamp: number;
+  /** @deprecated Use the `hasError` flag in conversation level instead. */
   failed?: boolean | null;
 }
 

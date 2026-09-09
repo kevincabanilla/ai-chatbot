@@ -14,6 +14,8 @@ export interface ChatRequest {
 
 export interface ChatResponse {
   message?: ChatMessage;
+  /** @deprecated Unused, will be removed in the future. */
   error?: string;
+  /** @deprecated Unused, will be removed in the future. */
   status?: number;
 }
