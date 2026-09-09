@@ -87,12 +87,15 @@ const ChatItem = ({
 export const ConversationHistory = ({
   currentConversationId,
   loadingId,
+  showRetry,
+  errorMessage,
   messages,
   onRetry,
 }: {
   currentConversationId: string | null;
   loadingId: string;
-  isLoading: boolean;
+  showRetry?: boolean | null;
+  errorMessage?: string | null;
   messages: MessageItem[];
   onRetry: () => void;
 }) => {
@@ -105,18 +108,19 @@ export const ConversationHistory = ({
       className="full-size"
     >
       {messages.map((item, i) => {
+        const isFromUser = item.role === "user";
         const isLastMessage = i === messages.length - 1;
         const showLoaders = isLastMessage && currentConversationId == loadingId;
 
         return (
           <ChatItem
-            key={item.timestamp}
-            id={item.timestamp.toString()}
+            key={item.messageId || item.timestamp}
+            id={item.messageId}
             messageRole={item.role}
-            failed={item.failed && isLastMessage}
+            showRetry={isLastMessage && isFromUser && showRetry}
             onRetry={onRetry}
           >
-            {item.role === "user" ? (
+            {isFromUser ? (
               <p className="text-sm md:text-base">{item.content}</p>
             ) : (
               <>
@@ -133,6 +137,12 @@ export const ConversationHistory = ({
           </ChatItem>
         );
       })}
+
+      {showRetry && errorMessage && (
+        <ChatItem messageRole="system" failed>
+          <span className="text-sm md:text-base">{errorMessage}</span>
+        </ChatItem>
+      )}
     </motion.div>
   );
 };

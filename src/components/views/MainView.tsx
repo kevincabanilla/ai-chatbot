@@ -23,7 +23,13 @@ export default function MainView() {
   const navigate = useNavigate();
   const currentConversationId = useGetQueryParam("c");
   const { isMobile, openSettings } = useAppContext();
-  const { state, appendMessage, updateLastMessage } = useStateManager();
+  const {
+    state,
+    appendMessage,
+    updateMessage,
+    deleteMessage,
+    updateConversation,
+  } = useStateManager();
 
   const [showAlert, setShowAlert] = useState(false);
   const [loadingId, setLoadingId] = useState(""); // Used to identify conversations with pending response.
@@ -66,18 +72,22 @@ export default function MainView() {
 
     const newMessages = [...messages];
 
+    if (currentConversation?.hasError || currentConversation?.errorMessage) {
+      // reset the conversation's hasError to false and errorMessage to null.
+      updateConversation(conversationId, (conv) => ({
+        ...conv,
+        hasError: false,
+        errorMessage: null,
+      }));
+    }
+
     if (!message) {
-      // retry is clicked.
-      // reset the last message failed flag to false.
-      updateLastMessage(conversationId, (msg) => {
-        scrollToId(msg.timestamp);
-        return {
-          ...msg,
-          failed: false,
-        };
-      });
+      // retry is clicked. scroll to the last message
+      const lastMessageId = currentConversation?.messages.at(-1)?.messageId;
+      if (lastMessageId) scrollToId(lastMessageId);
     } else {
       const newMessageItem: MessageItem = {
+        messageId: crypto.randomUUID(),
         conversationId: conversationId,
         content: message,
         role: "user",
@@ -85,24 +95,25 @@ export default function MainView() {
       };
 
       appendMessage(conversationId, newMessageItem, () => {
-        scrollToId(newMessageItem.timestamp);
+        scrollToId(newMessageItem.messageId);
       });
       newMessages.push(newMessageItem);
     }
 
-    try {
-      const timestamp = Date.now() + 1;
+    const aiResponseMessageId = crypto.randomUUID();
 
+    try {
       appendMessage(
         conversationId,
         {
+          messageId: aiResponseMessageId,
           role: "assistant",
           content: "",
           conversationId: conversationId,
-          timestamp,
+          timestamp: Date.now(),
         },
         () => {
-          scrollToId(timestamp);
+          scrollToId(aiResponseMessageId);
         },
       );
 
@@ -116,13 +127,13 @@ export default function MainView() {
       };
 
       const updateContent = (newContent: ChatMessage) => {
-        updateLastMessage(conversationId, (msg) => ({
+        updateMessage(aiResponseMessageId, conversationId, (msg) => ({
           ...msg,
           ...newContent,
-          // timestamp: Date.now(), future update
+          timestamp: Date.now(),
           content: msg.content + newContent.content,
         }));
-        scrollToId(timestamp);
+        scrollToId(aiResponseMessageId);
       };
 
       if (streamResponse) {
@@ -132,11 +143,14 @@ export default function MainView() {
       }
     } catch (err) {
       console.error(err);
-      setErrorMessage("Something went wrong. Please try again later.");
+      const errorMessage = "Something went wrong. Please try again later.";
+      setErrorMessage(errorMessage);
       setShowAlert(true);
-      updateLastMessage(conversationId, (msg) => ({
-        ...msg,
-        failed: true,
+      deleteMessage(aiResponseMessageId, conversationId);
+      updateConversation(conversationId, (conv) => ({
+        ...conv,
+        hasError: true,
+        errorMessage: errorMessage,
       }));
     } finally {
       setLoadingId("");
@@ -157,7 +171,8 @@ export default function MainView() {
               <ConversationHistory
                 currentConversationId={currentConversationId}
                 loadingId={loadingId}
-                isLoading={isLoading}
+                showRetry={currentConversation?.hasError}
+                errorMessage={currentConversation?.errorMessage}
                 messages={messages}
                 onRetry={() => {
                   void sendMessage();
@@ -212,7 +227,7 @@ export default function MainView() {
       <Toast
         visible={showAlert}
         type="error"
-        vertical="end"
+        vertical="start"
         onClose={() => {
           setShowAlert(false);
         }}
