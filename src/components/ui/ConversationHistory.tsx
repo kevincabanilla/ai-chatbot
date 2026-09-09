@@ -56,15 +56,6 @@ const ChatItem = ({
       )}
 
       <div className="flex min-w-0 max-w-full gap-2">
-        {isFromUser && showRetry && (
-          <button
-            className="cursor-pointer text-sm italic text-rose-500/80  hover:text-rose-500"
-            onClick={onRetry}
-          >
-            Retry
-          </button>
-        )}
-
         <AppCard
           className={clsx(
             "min-w-0 max-w-full px-4 py-2",
@@ -80,6 +71,15 @@ const ChatItem = ({
           {children}
         </AppCard>
       </div>
+
+      {showRetry && (
+        <button
+          className="mx-2 cursor-pointer text-sm italic text-rose-500/80  hover:text-rose-500"
+          onClick={onRetry}
+        >
+          Retry
+        </button>
+      )}
     </motion.div>
   );
 };
@@ -117,7 +117,7 @@ export const ConversationHistory = ({
             key={item.messageId || item.timestamp}
             id={item.messageId}
             messageRole={item.role}
-            showRetry={isLastMessage && isFromUser && showRetry}
+            showRetry={isLastMessage && showRetry}
             onRetry={onRetry}
           >
             {isFromUser ? (
