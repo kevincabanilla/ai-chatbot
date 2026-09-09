@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import clsx from "clsx";
-import useSWRMutation from "swr/mutation";
-import type { ChatRequest } from "@shared/types";
-import { streamChat } from "@/api/chatApi";
 import { GREETINGS } from "@/constants/greetings";
 import { Helper } from "@/libs/helper";
 import {
   QUERY_PARAM,
   useAppContext,
+  useChatStream,
   useGetQueryParam,
   useStateManager,
   useTypingAnimation,
@@ -29,6 +27,8 @@ export default function MainView() {
   const [loadingId, setLoadingId] = useState(""); // Used to identify conversations with pending response.
   const [errorMessage, setErrorMessage] = useState("");
 
+  const { streamMessage, isLoading } = useChatStream();
+
   const currentConversation: Conversation | null = !currentConversationId
     ? null
     : state.conversationsById[currentConversationId];
@@ -42,13 +42,6 @@ export default function MainView() {
       Helper.scrollToId(id);
     });
   };
-
-  const { trigger, isMutating: isLoading } = useSWRMutation<
-    ReadableStream<Uint8Array>, // Response type
-    Error, // Error type
-    string, // SWR key type
-    ChatRequest // Argument passed to trigger()
-  >("chat", (_, { arg }) => streamChat(arg));
 
   const sendMessage = async (message?: string) => {
     setShowAlert(false);
@@ -108,64 +101,24 @@ export default function MainView() {
         },
       );
 
-      const stream = await trigger({
-        model: currentConversation?.model ?? state.settings.model ?? undefined,
-        skill: currentConversation?.mode ?? state.settings.mode ?? undefined,
-        messages: newMessages.map((x) => ({
-          content: x.content,
-          role: x.role,
-        })),
-      });
-
-      const reader = stream.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let doneReading = false;
-
-      const processLine = (line: string) => {
-        const data = line.trim();
-
-        if (!data.startsWith("data:")) return;
-
-        const payload = data.slice("data:".length).trim();
-
-        if (payload === "[DONE]") {
-          return;
-        }
-
-        try {
-          const chunk = JSON.parse(payload) as {
-            choices?: { delta?: { content?: string } }[];
-          };
-          const content = chunk.choices?.[0]?.delta?.content;
-
-          if (content) {
-            updateLastMessage(conversationId, (msg) => ({
-              ...msg,
-              content: msg.content + content,
-            }));
-            scrollToId(timestamp);
-          }
-        } catch (error) {
-          console.error("Invalid stream chunk", error);
-        }
-      };
-
-      while (!doneReading) {
-        const { done, value } = await reader.read();
-
-        doneReading = done;
-
-        buffer += decoder.decode(value, { stream: !done });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-        lines.forEach(processLine);
-
-        if (done) {
-          processLine(buffer);
-          break;
-        }
-      }
+      await streamMessage(
+        {
+          model:
+            currentConversation?.model ?? state.settings.model ?? undefined,
+          skill: currentConversation?.mode ?? state.settings.mode ?? undefined,
+          messages: newMessages.map((x) => ({
+            content: x.content,
+            role: x.role,
+          })),
+        },
+        (content) => {
+          updateLastMessage(conversationId, (msg) => ({
+            ...msg,
+            content: msg.content + content,
+          }));
+          scrollToId(timestamp);
+        },
+      );
     } catch (err) {
       console.error(err);
       setErrorMessage("Something went wrong. Please try again later.");
