@@ -10,6 +10,7 @@ import {
   staggerItemRight,
 } from "@/libs/animationVariants";
 import MarkdownContent from "./MarkdownContent";
+import { TypingDots } from "../common/TypingDots";
 
 const ChatItem = ({
   id,
@@ -75,23 +76,6 @@ const ChatItem = ({
         </AppCard>
       </div>
     </motion.div>
-  );
-};
-
-const TypingDots = () => {
-  return (
-    <div className="flex gap-2 p-2.5">
-      {[0, 1, 2].map((dot) => (
-        <div
-          key={dot}
-          className="size-2 rounded-full bg-cyan-500 animate-bounce"
-          style={{
-            animationDelay: `${dot * 200}ms`,
-            animationDuration: "700ms",
-          }}
-        />
-      ))}
-    </div>
   );
 };
 
