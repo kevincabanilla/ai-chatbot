@@ -17,12 +17,14 @@ const ChatItem = ({
   id,
   messageRole,
   failed,
+  showRetry,
   children,
   onRetry,
 }: {
   id?: string;
   messageRole: ChatRole;
-  failed?: boolean | null;
+  failed?: boolean;
+  showRetry?: boolean | null;
   children: React.ReactNode;
   onRetry?: () => void;
 }) => {
@@ -54,7 +56,7 @@ const ChatItem = ({
       )}
 
       <div className="flex min-w-0 max-w-full gap-2">
-        {isFromUser && failed && (
+        {isFromUser && showRetry && (
           <button
             className="cursor-pointer text-sm italic text-rose-500/80  hover:text-rose-500"
             onClick={onRetry}
@@ -67,10 +69,12 @@ const ChatItem = ({
           className={clsx(
             "min-w-0 max-w-full px-4 py-2",
             "max-w-lg lg:max-w-xl xl:max-w-3xl rounded-2xl",
-            "whitespace-pre-wrap",
-            "wrap-anywhere",
+            "whitespace-pre-wrap wrap-anywhere",
+            "transition-colors",
             isFromUser ? "rounded-tr-none" : "rounded-tl-none",
-            isFromUser && (!failed ? "bg-accent/30" : "bg-rose-500/20"),
+            !failed && !showRetry
+              ? isFromUser && "bg-accent/30"
+              : "bg-rose-500/20",
           )}
         >
           {children}
