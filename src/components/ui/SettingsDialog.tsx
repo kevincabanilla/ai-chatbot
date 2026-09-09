@@ -118,20 +118,27 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
             </div>
           </div>
 
-          <label className="flex items-center gap-3 text-sm cursor-pointer">
-            <input
-              type="checkbox"
-              className="accent-accent"
-              checked={streamResponse}
-              onChange={(event) => {
-                setStreamResponse(event.target.checked);
-              }}
-            />
-            <span>Stream responses (Beta)</span>
-          </label>
+          <div className="w-full mt-1 mb-2 text-white/30 text-xs">
+            <span>
+              New modifications from above will only apply to new conversations.
+            </span>
+          </div>
 
-          <div className="w-full mt-1 text-white/30 text-xs">
-            <span>New changes only apply to new conversations.</span>
+          <div className={clsx("flex", streamResponse && "text-accent")}>
+            <label
+              className="flex items-center gap-2 text-sm cursor-pointer"
+              title="AI will send partial replies as soon as they become available."
+            >
+              <input
+                type="checkbox"
+                className="accent-accent"
+                checked={streamResponse}
+                onChange={(event) => {
+                  setStreamResponse(event.target.checked);
+                }}
+              />
+              <span>Stream responses (Beta)</span>
+            </label>
           </div>
         </div>
 
