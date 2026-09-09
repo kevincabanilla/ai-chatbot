@@ -1,12 +1,30 @@
 import axios from "axios";
 import type { ChatRequest, ChatResponse } from "@shared/types";
 
+function getErrorMessage(err: unknown, defaultMessage: string) {
+  return axios.isAxiosError(err)
+    ? ((err.response?.data as { error?: string }).error ?? defaultMessage)
+    : err instanceof Error
+      ? err.message
+      : defaultMessage;
+}
+
 export async function sendChat(
   request: ChatRequest,
 ): Promise<ChatResponse | null> {
-  const response = await axios.post<ChatResponse | null>("/api/chat", request);
+  try {
+    const response = await axios.post<ChatResponse | null>(
+      "/api/chat",
+      request,
+    );
 
-  return response.data;
+    return response.data;
+  } catch (err) {
+    throw new Error(
+      getErrorMessage(err, "An error occurred while sending chat message"),
+      { cause: err },
+    );
+  }
 }
 
 export async function streamChat(

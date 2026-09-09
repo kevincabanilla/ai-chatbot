@@ -143,7 +143,10 @@ export default function MainView() {
       }
     } catch (err) {
       console.error(err);
-      const errorMessage = "Something went wrong. Please try again later.";
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again later.";
       setErrorMessage(errorMessage);
       setShowAlert(true);
       deleteMessage(aiResponseMessageId, conversationId);
