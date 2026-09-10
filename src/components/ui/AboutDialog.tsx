@@ -48,16 +48,14 @@ export const AboutDialog = ({ onClose, ...props }: DialogProps) => {
             </span>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
+          <div className="flex flex-row justify-between gap-3">
             <a
               href={githubUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
                 "inline-flex items-center justify-center gap-2",
-                "rounded-lg bg-accent/2 px-4 py-2 font-semibold text-accent/90 backdrop-blur-md",
-                "transition-[background,border-color,box-shadow,color,transform] duration-300 ease-out",
-                "hover:-translate-y-px hover:bg-accent/5 hover:text-accent",
+                "rounded-full bg-transparent p-2",
               )}
             >
               <img
@@ -66,7 +64,6 @@ export const AboutDialog = ({ onClose, ...props }: DialogProps) => {
                 aria-hidden="true"
                 className="size-6"
               />
-              Contribute
             </a>
 
             <AppButton variant="outline" onClick={onClose}>
