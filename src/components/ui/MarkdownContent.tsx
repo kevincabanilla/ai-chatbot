@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Check, Copy, RotateCcw, Split } from "lucide-react";
+import { Check, Copy, Repeat, Split } from "lucide-react";
 import clsx from "clsx";
 import { AppIconButton } from "../buttons/AppIconButton";
 
@@ -15,7 +15,17 @@ const copyToClipboard = async (text: string) => {
   }
 };
 
-export default function MarkdownContent({ content }: { content: string }) {
+interface MarkdownContentProps {
+  content: string;
+  onTryAgain?: () => void;
+  onBranchOut?: () => void;
+}
+
+export default function MarkdownContent({
+  content,
+  onTryAgain,
+  onBranchOut,
+}: MarkdownContentProps) {
   const [contentCopied, setContentCopied] = useState(false);
 
   const copyContent = async () => {
@@ -146,7 +156,8 @@ export default function MarkdownContent({ content }: { content: string }) {
           size="sm"
           variant="ghost"
           label="Try again..."
-          icon={RotateCcw}
+          icon={Repeat}
+          onClick={onTryAgain}
         />
         <AppIconButton
           enableTooltip
@@ -155,6 +166,7 @@ export default function MarkdownContent({ content }: { content: string }) {
           variant="ghost"
           label="Branch in new chat"
           icon={Split}
+          onClick={onBranchOut}
         />
       </div>
     </div>
