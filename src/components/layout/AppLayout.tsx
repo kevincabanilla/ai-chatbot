@@ -6,11 +6,13 @@ import { SearchDialog } from "@/components/ui/SearchDialog";
 import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import { AppContext } from "@/contexts/AppContext";
 import { DeleteConversationDialog } from "../ui/DeleteConversationDialog";
+import { AboutDialog } from "../ui/AboutDialog";
 
 export default function AppLayout() {
   const isMobile = useMediaQuery(MEDIA_QUERIES.lg);
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deleteConversationId, setDeleteConversationId] = useState("");
@@ -33,6 +35,9 @@ export default function AppLayout() {
           setIsSettingsOpen(true);
         }}
         onDeleteConversation={onDeleteConversation}
+        onAboutClicked={() => {
+          setIsAboutOpen(true);
+        }}
       />
 
       <SearchDialog
@@ -66,6 +71,13 @@ export default function AppLayout() {
           open={isSettingsOpen}
           onClose={() => {
             setIsSettingsOpen(false);
+          }}
+        />
+
+        <AboutDialog
+          open={isAboutOpen}
+          onClose={() => {
+            setIsAboutOpen(false);
           }}
         />
 
