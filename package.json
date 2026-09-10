@@ -1,11 +1,11 @@
 {
   "name": "ai-chatbot",
   "private": true,
-  "version": "1.0.20",
+  "version": "1.0.22",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:vercel": "vercel dev",
+    "serve": "vercel dev",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

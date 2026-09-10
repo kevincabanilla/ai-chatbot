@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { motion, type Transition } from "motion/react";
-import { Bot, PanelLeft, Plus, Search, Settings, X, XIcon } from "lucide-react";
+import {
+  Bot,
+  Info,
+  PanelLeft,
+  Plus,
+  Search,
+  Settings,
+  X,
+  XIcon,
+} from "lucide-react";
 import { cn } from "@/libs/utils";
 import type { NavProps } from "@/interfaces";
 import { AppNavButton } from "../buttons/AppNavButton";
@@ -18,6 +27,7 @@ export function Nav({
   onSearchClicked,
   onSettingsClicked,
   onDeleteConversation,
+  onAboutClicked,
 }: NavProps) {
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -55,6 +65,7 @@ export function Nav({
       <NavFooter
         isCollapsed={isCollapsed}
         onSettingsClicked={onSettingsClicked}
+        onAboutClicked={onAboutClicked}
       />
     </motion.aside>
   );
@@ -247,9 +258,11 @@ const NavActions = ({
 const NavFooter = ({
   isCollapsed,
   onSettingsClicked,
+  onAboutClicked,
 }: {
   isCollapsed: boolean;
   onSettingsClicked: () => void;
+  onAboutClicked: () => void;
 }) => {
   return (
     <div className="border-t border-accent/20 p-3">
@@ -259,6 +272,14 @@ const NavFooter = ({
         onClick={onSettingsClicked}
       >
         <span>Settings</span>
+      </AppNavButton>
+
+      <AppNavButton
+        collapsed={isCollapsed}
+        icon={Info}
+        onClick={onAboutClicked}
+      >
+        <span>About</span>
       </AppNavButton>
     </div>
   );

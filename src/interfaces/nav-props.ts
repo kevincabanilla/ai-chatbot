@@ -5,4 +5,5 @@ export interface NavProps {
   onSearchClicked: () => void;
   onSettingsClicked: () => void;
   onDeleteConversation: (cid: string) => void;
+  onAboutClicked: () => void;
 }
