@@ -3,10 +3,29 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, RotateCcw, Split } from "lucide-react";
 import clsx from "clsx";
+import { AppIconButton } from "../buttons/AppIconButton";
+
+const copyToClipboard = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (error) {
+    console.error("Failed to copy text:", error);
+  }
+};
 
 export default function MarkdownContent({ content }: { content: string }) {
+  const [contentCopied, setContentCopied] = useState(false);
+
+  const copyContent = async () => {
+    setContentCopied(true);
+    await copyToClipboard(content);
+    setTimeout(() => {
+      setContentCopied(false);
+    }, 2500);
+  };
+
   return (
     <div className="text-sm leading-5 md:text-base">
       <ReactMarkdown
@@ -111,6 +130,33 @@ export default function MarkdownContent({ content }: { content: string }) {
       >
         {content}
       </ReactMarkdown>
+
+      <div className="flex items-center gap-0.5 mt-3">
+        <AppIconButton
+          enableTooltip
+          className={clsx(!contentCopied && "rotate-90")}
+          size="sm"
+          variant="ghost"
+          label={contentCopied ? "Response copied" : "Copy response"}
+          icon={contentCopied ? Check : Copy}
+          onClick={() => void copyContent()}
+        />
+        <AppIconButton
+          enableTooltip
+          size="sm"
+          variant="ghost"
+          label="Try again..."
+          icon={RotateCcw}
+        />
+        <AppIconButton
+          enableTooltip
+          className="rotate-90"
+          size="sm"
+          variant="ghost"
+          label="Branch in new chat"
+          icon={Split}
+        />
+      </div>
     </div>
   );
 }
@@ -119,15 +165,11 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
   const [copied, setCopied] = useState(false);
 
   const copyCode = async () => {
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopied(true);
-      setTimeout(() => {
-        setCopied(false);
-      }, 3000);
-    } catch (error) {
-      console.error("Failed to copy code:", error);
-    }
+    setCopied(true);
+    await copyToClipboard(code);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2500);
   };
 
   return (
