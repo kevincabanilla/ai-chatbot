@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import clsx from "clsx";
 import type { ChatMessage } from "@shared/types";
@@ -51,13 +51,23 @@ export default function MainView() {
 
   const hasStarted = messages.length > 0;
 
-  if (currentConversationId && currentConversation?.hasUnread) {
-    // mark the current conversation as read
-    updateConversation(currentConversationId, (conv) => ({
-      ...conv,
-      hasUnread: false,
-    }));
-  }
+  const latestConversationId = useRef(currentConversationId);
+
+  useEffect(() => {
+    latestConversationId.current = currentConversationId;
+
+    if (currentConversationId && currentConversation?.hasUnread) {
+      // mark the current conversation as read
+      updateConversation(currentConversationId, (conv) => ({
+        ...conv,
+        hasUnread: false,
+      }));
+    }
+  }, [
+    currentConversation?.hasUnread,
+    currentConversationId,
+    updateConversation,
+  ]);
 
   const scrollToId = (id: string | number) => {
     requestAnimationFrame(() => {
@@ -155,7 +165,7 @@ export default function MainView() {
           await sendChatMessage(chatRequest, updateContent);
         }
 
-        if (conversationId !== currentConversationId) {
+        if (conversationId !== latestConversationId.current) {
           // user has navigated to different conversation before the response has completed.
           // mark the conversation has unread.
           updateConversation(conversationId, (conv) => ({
