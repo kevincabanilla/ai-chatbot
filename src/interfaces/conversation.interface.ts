@@ -16,6 +16,7 @@ export interface Conversation {
   messages: MessageItem[];
   mode?: string | null;
   model?: string | null;
+  hasUnread?: boolean | null;
   hasError?: boolean | null;
   errorMessage?: string | null;
 }
