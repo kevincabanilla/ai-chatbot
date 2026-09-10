@@ -1,5 +1,6 @@
 import { Sparkles } from "lucide-react";
 import GitHubIcon from "@/assets/icons/GitHub.svg";
+import { cn } from "@/libs/utils";
 import AppButton from "../buttons/AppButton";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 
@@ -48,12 +49,16 @@ export const AboutDialog = ({ onClose, ...props }: DialogProps) => {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
-            <AppButton
-              variant="tonal"
-              className="inline-flex items-center justify-center gap-2"
-              onClick={() =>
-                window.open(githubUrl, "_blank", "noopener,noreferrer")
-              }
+            <a
+              href={githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                "inline-flex items-center justify-center gap-2",
+                "rounded-lg bg-accent/2 px-4 py-2 font-semibold text-accent/90 backdrop-blur-md",
+                "transition-[background,border-color,box-shadow,color,transform] duration-300 ease-out",
+                "hover:-translate-y-px hover:bg-accent/5 hover:text-accent",
+              )}
             >
               <img
                 src={GitHubIcon}
@@ -62,7 +67,7 @@ export const AboutDialog = ({ onClose, ...props }: DialogProps) => {
                 className="size-6"
               />
               Contribute
-            </AppButton>
+            </a>
 
             <AppButton variant="outline" onClick={onClose}>
               Close
