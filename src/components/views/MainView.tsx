@@ -113,7 +113,7 @@ export default function MainView() {
           conversationId: conversationId,
           content: message,
           role: "user",
-          timestamp: Date.now(),
+          dateCreated: new Date().toISOString(),
         };
 
         appendMessage(conversationId, newMessageItem, () => {
@@ -132,7 +132,7 @@ export default function MainView() {
             role: "assistant",
             content: "",
             conversationId: conversationId,
-            timestamp: Date.now(),
+            dateCreated: new Date().toISOString(),
           },
           () => {
             scrollToId(aiResponseMessageId);
@@ -153,7 +153,7 @@ export default function MainView() {
           updateMessage(aiResponseMessageId, conversationId, (msg) => ({
             ...msg,
             ...newContent,
-            timestamp: Date.now(),
+            dateCreated: new Date().toISOString(),
             content: msg.content + newContent.content,
           }));
           scrollToId(aiResponseMessageId);

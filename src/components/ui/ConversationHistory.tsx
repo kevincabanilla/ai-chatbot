@@ -114,7 +114,8 @@ export const ConversationHistory = ({
 
         return (
           <ChatItem
-            key={item.messageId || item.timestamp}
+            // eslint-disable-next-line @typescript-eslint/no-deprecated
+            key={item.messageId || item.dateCreated || item.timestamp} // to be removed
             id={item.messageId}
             messageRole={item.role}
             showRetry={isLastMessage && showRetry}
