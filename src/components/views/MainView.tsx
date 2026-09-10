@@ -48,6 +48,14 @@ export default function MainView() {
 
   const hasStarted = messages.length > 0;
 
+  if (currentConversationId && currentConversation?.hasUnread) {
+    // mark the current conversation as read
+    updateConversation(currentConversationId, (conv) => ({
+      ...conv,
+      hasUnread: false,
+    }));
+  }
+
   const scrollToId = (id: string | number) => {
     requestAnimationFrame(() => {
       Helper.scrollToId(id);
@@ -140,6 +148,15 @@ export default function MainView() {
         await streamMessage(chatRequest, updateContent);
       } else {
         await sendChatMessage(chatRequest, updateContent);
+      }
+
+      if (conversationId !== currentConversationId) {
+        // user has navigated to different conversation before the response has completed.
+        // mark the conversation has unread.
+        updateConversation(conversationId, (conv) => ({
+          ...conv,
+          hasUnread: true,
+        }));
       }
     } catch (err) {
       console.error(err);
