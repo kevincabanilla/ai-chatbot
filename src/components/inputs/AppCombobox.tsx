@@ -73,6 +73,7 @@ export const AppCombobox = ({
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const selectedOptionRef = useRef<HTMLLIElement>(null);
 
   const filtered = useMemo(() => {
     if (!query) return options;
@@ -89,6 +90,12 @@ export const AppCombobox = ({
 
     inputRef.current?.focus();
   }, [open, autofocus]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    selectedOptionRef.current?.scrollIntoView({ block: "start" });
+  }, [open]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -200,6 +207,7 @@ export const AppCombobox = ({
               return (
                 <li
                   key={option.value}
+                  ref={active ? selectedOptionRef : undefined}
                   role="option"
                   aria-selected={active}
                   className={cn(
