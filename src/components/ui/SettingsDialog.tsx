@@ -32,6 +32,14 @@ const AiModes: AiMode[] = Object.keys(AI_SKILL).map((key) => ({
 const defaultAiModel = import.meta.env.VITE_DEFAULT_AI_MODEL;
 
 export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
+  return (
+    <AppDialog onClose={onClose} {...props}>
+      <SettingsContent key={props.open ? "open" : "closed"} onClose={onClose} />
+    </AppDialog>
+  );
+};
+
+const SettingsContent = ({ onClose }: { onClose: () => void }) => {
   const { state, setState } = useStore();
   const [selectedMode, setSelectedMode] = useState(state.settings.mode);
   const [aiModel, setAiModel] = useState(state.settings.model);
@@ -67,93 +75,84 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
     onClose();
   };
 
-  const closeDialog = () => {
-    setSelectedMode(state.settings.mode);
-    setAiModel(state.settings.model);
-    setStreamResponse(state.settings.streamResponse ?? false);
-    onClose();
-  };
-
   return (
-    <AppDialog onClose={closeDialog} {...props}>
-      <div className="flex flex-col gap-6 p-6">
-        <div className="text-xl">
-          <h1>Settings</h1>
-        </div>
+    <div className="flex flex-col gap-6 p-6">
+      <div className="text-xl">
+        <h1>Settings</h1>
+      </div>
 
-        <div className="grow flex flex-col gap-3">
-          <div className="flex flex-col gap-1">
-            <span className="text-accent">Mode</span>
-            <div className="flex gap-6">
-              {AiModes.map(({ text, icon }) => (
-                <ModeItem
-                  key={text}
-                  text={text}
-                  icon={icon}
-                  selected={selectedMode == text}
-                  onClick={() => {
-                    setSelectedMode(text);
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <span className="text-accent">Model</span>
-            <div className="">
-              {!error ? (
-                <AppCombobox
-                  disabled={isLoading}
-                  value={aiModel}
-                  onValueChange={setAiModel}
-                  options={models}
-                  placeholder="Choose a framework"
-                />
-              ) : (
-                <div>
-                  <span>Failed to load models.</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="w-full mt-1 mb-2 text-white/30 text-xs">
-            <span>
-              New modifications from above will only apply to new conversations.
-            </span>
-          </div>
-
-          <div className={clsx("flex", streamResponse && "text-accent")}>
-            <label
-              className="flex items-center gap-2 text-sm cursor-pointer"
-              title="AI will send partial replies as soon as they become available."
-            >
-              <input
-                type="checkbox"
-                className="accent-accent"
-                checked={streamResponse}
-                onChange={(event) => {
-                  setStreamResponse(event.target.checked);
+      <div className="grow flex flex-col gap-3">
+        <div className="flex flex-col gap-1">
+          <span className="text-accent">Mode</span>
+          <div className="flex gap-6">
+            {AiModes.map(({ text, icon }) => (
+              <ModeItem
+                key={text}
+                text={text}
+                icon={icon}
+                selected={selectedMode == text}
+                onClick={() => {
+                  setSelectedMode(text);
                 }}
               />
-              <span>Stream responses (Beta)</span>
-            </label>
+            ))}
           </div>
         </div>
 
-        <div className="flex justify-between">
-          <AppButton
-            variant="ghost"
-            className="text-rose-500/90 bg-rose-500/2 hover:text-rose-500 hover:bg-rose-500/5"
-            onClick={closeDialog}
+        <div className="flex flex-col gap-1">
+          <span className="text-accent">Model</span>
+          <div className="">
+            {!error ? (
+              <AppCombobox
+                disabled={isLoading}
+                value={aiModel}
+                onValueChange={setAiModel}
+                options={models}
+                placeholder="Choose a framework"
+              />
+            ) : (
+              <div>
+                <span>Failed to load models.</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="w-full mt-1 mb-2 text-white/30 text-xs">
+          <span>
+            New modifications from above will only apply to new conversations.
+          </span>
+        </div>
+
+        <div className={clsx("flex", streamResponse && "text-accent")}>
+          <label
+            className="flex items-center gap-2 text-sm cursor-pointer"
+            title="AI will send partial replies as soon as they become available."
           >
-            Close
-          </AppButton>
-          <AppButton onClick={saveSettings}>Save</AppButton>
+            <input
+              type="checkbox"
+              className="accent-accent"
+              checked={streamResponse}
+              onChange={(event) => {
+                setStreamResponse(event.target.checked);
+              }}
+            />
+            <span>Stream responses (Beta)</span>
+          </label>
         </div>
       </div>
-    </AppDialog>
+
+      <div className="flex justify-between">
+        <AppButton
+          variant="ghost"
+          className="text-rose-500/90 bg-rose-500/2 hover:text-rose-500 hover:bg-rose-500/5"
+          onClick={onClose}
+        >
+          Close
+        </AppButton>
+        <AppButton onClick={saveSettings}>Save</AppButton>
+      </div>
+    </div>
   );
 };
 
