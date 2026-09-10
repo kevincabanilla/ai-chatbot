@@ -25,6 +25,7 @@ export default function MainView() {
   const { isMobile, openSettings } = useAppContext();
   const {
     state,
+    moveConversationToTop,
     appendMessage,
     updateMessage,
     deleteMessage,
@@ -122,6 +123,11 @@ export default function MainView() {
         newMessages.push(newMessageItem);
       }
 
+      if (currentConversation) {
+        // move the existing conversation to most recent.
+        moveConversationToTop(conversationId);
+      }
+
       const aiResponseMessageId = crypto.randomUUID();
 
       try {
@@ -197,6 +203,7 @@ export default function MainView() {
       currentConversationId,
       deleteMessage,
       messages,
+      moveConversationToTop,
       navigate,
       sendChatMessage,
       state.settings.mode,

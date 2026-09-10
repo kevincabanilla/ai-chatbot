@@ -20,6 +20,7 @@ export interface StateManager extends StoreContextType {
     updater: (msg: Conversation) => Conversation,
   ) => void;
   deleteConversation: (id: string) => void;
+  moveConversationToTop: (id: string) => void;
 }
 
 export function useStateManager(): StateManager {
@@ -186,6 +187,19 @@ export function useStateManager(): StateManager {
     });
   };
 
+  const moveConversationToTop = (id: string) => {
+    setState((prev) => {
+      const newOrder = [
+        id,
+        ...prev.conversationOrder.filter((cid) => cid !== id),
+      ];
+      return {
+        ...prev,
+        conversationOrder: newOrder,
+      };
+    });
+  };
+
   return {
     state,
     setState,
@@ -196,5 +210,6 @@ export function useStateManager(): StateManager {
     deleteMessage,
     updateConversation,
     deleteConversation,
+    moveConversationToTop,
   };
 }
