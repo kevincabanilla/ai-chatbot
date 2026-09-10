@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router";
 import { MEDIA_QUERIES, useMediaQuery } from "@/hooks";
-import { TopToolbar, LeftNav } from "@/components/views";
+import { TopToolbar, LeftSidebar } from "@/components/views";
 import { SearchDialog } from "@/components/ui/SearchDialog";
 import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import { AppContext } from "@/contexts/AppContext";
@@ -24,7 +24,7 @@ export default function AppLayout() {
 
   return (
     <div className="flex">
-      <LeftNav
+      <LeftSidebar
         isCollapsed={isCollapsed}
         isMobile={isMobile}
         setIsCollapsed={setIsCollapsed}
