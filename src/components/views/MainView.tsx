@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import clsx from "clsx";
 import type { ChatMessage } from "@shared/types";
@@ -44,7 +44,10 @@ export default function MainView() {
     ? null
     : state.conversationsById[currentConversationId];
 
-  const messages = currentConversation?.messages ?? [];
+  const messages = useMemo(
+    () => currentConversation?.messages ?? [],
+    [currentConversation?.messages],
+  );
 
   const hasStarted = messages.length > 0;
 
@@ -62,120 +65,138 @@ export default function MainView() {
     });
   };
 
-  const sendMessage = async (message?: string) => {
-    setShowAlert(false);
+  const sendMessage = useCallback(
+    async (message?: string) => {
+      setShowAlert(false);
 
-    // save current to prevent misplacing of new messages.
-    let conversationId = currentConversationId ?? "";
+      // save current to prevent misplacing of new messages.
+      let conversationId = currentConversationId ?? "";
 
-    if (!currentConversation) {
-      conversationId = crypto.randomUUID();
-      await navigate({
-        pathname: "/",
-        search: `?${QUERY_PARAM.ChatId}=${conversationId}`,
-      });
-    }
-
-    setLoadingId(conversationId);
-
-    const newMessages = [...messages];
-
-    if (currentConversation?.hasError || currentConversation?.errorMessage) {
-      // reset the conversation's hasError to false and errorMessage to null.
-      updateConversation(conversationId, (conv) => ({
-        ...conv,
-        hasError: false,
-        errorMessage: null,
-      }));
-    }
-
-    if (!message) {
-      // retry is clicked. scroll to the last message
-      const lastMessageId = currentConversation?.messages.at(-1)?.messageId;
-      if (lastMessageId) scrollToId(lastMessageId);
-    } else {
-      const newMessageItem: MessageItem = {
-        messageId: crypto.randomUUID(),
-        conversationId: conversationId,
-        content: message,
-        role: "user",
-        timestamp: Date.now(),
-      };
-
-      appendMessage(conversationId, newMessageItem, () => {
-        scrollToId(newMessageItem.messageId);
-      });
-      newMessages.push(newMessageItem);
-    }
-
-    const aiResponseMessageId = crypto.randomUUID();
-
-    try {
-      appendMessage(
-        conversationId,
-        {
-          messageId: aiResponseMessageId,
-          role: "assistant",
-          content: "",
-          conversationId: conversationId,
-          timestamp: Date.now(),
-        },
-        () => {
-          scrollToId(aiResponseMessageId);
-        },
-      );
-
-      const chatRequest = {
-        model: currentConversation?.model ?? state.settings.model ?? undefined,
-        skill: currentConversation?.mode ?? state.settings.mode ?? undefined,
-        messages: newMessages.map((x) => ({
-          content: x.content,
-          role: x.role,
-        })),
-      };
-
-      const updateContent = (newContent: ChatMessage) => {
-        updateMessage(aiResponseMessageId, conversationId, (msg) => ({
-          ...msg,
-          ...newContent,
-          timestamp: Date.now(),
-          content: msg.content + newContent.content,
-        }));
-        scrollToId(aiResponseMessageId);
-      };
-
-      if (streamResponse) {
-        await streamMessage(chatRequest, updateContent);
-      } else {
-        await sendChatMessage(chatRequest, updateContent);
+      if (!currentConversation) {
+        conversationId = crypto.randomUUID();
+        await navigate({
+          pathname: "/",
+          search: `?${QUERY_PARAM.ChatId}=${conversationId}`,
+        });
       }
 
-      if (conversationId !== currentConversationId) {
-        // user has navigated to different conversation before the response has completed.
-        // mark the conversation has unread.
+      setLoadingId(conversationId);
+
+      const newMessages = [...messages];
+
+      if (currentConversation?.hasError || currentConversation?.errorMessage) {
+        // reset the conversation's hasError to false and errorMessage to null.
         updateConversation(conversationId, (conv) => ({
           ...conv,
-          hasUnread: true,
+          hasError: false,
+          errorMessage: null,
         }));
       }
-    } catch (err) {
-      console.error(err);
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Something went wrong. Please try again later.";
-      setErrorMessage(errorMessage);
-      setShowAlert(true);
-      deleteMessage(aiResponseMessageId, conversationId);
-      updateConversation(conversationId, (conv) => ({
-        ...conv,
-        hasError: true,
-        errorMessage: errorMessage,
-      }));
-    } finally {
-      setLoadingId("");
-    }
-  };
+
+      if (!message) {
+        // retry is clicked. scroll to the last message
+        const lastMessageId = currentConversation?.messages.at(-1)?.messageId;
+        if (lastMessageId) scrollToId(lastMessageId);
+      } else {
+        const newMessageItem: MessageItem = {
+          messageId: crypto.randomUUID(),
+          conversationId: conversationId,
+          content: message,
+          role: "user",
+          timestamp: Date.now(),
+        };
+
+        appendMessage(conversationId, newMessageItem, () => {
+          scrollToId(newMessageItem.messageId);
+        });
+        newMessages.push(newMessageItem);
+      }
+
+      const aiResponseMessageId = crypto.randomUUID();
+
+      try {
+        appendMessage(
+          conversationId,
+          {
+            messageId: aiResponseMessageId,
+            role: "assistant",
+            content: "",
+            conversationId: conversationId,
+            timestamp: Date.now(),
+          },
+          () => {
+            scrollToId(aiResponseMessageId);
+          },
+        );
+
+        const chatRequest = {
+          model:
+            currentConversation?.model ?? state.settings.model ?? undefined,
+          skill: currentConversation?.mode ?? state.settings.mode ?? undefined,
+          messages: newMessages.map((x) => ({
+            content: x.content,
+            role: x.role,
+          })),
+        };
+
+        const updateContent = (newContent: ChatMessage) => {
+          updateMessage(aiResponseMessageId, conversationId, (msg) => ({
+            ...msg,
+            ...newContent,
+            timestamp: Date.now(),
+            content: msg.content + newContent.content,
+          }));
+          scrollToId(aiResponseMessageId);
+        };
+
+        if (streamResponse) {
+          await streamMessage(chatRequest, updateContent);
+        } else {
+          await sendChatMessage(chatRequest, updateContent);
+        }
+
+        if (conversationId !== currentConversationId) {
+          // user has navigated to different conversation before the response has completed.
+          // mark the conversation has unread.
+          updateConversation(conversationId, (conv) => ({
+            ...conv,
+            hasUnread: true,
+          }));
+        }
+      } catch (err) {
+        console.error(err);
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "Something went wrong. Please try again later.";
+        setErrorMessage(errorMessage);
+        setShowAlert(true);
+        deleteMessage(aiResponseMessageId, conversationId);
+        updateConversation(conversationId, (conv) => ({
+          ...conv,
+          hasError: true,
+          errorMessage: errorMessage,
+        }));
+      } finally {
+        setLoadingId("");
+      }
+    },
+    [
+      appendMessage,
+      currentConversation,
+      currentConversationId,
+      deleteMessage,
+      messages,
+      navigate,
+      sendChatMessage,
+      state.settings.mode,
+      state.settings.model,
+      streamMessage,
+      streamResponse,
+      updateConversation,
+      updateMessage,
+    ],
+  );
 
   return (
     <main>
