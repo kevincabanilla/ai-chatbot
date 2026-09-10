@@ -45,6 +45,7 @@ export interface ComboboxProps extends VariantProps<typeof comboboxVariants> {
   emptyMessage?: string;
   placeholder?: string;
   searchPlaceholder?: string;
+  "aria-label"?: string;
   options: ComboboxOption[];
   ref?: Ref<HTMLButtonElement>;
   value?: string | null;
@@ -58,6 +59,7 @@ export const AppCombobox = ({
   emptyMessage = "No results.",
   placeholder = "Select...",
   searchPlaceholder = "Search...",
+  "aria-label": ariaLabel,
   options,
   variant,
   size,
@@ -147,6 +149,7 @@ export const AppCombobox = ({
         type="button"
         disabled={disabled}
         role="combobox"
+        aria-label={ariaLabel}
         aria-expanded={open}
         onClick={() => {
           setOpen((o) => !o);
