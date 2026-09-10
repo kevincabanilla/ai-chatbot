@@ -103,6 +103,7 @@ export interface AppTooltipProps {
   exitDelay?: number;
   open?: boolean;
   defaultOpen?: boolean;
+  disabled?: boolean;
   disableHoverListener?: boolean;
   disableFocusListener?: boolean;
   disableTouchListener?: boolean;
@@ -130,6 +131,7 @@ export const AppTooltip = ({
   exitDelay = 0,
   open: controlledOpen,
   defaultOpen = false,
+  disabled = false,
   disableHoverListener = false,
   disableFocusListener = false,
   disableTouchListener = false,
@@ -169,45 +171,45 @@ export const AppTooltip = ({
     );
   }
 
-  const child = cloneElement(children, {
-    "aria-describedby": open ? tooltipId : undefined,
-    onMouseEnter: (event: MouseEvent) => {
-      children.props.onMouseEnter?.(event);
-      if (!disableHoverListener) showTooltip();
-    },
-    onMouseLeave: (event: MouseEvent) => {
-      children.props.onMouseLeave?.(event);
-      if (!disableHoverListener) hideTooltip();
-    },
-    onFocus: (event: FocusEvent) => {
-      children.props.onFocus?.(event);
-      if (!disableFocusListener) showTooltip();
-    },
-    onBlur: (event: FocusEvent) => {
-      children.props.onBlur?.(event);
-      if (!disableFocusListener) hideTooltip();
-    },
-    onKeyDown: (event: KeyboardEvent) => {
-      children.props.onKeyDown?.(event);
-      if (event.key === "Escape") hideTooltip();
-    },
-    onTouchStart: (event: TouchEvent) => {
-      children.props.onTouchStart?.(event);
-      if (!disableTouchListener) {
-        if (open) hideTooltip();
-        else showTooltip();
-      }
-    },
-  });
-
-  return (
+  return disabled ? (
+    <>{children}</>
+  ) : (
     <div
       className="relative inline-flex"
       onMouseEnter={disableHoverListener ? undefined : showTooltip}
       onMouseLeave={disableHoverListener ? undefined : hideTooltip}
       onTouchStart={disableTouchListener ? undefined : showTooltip}
     >
-      {child}
+      {cloneElement(children, {
+        "aria-describedby": open ? tooltipId : undefined,
+        onMouseEnter: (event: MouseEvent) => {
+          children.props.onMouseEnter?.(event);
+          if (!disableHoverListener) showTooltip();
+        },
+        onMouseLeave: (event: MouseEvent) => {
+          children.props.onMouseLeave?.(event);
+          if (!disableHoverListener) hideTooltip();
+        },
+        onFocus: (event: FocusEvent) => {
+          children.props.onFocus?.(event);
+          if (!disableFocusListener) showTooltip();
+        },
+        onBlur: (event: FocusEvent) => {
+          children.props.onBlur?.(event);
+          if (!disableFocusListener) hideTooltip();
+        },
+        onKeyDown: (event: KeyboardEvent) => {
+          children.props.onKeyDown?.(event);
+          if (event.key === "Escape") hideTooltip();
+        },
+        onTouchStart: (event: TouchEvent) => {
+          children.props.onTouchStart?.(event);
+          if (!disableTouchListener) {
+            if (open) hideTooltip();
+            else showTooltip();
+          }
+        },
+      })}
 
       <AnimatePresence>
         {open && title != null && (
