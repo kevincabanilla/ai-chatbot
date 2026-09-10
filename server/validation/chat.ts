@@ -15,7 +15,7 @@ export function validateChatMessages(messages: ChatMessage[] | null) {
     throw new ChatValidationError("Messages cannot be empty");
   }
 
-  if (messages.length > 50) {
+  if (messages.length > 100) {
     throw new ChatValidationError("Conversation too long");
   }
 
