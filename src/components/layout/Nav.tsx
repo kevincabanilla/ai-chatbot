@@ -195,6 +195,8 @@ const NavActions = ({
           <ul className="space-y-2 min-h-0 flex-1 overflow-y-auto pr-1">
             {state.conversationOrder.map((cid) => {
               const isActive = cid === currentConversationId;
+              const { title, hasUnread } = state.conversationsById[cid];
+
               return (
                 <li key={cid}>
                   <motion.div
@@ -211,7 +213,7 @@ const NavActions = ({
                       }}
                     >
                       <div className="grow truncate">
-                        <span>{state.conversationsById[cid].title}</span>
+                        <span>{title}</span>
                       </div>
 
                       <motion.button
@@ -243,6 +245,36 @@ const NavActions = ({
                       >
                         <XIcon />
                       </motion.button>
+
+                      {hasUnread && (
+                        <motion.div
+                          variants={{
+                            rest: {
+                              opacity: 1,
+                              scale: 1,
+                            },
+                            hover: {
+                              opacity: 0,
+                              scale: 0.6,
+                              transition: {
+                                delay: 0.15,
+                                duration: 0.15,
+                              },
+                            },
+                          }}
+                          className="shrink-0 bg-transparent flex items-center justify-center group-hover:hidden"
+                          aria-label="Has Unread"
+                        >
+                          <span
+                            className={cn(
+                              "inline-flex items-center justify-center rounded-full bg-accent",
+                              "size-5 px-1.5 py-0.5 text-xs font-medium text-blue-800",
+                            )}
+                          >
+                            1
+                          </span>
+                        </motion.div>
+                      )}
                     </AppNavLink>
                   </motion.div>
                 </li>
