@@ -52,7 +52,15 @@ export const PromptTextArea = ({
         isMultiRow ? "items-start" : "items-center",
       )}
     >
-      <AppIconButton rounded icon={Plus} label="Add Files" variant="ghost" />
+      <AppIconButton
+        rounded
+        icon={Plus}
+        label="Add Files"
+        variant="ghost"
+        onClick={() => {
+          alert("Under construction!");
+        }}
+      />
 
       <AppTextArea
         className={clsx(
@@ -72,7 +80,15 @@ export const PromptTextArea = ({
 
       {isMultiRow && <div className="flex-1" />}
 
-      <AppIconButton rounded icon={Mic} label="Dictate" variant="ghost" />
+      <AppIconButton
+        rounded
+        icon={Mic}
+        label="Dictate"
+        variant="ghost"
+        onClick={() => {
+          alert("Under construction!");
+        }}
+      />
 
       {prompt.length > 0 && (
         <AppIconButton rounded icon={ArrowUp} label="Submit" onClick={submit} />
