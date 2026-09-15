@@ -15,7 +15,6 @@ export const HoverMarquee = ({
 }: HoverMarqueeProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
-
   const [distance, setDistance] = useState(0);
 
   useLayoutEffect(() => {
@@ -43,7 +42,11 @@ export const HoverMarquee = ({
   return (
     <div
       ref={containerRef}
-      className={clsx("overflow-hidden", className)}
+      className={clsx(
+        "relative overflow-hidden",
+        "mask-[linear-gradient(to_right,transparent,black_7%,black_93%,transparent)]",
+        className,
+      )}
       {...props}
     >
       <motion.span
