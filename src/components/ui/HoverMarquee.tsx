@@ -2,6 +2,8 @@ import { useLayoutEffect, useRef, useState, type ComponentProps } from "react";
 import { animate } from "motion/react";
 import { clsx } from "clsx";
 
+type MaskState = "none" | "left" | "right" | "both";
+
 interface HoverMarqueeProps extends ComponentProps<"div"> {
   speed?: number; // px/s
   children: React.ReactNode;
@@ -18,6 +20,7 @@ export const HoverMarquee = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [distance, setDistance] = useState(0);
+  const [maskState, setMaskState] = useState<MaskState>("none");
 
   useLayoutEffect(() => {
     const update = () => {
@@ -27,6 +30,7 @@ export const HoverMarquee = ({
         textRef.current.scrollWidth - containerRef.current.clientWidth;
 
       setDistance(Math.max(0, overflow));
+      setMaskState(distance > 0 ? "right" : "none");
     };
 
     update();
@@ -53,6 +57,10 @@ export const HoverMarquee = ({
       {
         duration: distance / speed,
         ease: "linear",
+        onComplete: () => {
+          // We've reached the end, so only the left side is clipped.
+          setMaskState("left");
+        },
       },
     );
   };
@@ -63,6 +71,10 @@ export const HoverMarquee = ({
       { x: 0 },
       {
         duration: 0.05,
+        onComplete: () => {
+          // Back at the beginning, only the right side has hidden text.
+          setMaskState(distance > 0 ? "right" : "none");
+        },
       },
     );
   };
@@ -72,7 +84,21 @@ export const HoverMarquee = ({
       ref={containerRef}
       className={clsx(
         "relative overflow-hidden",
-        "mask-[linear-gradient(to_right,transparent,black_7%,black_93%,transparent)]",
+        {
+          "mask-none": maskState === "none",
+
+          // Right edge fades
+          "mask-[linear-gradient(to_right,transparent,black_0%,black_93%,transparent)]":
+            maskState === "right",
+
+          // Left edge fades
+          "mask-[linear-gradient(to_right,transparent,black_7%,black_100%)]":
+            maskState === "left",
+
+          // Both edges fade
+          "mask-[linear-gradient(to_right,transparent,black_7%,black_93%,transparent)]":
+            maskState === "both",
+        },
         className,
       )}
       {...props}
