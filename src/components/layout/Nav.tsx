@@ -19,6 +19,7 @@ import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
 import { QUERY_PARAM, useGetQueryParam, useStateManager } from "@/hooks";
 import { Helper } from "@/libs/helper";
 import { AppNavLink } from "../buttons/AppNavLink";
+import { HoverMarquee } from "../ui/HoverMarquee";
 
 export function Nav({
   isMobile,
@@ -214,7 +215,7 @@ const NavActions = ({
                       }}
                     >
                       <div className="grow truncate">
-                        <span>{title}</span>
+                        <HoverMarquee>{title}</HoverMarquee>
                       </div>
 
                       <motion.button
