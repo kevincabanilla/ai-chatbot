@@ -170,7 +170,7 @@ export const AppCombobox = ({
           className,
         )}
       >
-        <span className={cn("truncate", !selected && "text-muted-foreground")}>
+        <span className={cn("truncate", !selected && "text-muted")}>
           {selected?.label ?? placeholder}
         </span>
 
