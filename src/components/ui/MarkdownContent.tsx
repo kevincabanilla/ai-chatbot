@@ -6,14 +6,8 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Check, Copy, Repeat, Split } from "lucide-react";
 import clsx from "clsx";
 import { AppIconButton } from "../buttons/AppIconButton";
-
-const copyToClipboard = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch (error) {
-    console.error("Failed to copy text:", error);
-  }
-};
+import { CopyButton } from "../buttons/CopyButton";
+import { copyToClipboard } from "@/libs/utils";
 
 interface MarkdownContentProps {
   content: string;
@@ -26,16 +20,6 @@ export default function MarkdownContent({
   onTryAgain,
   onBranchOut,
 }: MarkdownContentProps) {
-  const [contentCopied, setContentCopied] = useState(false);
-
-  const copyContent = async () => {
-    setContentCopied(true);
-    await copyToClipboard(content);
-    setTimeout(() => {
-      setContentCopied(false);
-    }, 2500);
-  };
-
   return (
     <div className="text-sm leading-5 md:text-base">
       <ReactMarkdown
@@ -142,20 +126,13 @@ export default function MarkdownContent({
       </ReactMarkdown>
 
       <div className="flex items-center gap-0.5 mt-3">
-        <AppIconButton
-          enableTooltip
-          className={clsx(!contentCopied && "rotate-90")}
-          size="sm"
-          variant="ghost"
-          label={contentCopied ? "Response copied" : "Copy response"}
-          icon={contentCopied ? Check : Copy}
-          onClick={() => void copyContent()}
-        />
+        <CopyButton onCopyToClipboard={() => void copyToClipboard(content)} />
         <AppIconButton
           enableTooltip
           size="sm"
           variant="ghost"
-          label="Try again..."
+          label="Retry"
+          tooltip="Try again..."
           icon={Repeat}
           onClick={onTryAgain}
         />
