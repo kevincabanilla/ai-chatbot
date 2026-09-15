@@ -1,6 +1,6 @@
 import type { MessageItem } from "@/interfaces";
 import { motion } from "motion/react";
-import { staggerContainer } from "@/libs/animationVariants";
+import { staggerContainer, staggerItem } from "@/libs/animationVariants";
 import MarkdownContent from "./MarkdownContent";
 import { TypingDots } from "../common/TypingDots";
 import ParagraphSkeletonLoader from "../common/ParagraphSkeletonLoader";
@@ -47,11 +47,14 @@ export const ConversationHistory = ({
             className="w-full"
           >
             {showDateSeparator && (
-              <div className="my-4 flex items-center gap-3 text-xs text-muted">
+              <motion.div
+                className="my-4 flex items-center gap-3 text-xs text-muted"
+                variants={staggerItem}
+              >
                 <div className="h-px flex-1 border-t border-accent/25" />
                 <span>{getDateLabel(date)}</span>
                 <div className="h-px flex-1 border-t border-accent/25" />
-              </div>
+              </motion.div>
             )}
 
             <MessageBubble
