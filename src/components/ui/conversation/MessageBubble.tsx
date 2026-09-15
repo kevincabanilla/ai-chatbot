@@ -4,7 +4,7 @@ import type { ChatRole } from "@shared/types";
 import { Bot } from "lucide-react";
 import { motion } from "motion/react";
 import { UserMessageActions } from "./UserMessageActions";
-import { staggerItemLeft, staggerItemRight } from "@/libs/animationVariants";
+import { staggerItem } from "@/libs/animationVariants";
 
 export interface MessageBubbleProps {
   id?: string;
@@ -31,7 +31,7 @@ export const MessageBubble = ({
 
   return (
     <motion.div
-      variants={isFromUser ? staggerItemRight : staggerItemLeft}
+      variants={staggerItem}
       id={id}
       className={cn(
         "w-full my-2 flex",
