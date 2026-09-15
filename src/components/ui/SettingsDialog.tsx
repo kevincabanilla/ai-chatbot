@@ -69,6 +69,11 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
     [data?.models],
   );
 
+  const defaultModel = models.find((model) => model.value === defaultAiModel);
+  const modelOptions = !defaultModel
+    ? models
+    : [defaultModel, ...models.filter((model) => model !== defaultModel)];
+
   const canSave = Boolean(selectedMode && aiModel);
 
   const saveSettings = () => {
@@ -145,7 +150,7 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
               <AppCombobox
                 value={aiModel}
                 onValueChange={setAiModel}
-                options={models}
+                options={modelOptions}
                 placeholder="Choose a model"
                 emptyMessage="No matching models."
                 searchPlaceholder="Search models..."
