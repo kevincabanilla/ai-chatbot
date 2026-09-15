@@ -174,12 +174,7 @@ export const AppTooltip = ({
   return disabled ? (
     <>{children}</>
   ) : (
-    <div
-      className="relative inline-flex"
-      onMouseEnter={disableHoverListener ? undefined : showTooltip}
-      onMouseLeave={disableHoverListener ? undefined : hideTooltip}
-      onTouchStart={disableTouchListener ? undefined : showTooltip}
-    >
+    <div className="relative inline-flex">
       {cloneElement(children, {
         "aria-describedby": open ? tooltipId : undefined,
         onMouseEnter: (event: MouseEvent) => {
