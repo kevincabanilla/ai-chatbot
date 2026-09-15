@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState, type ComponentProps } from "react";
-import { motion } from "motion/react";
+import { animate } from "motion/react";
 import { clsx } from "clsx";
 
 interface HoverMarqueeProps extends ComponentProps<"div"> {
@@ -11,6 +11,8 @@ export const HoverMarquee = ({
   className,
   speed = 40,
   children,
+  onMouseEnter,
+  onMouseLeave,
   ...props
 }: HoverMarqueeProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -37,7 +39,33 @@ export const HoverMarquee = ({
     return () => {
       resize.disconnect();
     };
-  }, [children]);
+  }, [children, distance]);
+
+  const handleHoverStart = () => {
+    if (distance <= 0) return;
+
+    // Once the text starts moving, both sides can have hidden text.
+    setMaskState("both");
+
+    animate(
+      textRef.current,
+      { x: -distance },
+      {
+        duration: distance / speed,
+        ease: "linear",
+      },
+    );
+  };
+
+  const handleHoverEnd = () => {
+    animate(
+      textRef.current,
+      { x: 0 },
+      {
+        duration: 0.05,
+      },
+    );
+  };
 
   return (
     <div
@@ -48,18 +76,18 @@ export const HoverMarquee = ({
         className,
       )}
       {...props}
+      onMouseEnter={(e) => {
+        handleHoverStart();
+        onMouseEnter?.(e);
+      }}
+      onMouseLeave={(e) => {
+        handleHoverEnd();
+        onMouseLeave?.(e);
+      }}
     >
-      <motion.span
-        ref={textRef}
-        className="inline-block whitespace-nowrap"
-        whileHover={distance > 0 ? { x: -distance } : undefined}
-        transition={{
-          duration: distance / speed,
-          ease: "linear",
-        }}
-      >
+      <span ref={textRef} className="inline-block whitespace-nowrap">
         {children}
-      </motion.span>
+      </span>
     </div>
   );
 };
