@@ -19,3 +19,7 @@ export interface ChatResponse {
   /** @deprecated Unused, will be removed in the future. */
   status?: number;
 }
+
+export interface GenerateTitleRequest {
+  message: string;
+}
