@@ -11,6 +11,7 @@ import {
   useChatStream,
   useGetQueryParam,
   useStateManager,
+  useTitleGenerator,
   useTypingAnimation,
 } from "@/hooks";
 import type { Conversation, MessageItem } from "@/interfaces";
@@ -38,6 +39,8 @@ export default function MainView() {
 
   const { sendChatMessage, isMutating: isChatLoading } = useChat();
   const { streamMessage, isMutating: isStreaming } = useChatStream();
+  const { generateTitle } = useTitleGenerator();
+
   const streamResponse = state.settings.streamResponse ?? false;
   const isLoading = streamResponse ? isStreaming : isChatLoading;
 
@@ -82,8 +85,9 @@ export default function MainView() {
 
       // save current to prevent misplacing of new messages.
       let conversationId = currentConversationId ?? "";
+      const isNewConversation = !conversationId;
 
-      if (!currentConversation) {
+      if (isNewConversation) {
         conversationId = crypto.randomUUID();
         await navigate({
           pathname: "/",
@@ -121,6 +125,20 @@ export default function MainView() {
           scrollToId(newMessageItem.messageId);
         });
         newMessages.push(newMessageItem);
+      }
+
+      // Generate title for new conversations.
+      if (isNewConversation) {
+        generateTitle({ message: message ?? "" })
+          .then((title) => {
+            updateConversation(conversationId, (conv) => ({
+              ...conv,
+              title,
+            }));
+          })
+          .catch((err: unknown) => {
+            console.log(err);
+          });
       }
 
       if (currentConversation) {
