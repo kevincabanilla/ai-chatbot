@@ -1,31 +1,56 @@
-import { AnimatePresence, motion } from "motion/react";
+import { useState, type ComponentProps } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useScroll,
+} from "motion/react";
 import { Menu, Trash2 } from "lucide-react";
-import clsx from "clsx";
 import { AppIconButton } from "../buttons/AppIconButton";
 import { useGetQueryParam, useStateManager } from "@/hooks";
+import { cn } from "@/libs/utils";
 
-export const TopToolbar = ({
-  isVisible,
-  onOpenDrawer,
-  onDeleteConversation,
-}: {
+export interface TopToolbarProps extends ComponentProps<typeof motion.header> {
   isVisible: boolean;
   onOpenDrawer: (shouldOpen: boolean) => void;
   onDeleteConversation: (cid: string) => void;
-}) => {
+}
+
+export const TopToolbar = ({
+  className,
+  isVisible,
+  onOpenDrawer,
+  onDeleteConversation,
+}: TopToolbarProps) => {
+  const [hidden, setHidden] = useState(false);
+  const { scrollY } = useScroll();
   const currentConversationId = useGetQueryParam("c");
   const { getConversation, isConverstationExists } = useStateManager();
+
   const conversation = getConversation(currentConversationId);
+
+  useMotionValueEvent(scrollY, "change", (current) => {
+    const previous = scrollY.getPrevious() ?? 0;
+
+    // Ignore tiny movements near the top
+    if (current < 30) {
+      setHidden(false);
+      return;
+    }
+
+    setHidden(current > previous); // Scrolling down when true
+  });
 
   return (
     <AnimatePresence>
       {/* Mobile header */}
-      {isVisible && (
+      {isVisible && !hidden && (
         <motion.header
-          className={clsx(
-            "sticky top-0 h-16 z-50 flex items-center",
+          className={cn(
+            "fixed inset-x-0 top-0 h-16 z-50 flex items-center",
             "border-b border-accent/20",
             "bg-primary/5 backdrop-blur-md px-4",
+            className,
           )}
           initial={{ y: "-100%" }}
           animate={{ y: 0 }}
