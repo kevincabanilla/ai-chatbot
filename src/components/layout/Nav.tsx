@@ -19,6 +19,7 @@ import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
 import { QUERY_PARAM, useGetQueryParam, useStateManager } from "@/hooks";
 import { Helper } from "@/libs/helper";
 import { AppNavLink } from "../buttons/AppNavLink";
+import { HoverMarquee } from "../ui/HoverMarquee";
 
 export function Nav({
   isMobile,
@@ -195,6 +196,9 @@ const NavActions = ({
           <ul className="space-y-2 min-h-0 flex-1 overflow-y-auto pr-1">
             {state.conversationOrder.map((cid) => {
               const isActive = cid === currentConversationId;
+              const { title, hasUnread, hasError } =
+                state.conversationsById[cid];
+
               return (
                 <li key={cid}>
                   <motion.div
@@ -211,7 +215,7 @@ const NavActions = ({
                       }}
                     >
                       <div className="grow truncate">
-                        <span>{state.conversationsById[cid].title}</span>
+                        <HoverMarquee>{title}</HoverMarquee>
                       </div>
 
                       <motion.button
@@ -243,6 +247,38 @@ const NavActions = ({
                       >
                         <XIcon />
                       </motion.button>
+
+                      {(hasUnread ?? hasError) && (
+                        <motion.div
+                          variants={{
+                            rest: {
+                              opacity: 1,
+                              scale: 1,
+                            },
+                            hover: {
+                              opacity: 0,
+                              scale: 0.6,
+                              transition: {
+                                delay: 0.15,
+                                duration: 0.15,
+                              },
+                            },
+                          }}
+                          className="shrink-0 bg-transparent flex items-center justify-center group-hover:hidden"
+                          aria-label="Notification Badge"
+                        >
+                          <span
+                            className={cn(
+                              "inline-flex items-center justify-center rounded-full ",
+                              "size-5 px-1.5 py-0.5 text-xs font-medium ",
+                              hasUnread && "bg-accent text-blue-800",
+                              hasError && "bg-red-500 text-white",
+                            )}
+                          >
+                            {hasUnread ? 1 : "!"}
+                          </span>
+                        </motion.div>
+                      )}
                     </AppNavLink>
                   </motion.div>
                 </li>

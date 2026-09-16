@@ -22,7 +22,7 @@ export const AppConfirmDialog = ({
     <AppDialog {...props}>
       <div className="flex flex-col gap-6 p-6">
         {dialogTitle && (
-          <div className="text-xl">
+          <div className="text-lg sm:text-xl">
             <h1>{dialogTitle}</h1>
           </div>
         )}

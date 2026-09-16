@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 
 export const TypingDots = () => {
   return (
-    <div className="flex gap-2 p-1.5 md:p-2">
+    <div className="h-full flex items-center justify-center gap-2 py-1.5">
       {[0, 1, 2].map((dot) => (
         <motion.div
           key={dot}

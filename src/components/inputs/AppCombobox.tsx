@@ -8,7 +8,7 @@ import { cn } from "@/libs/utils";
 const comboboxVariants = cva(
   [
     "w-full flex items-center justify-between border",
-    "bg-bg-secondary px-3 py-2 text-sm",
+    "bg-bg-secondary px-3 py-2",
     "outline-none transition-colors",
     "focus-visible:ring-2",
     "disabled:pointer-events-none disabled:opacity-50",
@@ -21,8 +21,8 @@ const comboboxVariants = cva(
       },
       size: {
         sm: "h-8 text-xs",
-        md: "h-10",
-        lg: "h-12 text-base",
+        md: "h-10 text-xs md:text-sm",
+        lg: "h-12 text-sm md:text-base",
       },
     },
     defaultVariants: {
@@ -45,6 +45,7 @@ export interface ComboboxProps extends VariantProps<typeof comboboxVariants> {
   emptyMessage?: string;
   placeholder?: string;
   searchPlaceholder?: string;
+  "aria-label"?: string;
   options: ComboboxOption[];
   ref?: Ref<HTMLButtonElement>;
   value?: string | null;
@@ -58,6 +59,7 @@ export const AppCombobox = ({
   emptyMessage = "No results.",
   placeholder = "Select...",
   searchPlaceholder = "Search...",
+  "aria-label": ariaLabel,
   options,
   variant,
   size,
@@ -71,6 +73,7 @@ export const AppCombobox = ({
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const selectedOptionRef = useRef<HTMLLIElement>(null);
 
   const filtered = useMemo(() => {
     if (!query) return options;
@@ -87,6 +90,12 @@ export const AppCombobox = ({
 
     inputRef.current?.focus();
   }, [open, autofocus]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    selectedOptionRef.current?.scrollIntoView({ block: "start" });
+  }, [open]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -147,6 +156,7 @@ export const AppCombobox = ({
         type="button"
         disabled={disabled}
         role="combobox"
+        aria-label={ariaLabel}
         aria-expanded={open}
         onClick={() => {
           setOpen((o) => !o);
@@ -160,12 +170,12 @@ export const AppCombobox = ({
           className,
         )}
       >
-        <span className={cn("truncate", !selected && "text-muted-foreground")}>
+        <span className={cn("truncate", !selected && "text-muted")}>
           {selected?.label ?? placeholder}
         </span>
 
         <ChevronDown
-          className={cn("h-4 w-4 transition-transform", open && "rotate-180")}
+          className={cn("size-4 transition-transform", open && "rotate-180")}
         />
       </button>
 
@@ -174,7 +184,7 @@ export const AppCombobox = ({
           <div className="border-b border-accent/30 p-3">
             <input
               ref={inputRef}
-              className="w-full rounded-md bg-transparent text-sm outline-none"
+              className="w-full rounded-md bg-transparent text-xs md:text-sm outline-none"
               placeholder={searchPlaceholder}
               value={query}
               onChange={(e) => {
@@ -186,7 +196,7 @@ export const AppCombobox = ({
 
           <ul className="max-h-60 overflow-y-auto p-1">
             {filtered.length === 0 && (
-              <li className="px-3 py-6 text-center text-sm text-slate-400/60">
+              <li className="px-3 py-6 text-center text-xs md:text-sm text-slate-400/60">
                 {emptyMessage}
               </li>
             )}
@@ -197,10 +207,11 @@ export const AppCombobox = ({
               return (
                 <li
                   key={option.value}
+                  ref={active ? selectedOptionRef : undefined}
                   role="option"
                   aria-selected={active}
                   className={cn(
-                    "flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm transition-colors",
+                    "flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-xs md:text-sm transition-colors",
                     highlighted === index && "bg-accent/20",
                     active && "font-medium text-accent",
                     option.disabled && "pointer-events-none opacity-50",

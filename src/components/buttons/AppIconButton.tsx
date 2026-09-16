@@ -2,6 +2,7 @@ import { type ComponentPropsWithRef } from "react";
 import type { LucideIcon } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/libs/utils";
+import { AppTooltip } from "../indicators/AppTooltip";
 
 const appIconButtonVariants = cva(
   [
@@ -30,10 +31,10 @@ const appIconButtonVariants = cva(
         plain: "text-foreground/90 hover:text-foreground bg-transparent",
       },
       size: {
-        xs: "h-6 w-6 [&>svg]:h-3.5 [&>svg]:w-3.5",
-        sm: "h-8 w-8 [&>svg]:h-4 [&>svg]:w-4",
-        md: "h-10 w-10 [&>svg]:h-5 [&>svg]:w-5",
-        lg: "h-12 w-12 [&>svg]:h-6 [&>svg]:w-6",
+        xs: "h-6 w-6 [&>svg]:size-3.5",
+        sm: "h-8 w-8 [&>svg]:size-4",
+        md: "h-10 w-10 [&>svg]:size-5",
+        lg: "h-12 w-12 [&>svg]:size-6",
       },
       rounded: {
         false: "rounded-xl",
@@ -53,36 +54,50 @@ export interface AppIconButtonProps
     ComponentPropsWithRef<"button">,
     VariantProps<typeof appIconButtonVariants> {
   icon: LucideIcon;
+  iconClass?: string;
   label: string;
+  tooltip?: string;
+  enableTooltip?: boolean;
 }
 
 export const AppIconButton = ({
   icon: Icon,
+  iconClass,
   label,
   variant,
   size,
   rounded,
+  tooltip,
+  enableTooltip,
   className,
   type = "button",
   ref,
   ...props
 }: AppIconButtonProps) => {
   return (
-    <button
-      ref={ref}
-      type={type}
-      aria-label={label}
-      className={cn(
-        appIconButtonVariants({
-          variant,
-          size,
-          rounded,
-        }),
-        className,
-      )}
-      {...props}
+    <AppTooltip
+      disabled={!enableTooltip}
+      arrow
+      enterDelay={300}
+      placement="bottom"
+      title={tooltip ?? label}
     >
-      <Icon aria-hidden="true" />
-    </button>
+      <button
+        ref={ref}
+        type={type}
+        aria-label={label}
+        className={cn(
+          appIconButtonVariants({
+            variant,
+            size,
+            rounded,
+          }),
+          className,
+        )}
+        {...props}
+      >
+        <Icon className={cn(iconClass)} aria-hidden="true" />
+      </button>
+    </AppTooltip>
   );
 };

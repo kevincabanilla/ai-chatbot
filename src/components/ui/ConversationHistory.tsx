@@ -1,88 +1,12 @@
-import clsx from "clsx";
-import { Bot } from "lucide-react";
-import type { ChatRole } from "@shared/types";
-import { AppCard } from "../containers/AppCard";
 import type { MessageItem } from "@/interfaces";
 import { motion } from "motion/react";
-import {
-  staggerContainer,
-  staggerItemLeft,
-  staggerItemRight,
-} from "@/libs/animationVariants";
+import { staggerContainer, staggerItem } from "@/libs/animationVariants";
 import MarkdownContent from "./MarkdownContent";
 import { TypingDots } from "../common/TypingDots";
 import ParagraphSkeletonLoader from "../common/ParagraphSkeletonLoader";
-
-const ChatItem = ({
-  id,
-  messageRole,
-  failed,
-  showRetry,
-  children,
-  onRetry,
-}: {
-  id?: string;
-  messageRole: ChatRole;
-  failed?: boolean;
-  showRetry?: boolean | null;
-  children: React.ReactNode;
-  onRetry?: () => void;
-}) => {
-  const isFromUser = messageRole === "user";
-
-  return (
-    <motion.div
-      variants={isFromUser ? staggerItemRight : staggerItemLeft}
-      id={id}
-      className={clsx(
-        "w-full my-3 flex",
-        isFromUser ? "pl-6 flex-row-reverse" : "pr-6",
-      )}
-    >
-      {!isFromUser && (
-        <div className="hidden md:block pr-2.5">
-          <div
-            className={clsx(
-              "w-7 md:w-10.5",
-              "h-7 md:h-10.5",
-              "p-1 md:p-2",
-              "flex justify-center items-center",
-              "rounded-full border border-accent/60 ",
-            )}
-          >
-            <Bot className="full-size" />
-          </div>
-        </div>
-      )}
-
-      <div className="flex min-w-0 max-w-full gap-2">
-        <AppCard
-          className={clsx(
-            "min-w-0 max-w-full px-4 py-2",
-            "max-w-lg lg:max-w-xl xl:max-w-3xl rounded-2xl",
-            "whitespace-pre-wrap wrap-anywhere",
-            "transition-colors",
-            isFromUser ? "rounded-tr-none" : "rounded-tl-none",
-            !failed && !showRetry
-              ? isFromUser && "bg-accent/30"
-              : "bg-rose-500/20",
-          )}
-        >
-          {children}
-        </AppCard>
-      </div>
-
-      {showRetry && (
-        <button
-          className="mx-2 cursor-pointer text-sm italic text-rose-500/80  hover:text-rose-500"
-          onClick={onRetry}
-        >
-          Retry
-        </button>
-      )}
-    </motion.div>
-  );
-};
+import { isSameDay } from "date-fns";
+import { getDateLabel, getMessageDate } from "@/libs/utils";
+import { MessageBubble } from "./conversation/MessageBubble";
 
 export const ConversationHistory = ({
   currentConversationId,
@@ -111,37 +35,59 @@ export const ConversationHistory = ({
         const isFromUser = item.role === "user";
         const isLastMessage = i === messages.length - 1;
         const showLoaders = isLastMessage && currentConversationId == loadingId;
+        const date = getMessageDate(item);
+        const previousDate = i > 0 ? getMessageDate(messages[i - 1]) : null;
+        const showDateSeparator =
+          date && (!previousDate || !isSameDay(date, previousDate));
 
         return (
-          <ChatItem
-            key={item.messageId || item.timestamp}
-            id={item.messageId}
-            messageRole={item.role}
-            showRetry={isLastMessage && showRetry}
-            onRetry={onRetry}
+          <div
+            // eslint-disable-next-line @typescript-eslint/no-deprecated
+            key={item.messageId || item.dateCreated || item.timestamp} // to be removed
+            className="w-full"
           >
-            {isFromUser ? (
-              <p className="text-sm md:text-base">{item.content}</p>
-            ) : (
-              <>
-                {item.content && <MarkdownContent content={item.content} />}
-
-                {showLoaders &&
-                  (!item.content ? (
-                    <TypingDots />
-                  ) : (
-                    <ParagraphSkeletonLoader />
-                  ))}
-              </>
+            {showDateSeparator && (
+              <motion.div
+                className="my-4 flex items-center gap-3 text-xs text-muted"
+                variants={staggerItem}
+              >
+                <div className="h-px flex-1 border-t border-accent/25" />
+                <span>{getDateLabel(date)}</span>
+                <div className="h-px flex-1 border-t border-accent/25" />
+              </motion.div>
             )}
-          </ChatItem>
+
+            <MessageBubble
+              id={item.messageId}
+              messageRole={item.role}
+              showRetry={isLastMessage && showRetry}
+              onRetry={onRetry}
+              date={date}
+              content={item.content}
+            >
+              {isFromUser ? (
+                <p className="text-sm md:text-base">{item.content}</p>
+              ) : (
+                <>
+                  {item.content && <MarkdownContent content={item.content} />}
+
+                  {showLoaders &&
+                    (!item.content ? (
+                      <TypingDots />
+                    ) : (
+                      <ParagraphSkeletonLoader />
+                    ))}
+                </>
+              )}
+            </MessageBubble>
+          </div>
         );
       })}
 
       {showRetry && errorMessage && (
-        <ChatItem messageRole="system" failed>
+        <MessageBubble messageRole="system" failed>
           <span className="text-sm md:text-base">{errorMessage}</span>
-        </ChatItem>
+        </MessageBubble>
       )}
     </motion.div>
   );

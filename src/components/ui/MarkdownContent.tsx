@@ -3,10 +3,23 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Repeat, Split } from "lucide-react";
 import clsx from "clsx";
+import { AppIconButton } from "../buttons/AppIconButton";
+import { CopyButton } from "../buttons/CopyButton";
+import { copyToClipboard } from "@/libs/utils";
 
-export default function MarkdownContent({ content }: { content: string }) {
+interface MarkdownContentProps {
+  content: string;
+  onTryAgain?: () => void;
+  onBranchOut?: () => void;
+}
+
+export default function MarkdownContent({
+  content,
+  onTryAgain,
+  onBranchOut,
+}: MarkdownContentProps) {
   return (
     <div className="text-sm leading-5 md:text-base">
       <ReactMarkdown
@@ -111,6 +124,28 @@ export default function MarkdownContent({ content }: { content: string }) {
       >
         {content}
       </ReactMarkdown>
+
+      <div className="flex items-center gap-0.5 mt-3">
+        <CopyButton onCopyToClipboard={() => void copyToClipboard(content)} />
+        <AppIconButton
+          enableTooltip
+          size="sm"
+          variant="ghost"
+          label="Retry"
+          tooltip="Try again..."
+          icon={Repeat}
+          onClick={onTryAgain}
+        />
+        <AppIconButton
+          enableTooltip
+          className="rotate-90"
+          size="sm"
+          variant="ghost"
+          label="Branch in new chat"
+          icon={Split}
+          onClick={onBranchOut}
+        />
+      </div>
     </div>
   );
 }
@@ -119,15 +154,11 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
   const [copied, setCopied] = useState(false);
 
   const copyCode = async () => {
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopied(true);
-      setTimeout(() => {
-        setCopied(false);
-      }, 3000);
-    } catch (error) {
-      console.error("Failed to copy code:", error);
-    }
+    setCopied(true);
+    await copyToClipboard(code);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2500);
   };
 
   return (
