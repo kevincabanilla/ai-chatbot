@@ -219,6 +219,7 @@ export default function MainView() {
       currentConversation,
       currentConversationId,
       deleteMessage,
+      generateTitle,
       messages,
       moveConversationToTop,
       navigate,
