@@ -237,7 +237,7 @@ export default function MainView() {
     <main>
       <div
         className={clsx(
-          "relative min-h-screen px-3 flex flex-col items-center",
+          "relative min-h-[calc(100dvh-4rem)] lg:min-h-screen px-3 flex flex-col items-center",
           hasStarted ? "justify-start" : "justify-center",
         )}
       >
