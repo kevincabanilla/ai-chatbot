@@ -8,7 +8,7 @@ export const MobilepNav = ({ ...props }: NavProps) => {
     <AnimatePresence>
       {!props.isCollapsed && (
         <motion.div
-          className={cn("h-screen z-100 fixed inset-0")}
+          className={cn("h-dvh z-100 fixed inset-0")}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
