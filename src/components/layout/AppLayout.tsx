@@ -7,6 +7,7 @@ import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import { AppContext } from "@/contexts/AppContext";
 import { DeleteConversationDialog } from "../ui/DeleteConversationDialog";
 import { AboutDialog } from "../ui/AboutDialog";
+import clsx from "clsx";
 
 export default function AppLayout() {
   const isMobile = useMediaQuery(MEDIA_QUERIES.lg);
@@ -47,8 +48,9 @@ export default function AppLayout() {
         }}
       />
 
-      <div className="min-w-0 flex-1">
+      <div className={clsx("min-w-0 flex-1", isMobile && "pt-16")}>
         <TopToolbar
+          className="h-16"
           isVisible={isMobile}
           onOpenDrawer={(shouldOpen) => {
             setIsCollapsed(!shouldOpen);
