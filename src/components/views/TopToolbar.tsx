@@ -3,7 +3,6 @@ import { Menu, Trash2 } from "lucide-react";
 import clsx from "clsx";
 import { AppIconButton } from "../buttons/AppIconButton";
 import { useGetQueryParam, useStateManager } from "@/hooks";
-import type { Conversation } from "@/interfaces";
 
 export const TopToolbar = ({
   isVisible,
@@ -15,10 +14,8 @@ export const TopToolbar = ({
   onDeleteConversation: (cid: string) => void;
 }) => {
   const currentConversationId = useGetQueryParam("c");
-  const { state, isConverstationExists } = useStateManager();
-  const currentConversation: Conversation | null = !currentConversationId
-    ? null
-    : state.conversationsById[currentConversationId];
+  const { getConversation, isConverstationExists } = useStateManager();
+  const conversation = getConversation(currentConversationId);
 
   return (
     <AnimatePresence>
@@ -49,7 +46,7 @@ export const TopToolbar = ({
           />
 
           <h1 className="grow font-bold tracking-tight ml-3 truncate">
-            {currentConversation?.title ?? import.meta.env.VITE_APP_TITLE}
+            {conversation?.title ?? import.meta.env.VITE_APP_TITLE}
           </h1>
 
           <div className="grow" />

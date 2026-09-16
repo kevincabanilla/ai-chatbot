@@ -14,7 +14,7 @@ import {
   useTitleGenerator,
   useTypingAnimation,
 } from "@/hooks";
-import type { Conversation, MessageItem } from "@/interfaces";
+import type { MessageItem } from "@/interfaces";
 import { PromptTextArea } from "../ui/PromptTextArea";
 import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
@@ -30,6 +30,7 @@ export default function MainView() {
     appendMessage,
     updateMessage,
     deleteMessage,
+    getConversation,
     updateConversation,
   } = useStateManager();
 
@@ -44,9 +45,7 @@ export default function MainView() {
   const streamResponse = state.settings.streamResponse ?? false;
   const isLoading = streamResponse ? isStreaming : isChatLoading;
 
-  const currentConversation: Conversation | null = !currentConversationId
-    ? null
-    : state.conversationsById[currentConversationId];
+  const currentConversation = getConversation(currentConversationId);
 
   const messages = useMemo(
     () => currentConversation?.messages ?? [],
