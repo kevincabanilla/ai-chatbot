@@ -6,4 +6,5 @@ export * from "./useKeyboardOffset";
 export * from "./useMediaQuery";
 export * from "./useStateManager";
 export * from "./useStore";
+export * from "./useTitleGenerator";
 export * from "./useTypingAnimation";

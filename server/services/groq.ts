@@ -3,11 +3,17 @@ import {
   type GroqGetModelsResponse,
   type GroqChatCompletionResponse,
 } from "../types/groq.js";
-import type { ChatMessage, ChatRequest } from "../../shared/types/chat.js";
+import type {
+  ChatMessage,
+  ChatRequest,
+  GenerateTitleRequest,
+} from "../../shared/types/chat.js";
 import type { AiModel } from "../../shared/types/model.js";
 import { handleGroqError } from "../handlers/groq.js";
 import { type AISkill } from "../../shared/ai/skills.js";
 import aiSkills from "../data/skills.json" with { type: "json" };
+
+const TITLE_GENERATOR_MODEL = "openai/gpt-oss-20b";
 
 const {
   VITE_DEFAULT_AI_MODEL,
@@ -96,6 +102,39 @@ export async function getGroqModels(): Promise<AiModel[]> {
       }));
 
     return models;
+  } catch (err) {
+    handleGroqError(err);
+  }
+}
+
+export async function generateTitle(
+  request: GenerateTitleRequest,
+): Promise<string> {
+  const messages = [
+    {
+      role: "system",
+      content: JSON.stringify(aiSkills.TITLE_GENERATOR),
+    },
+    {
+      role: "user",
+      content: request.message,
+    },
+  ] as ChatMessage[];
+
+  const payload = {
+    model: TITLE_GENERATOR_MODEL,
+    temperature: Number(GROQ_CHAT_TEMPERATURE) || 1,
+    max_tokens: Number(GROQ_MAX_TOKENS) || 2048,
+    messages,
+  };
+
+  try {
+    const response = await groqClient.post<GroqChatCompletionResponse>(
+      "/chat/completions",
+      payload,
+    );
+
+    return response.data.choices[0].message.content;
   } catch (err) {
     handleGroqError(err);
   }

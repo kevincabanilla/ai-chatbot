@@ -44,7 +44,7 @@ export function useStateManager(): StateManager {
       if (!currentConversation) {
         const conversation: Conversation = {
           id: conversationId,
-          title: newMessage.content,
+          title: "New Conversation",
           messages: [newMessage],
           mode: state.settings.mode,
           model: state.settings.model,
