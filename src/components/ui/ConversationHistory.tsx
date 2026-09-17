@@ -8,6 +8,15 @@ import { isSameDay } from "date-fns";
 import { getDateLabel, getMessageDate } from "@/libs/utils";
 import { MessageBubble } from "./conversation/MessageBubble";
 
+export interface ConversationHistoryProps {
+  currentConversationId: string | null;
+  loadingId: string;
+  showRetry?: boolean | null;
+  errorMessage?: string | null;
+  messages: MessageItem[];
+  onRetry: () => void;
+}
+
 export const ConversationHistory = ({
   currentConversationId,
   loadingId,
@@ -15,14 +24,7 @@ export const ConversationHistory = ({
   errorMessage,
   messages,
   onRetry,
-}: {
-  currentConversationId: string | null;
-  loadingId: string;
-  showRetry?: boolean | null;
-  errorMessage?: string | null;
-  messages: MessageItem[];
-  onRetry: () => void;
-}) => {
+}: ConversationHistoryProps) => {
   return (
     <motion.div
       key={currentConversationId}
