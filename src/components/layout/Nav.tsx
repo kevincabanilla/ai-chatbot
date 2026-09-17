@@ -199,13 +199,15 @@ const NavActions = ({
           <span>New Chat</span>
         </AppNavLink>
 
-        <AppNavButton
-          collapsed={isCollapsed}
-          icon={Search}
-          onClick={onSearchClicked}
-        >
-          <span>Search Chat</span>
-        </AppNavButton>
+        {state.conversationOrder.length > 0 && (
+          <AppNavButton
+            collapsed={isCollapsed}
+            icon={Search}
+            onClick={onSearchClicked}
+          >
+            <span>Search Chat</span>
+          </AppNavButton>
+        )}
       </div>
 
       {!isCollapsed && state.conversationOrder.length > 0 && (
