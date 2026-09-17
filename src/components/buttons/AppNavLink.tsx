@@ -22,14 +22,18 @@ export const AppNavLink = ({
         "rounded-lg px-3 py-2",
         "text-sm transition-colors",
         "hover:bg-white/5 hover:text-accent",
+        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent",
         collapsed && !Icon && "hidden",
         className,
       )}
       {...props}
     >
-      {Icon && <Icon className="shrink-0 p-0.5" />}
+      {Icon && <Icon className="shrink-0 size-4" aria-hidden="true" />}
       <div
-        className={cn("flex w-full truncate", !collapsed ? "opacity-100" : "opacity-0")}
+        className={cn(
+          "flex w-full truncate",
+          !collapsed ? "opacity-100" : "opacity-0",
+        )}
       >
         {children}
       </div>
