@@ -219,7 +219,7 @@ const NavActions = ({
           <ul
             ref={recentConversationsRef}
             className={cn(
-              "space-y-2 min-h-0 flex-1 overflow-y-auto py-2 pl-3",
+              "app-scrollbar space-y-2 min-h-0 flex-1 overflow-y-auto py-2 pl-3",
               hasScrollbar ? "pr-1" : "pr-3",
             )}
           >

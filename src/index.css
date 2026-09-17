@@ -35,3 +35,29 @@
 @utility full-size {
   @apply h-full w-full;
 }
+
+.app-scrollbar {
+  scrollbar-color: var(--color-muted) transparent;
+  scrollbar-width: thin;
+}
+
+.app-scrollbar:hover {
+  scrollbar-color: var(--color-accent) transparent;
+}
+
+.app-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.app-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-muted);
+  border-radius: 9999px;
+}
+
+.app-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: var(--color-accent);
+}
