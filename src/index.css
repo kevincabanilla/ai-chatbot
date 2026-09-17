@@ -19,6 +19,7 @@
 
   --color-foreground: #e2e8f0;
   --color-muted: #737b87;
+  --color-muted-foreground: #b1b3b8;
 }
 
 :root {
@@ -42,7 +43,7 @@
 }
 
 .app-scrollbar:hover {
-  scrollbar-color: var(--color-accent) transparent;
+  scrollbar-color: var(--color-muted-foreground) transparent;
 }
 
 .app-scrollbar::-webkit-scrollbar {
@@ -59,5 +60,5 @@
 }
 
 .app-scrollbar:hover::-webkit-scrollbar-thumb {
-  background-color: var(--color-accent);
+  background-color: var(--color-muted-foreground);
 }
