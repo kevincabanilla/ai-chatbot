@@ -1,10 +1,12 @@
-import { AppCard } from "@/components/containers/AppCard";
-import { cn, copyToClipboard } from "@/libs/utils";
-import type { ChatRole } from "@shared/types";
-import { Bot } from "lucide-react";
+import { useState } from "react";
 import { motion } from "motion/react";
-import { UserMessageActions } from "./UserMessageActions";
+import { Bot } from "lucide-react";
+import type { ChatRole } from "@shared/types";
+import { cn, copyToClipboard } from "@/libs/utils";
 import { staggerItem } from "@/libs/animationVariants";
+import { AppCard } from "@/components/containers/AppCard";
+import { useMediaQuery } from "@/hooks";
+import { UserMessageActions } from "./UserMessageActions";
 
 export interface MessageBubbleProps {
   id?: string;
@@ -27,6 +29,8 @@ export const MessageBubble = ({
   date = null,
   onRetry,
 }: MessageBubbleProps) => {
+  const [isUserActionsVisible, setIsUserActionsVisible] = useState(false);
+  const isTouchDevice = useMediaQuery("(pointer: coarse)");
   const isFromUser = messageRole === "user";
 
   return (
@@ -49,7 +53,7 @@ export const MessageBubble = ({
               "rounded-full border border-accent/60 ",
             )}
           >
-            <Bot className="full-size" />
+            <Bot className="full-size" aria-hidden="true" />
           </div>
         </div>
       )}
@@ -57,7 +61,9 @@ export const MessageBubble = ({
       <motion.div
         className="flex flex-col gap-0.5 min-w-0 w-full max-w-full"
         initial="hide"
+        animate={isTouchDevice && isUserActionsVisible ? "hover" : "hide"}
         whileHover="hover"
+        whileTap={isTouchDevice ? "hover" : undefined}
       >
         <div className={cn("flex", isFromUser && "flex-row-reverse")}>
           <AppCard
@@ -71,6 +77,10 @@ export const MessageBubble = ({
                 ? isFromUser && "bg-accent/30"
                 : "bg-rose-500/20",
             )}
+            onPointerDown={(event) => {
+              if (event.pointerType === "touch")
+                setIsUserActionsVisible((visible) => !visible);
+            }}
           >
             {children}
           </AppCard>

@@ -19,6 +19,8 @@
 
   --color-foreground: #e2e8f0;
   --color-muted: #737b87;
+
+  --color-scrollbar: #4c525a;
 }
 
 :root {
@@ -34,4 +36,30 @@
 
 @utility full-size {
   @apply h-full w-full;
+}
+
+.app-scrollbar {
+  scrollbar-color: var(--color-scrollbar) transparent;
+  scrollbar-width: thin;
+}
+
+.app-scrollbar:hover {
+  scrollbar-color: var(--color-muted) transparent;
+}
+
+.app-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.app-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-muted);
+  border-radius: 9999px;
+}
+
+.app-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: var(--color-muted);
 }

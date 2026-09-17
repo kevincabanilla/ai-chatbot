@@ -14,7 +14,7 @@ import {
   useTitleGenerator,
   useTypingAnimation,
 } from "@/hooks";
-import type { Conversation, MessageItem } from "@/interfaces";
+import type { MessageItem } from "@/interfaces";
 import { PromptTextArea } from "../ui/PromptTextArea";
 import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
@@ -30,6 +30,7 @@ export default function MainView() {
     appendMessage,
     updateMessage,
     deleteMessage,
+    getConversation,
     updateConversation,
   } = useStateManager();
 
@@ -44,9 +45,7 @@ export default function MainView() {
   const streamResponse = state.settings.streamResponse ?? false;
   const isLoading = streamResponse ? isStreaming : isChatLoading;
 
-  const currentConversation: Conversation | null = !currentConversationId
-    ? null
-    : state.conversationsById[currentConversationId];
+  const currentConversation = getConversation(currentConversationId);
 
   const messages = useMemo(
     () => currentConversation?.messages ?? [],
@@ -57,27 +56,36 @@ export default function MainView() {
 
   const latestConversationId = useRef(currentConversationId);
 
-  useEffect(() => {
-    latestConversationId.current = currentConversationId;
-
-    if (currentConversationId && currentConversation?.hasUnread) {
-      // mark the current conversation as read
-      updateConversation(currentConversationId, (conv) => ({
-        ...conv,
-        hasUnread: false,
-      }));
-    }
-  }, [
-    currentConversation?.hasUnread,
-    currentConversationId,
-    updateConversation,
-  ]);
-
   const scrollToId = (id: string | number) => {
     requestAnimationFrame(() => {
       Helper.scrollToId(id);
     });
   };
+
+  useEffect(() => {
+    latestConversationId.current = currentConversationId;
+
+    if (currentConversation?.hasUnread || currentConversation?.hasError) {
+      if (currentConversation.hasUnread) {
+        // mark the current conversation as read
+        updateConversation(currentConversation.id, (conv) => ({
+          ...conv,
+          hasUnread: false,
+        }));
+      }
+
+      const lastMessageId =
+        currentConversation.messages.at(-1)?.messageId ?? "";
+      scrollToId(lastMessageId);
+    }
+  }, [
+    currentConversation?.id,
+    currentConversation?.hasError,
+    currentConversation?.hasUnread,
+    currentConversation?.messages,
+    currentConversationId,
+    updateConversation,
+  ]);
 
   const sendMessage = useCallback(
     async (message?: string) => {
@@ -220,6 +228,7 @@ export default function MainView() {
       currentConversation,
       currentConversationId,
       deleteMessage,
+      generateTitle,
       messages,
       moveConversationToTop,
       navigate,
@@ -237,7 +246,7 @@ export default function MainView() {
     <main>
       <div
         className={clsx(
-          "relative min-h-screen px-3 flex flex-col items-center",
+          "relative min-h-[calc(100dvh-4rem)] lg:min-h-screen px-3 flex flex-col items-center",
           hasStarted ? "justify-start" : "justify-center",
         )}
       >

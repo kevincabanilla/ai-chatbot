@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { motion, type Transition } from "motion/react";
 import {
@@ -111,11 +111,11 @@ const NavHeader = ({
             setIsCollapseBtnHovered(false);
           }}
         >
-          <HeaderIcon className="shrink-0 p-0.5" />
+          <HeaderIcon className="shrink-0 p-0.5" aria-hidden="true" />
         </button>
       ) : (
         <Link to={"/"} className={HeaderIconClassName}>
-          <Bot className="shrink-0 p-0.5" />
+          <Bot className="shrink-0 p-0.5" aria-hidden="true" />
         </Link>
       )}
 
@@ -162,6 +162,25 @@ const NavActions = ({
 }) => {
   const currentConversationId = useGetQueryParam("c");
   const { state } = useStateManager();
+  const recentConversationsRef = useRef<HTMLUListElement>(null);
+  const [hasScrollbar, setHasScrollbar] = useState(false);
+
+  useEffect(() => {
+    const list = recentConversationsRef.current;
+    if (!list) return;
+
+    const updateScrollbarState = () => {
+      setHasScrollbar(list.scrollHeight > list.clientHeight);
+    };
+
+    updateScrollbarState();
+    const resizeObserver = new ResizeObserver(updateScrollbarState);
+    resizeObserver.observe(list);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [state.conversationOrder.length, isCollapsed]);
 
   const onNavigate = () => {
     if (isMobile) onToggle();
@@ -169,31 +188,41 @@ const NavActions = ({
   };
 
   return (
-    <nav className="min-h-0 flex flex-col flex-1 p-3">
-      <AppNavLink
-        to={`/`}
-        collapsed={isCollapsed}
-        icon={Plus}
-        onClick={onNavigate}
-      >
-        <span>New Chat</span>
-      </AppNavLink>
+    <nav className="min-h-0 flex flex-col flex-1">
+      <div className="flex flex-col gap-2 px-3 pt-3">
+        <AppNavLink
+          to={`/`}
+          collapsed={isCollapsed}
+          icon={Plus}
+          onClick={onNavigate}
+        >
+          <span>New Chat</span>
+        </AppNavLink>
 
-      <AppNavButton
-        collapsed={isCollapsed}
-        icon={Search}
-        onClick={onSearchClicked}
-      >
-        <span>Search Chat</span>
-      </AppNavButton>
+        {state.conversationOrder.length > 0 && (
+          <AppNavButton
+            collapsed={isCollapsed}
+            icon={Search}
+            onClick={onSearchClicked}
+          >
+            <span>Search Chat</span>
+          </AppNavButton>
+        )}
+      </div>
 
       {!isCollapsed && state.conversationOrder.length > 0 && (
         <div className="flex flex-col flex-1 min-h-0 mt-1">
-          <div className="shrink-0 p-2">
+          <div className="shrink-0 px-5 py-2">
             <span className="text-xs font-medium">Recents</span>
           </div>
 
-          <ul className="space-y-2 min-h-0 flex-1 overflow-y-auto pr-1">
+          <ul
+            ref={recentConversationsRef}
+            className={cn(
+              "app-scrollbar space-y-2 min-h-0 flex-1 overflow-y-auto py-2 pl-3",
+              hasScrollbar ? "pr-1" : "pr-3",
+            )}
+          >
             {state.conversationOrder.map((cid) => {
               const isActive = cid === currentConversationId;
               const { title, hasUnread, hasError } =
@@ -218,66 +247,14 @@ const NavActions = ({
                         <HoverMarquee>{title}</HoverMarquee>
                       </div>
 
-                      <motion.button
-                        variants={{
-                          rest: {
-                            opacity: 0,
-                            scale: 0.8,
-                          },
-                          hover: {
-                            opacity: 1,
-                            scale: 1,
-                            transition: {
-                              delay: 0.15,
-                              duration: 0.15,
-                            },
-                          },
-                        }}
-                        className={cn(
-                          "shrink-0 size-5 rounded-sm cursor-pointer",
-                          "hidden group-hover:flex items-center justify-center",
-                          "bg-transparent hover:text-rose-500",
-                        )}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
+                      <DeleteButton
+                        onClick={() => {
                           onDeleteConversation(cid);
                         }}
-                        aria-label="Close conversation"
-                      >
-                        <XIcon />
-                      </motion.button>
+                      />
 
                       {(hasUnread ?? hasError) && (
-                        <motion.div
-                          variants={{
-                            rest: {
-                              opacity: 1,
-                              scale: 1,
-                            },
-                            hover: {
-                              opacity: 0,
-                              scale: 0.6,
-                              transition: {
-                                delay: 0.15,
-                                duration: 0.15,
-                              },
-                            },
-                          }}
-                          className="shrink-0 bg-transparent flex items-center justify-center group-hover:hidden"
-                          aria-label="Notification Badge"
-                        >
-                          <span
-                            className={cn(
-                              "inline-flex items-center justify-center rounded-full ",
-                              "size-5 px-1.5 py-0.5 text-xs font-medium ",
-                              hasUnread && "bg-accent text-blue-800",
-                              hasError && "bg-red-500 text-white",
-                            )}
-                          >
-                            {hasUnread ? 1 : "!"}
-                          </span>
-                        </motion.div>
+                        <AlertBadge hasUnread={hasUnread} hasError={hasError} />
                       )}
                     </AppNavLink>
                   </motion.div>
@@ -288,6 +265,80 @@ const NavActions = ({
         </div>
       )}
     </nav>
+  );
+};
+
+const DeleteButton = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <motion.button
+      variants={{
+        rest: {
+          opacity: 0,
+          scale: 0.8,
+        },
+        hover: {
+          opacity: 1,
+          scale: 1,
+          transition: {
+            delay: 0.15,
+            duration: 0.15,
+          },
+        },
+      }}
+      className={cn(
+        "shrink-0 size-5 rounded-sm cursor-pointer",
+        "hidden group-hover:flex items-center justify-center",
+        "bg-transparent hover:text-rose-500",
+      )}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick();
+      }}
+      aria-label="Close conversation"
+    >
+      <XIcon aria-hidden="true" />
+    </motion.button>
+  );
+};
+
+const AlertBadge = ({
+  hasUnread,
+  hasError,
+}: {
+  hasUnread?: boolean | null;
+  hasError?: boolean | null;
+}) => {
+  return (
+    <motion.div
+      variants={{
+        rest: {
+          opacity: 1,
+          scale: 1,
+        },
+        hover: {
+          opacity: 0,
+          scale: 0.6,
+          transition: {
+            delay: 0.15,
+            duration: 0.15,
+          },
+        },
+      }}
+      className="shrink-0 bg-transparent flex items-center justify-center group-hover:hidden"
+      aria-label="Notification Badge"
+    >
+      <span
+        className={cn(
+          "inline-flex items-center justify-center rounded-full ",
+          "size-5 px-1.5 py-0.5 text-xs font-medium ",
+          hasUnread && "bg-accent text-blue-800",
+          hasError && "bg-red-500 text-white",
+        )}
+      >
+        {hasUnread ? 1 : "!"}
+      </span>
+    </motion.div>
   );
 };
 
