@@ -56,27 +56,36 @@ export default function MainView() {
 
   const latestConversationId = useRef(currentConversationId);
 
-  useEffect(() => {
-    latestConversationId.current = currentConversationId;
-
-    if (currentConversationId && currentConversation?.hasUnread) {
-      // mark the current conversation as read
-      updateConversation(currentConversationId, (conv) => ({
-        ...conv,
-        hasUnread: false,
-      }));
-    }
-  }, [
-    currentConversation?.hasUnread,
-    currentConversationId,
-    updateConversation,
-  ]);
-
   const scrollToId = (id: string | number) => {
     requestAnimationFrame(() => {
       Helper.scrollToId(id);
     });
   };
+
+  useEffect(() => {
+    latestConversationId.current = currentConversationId;
+
+    if (currentConversation?.hasUnread || currentConversation?.hasError) {
+      if (currentConversation.hasUnread) {
+        // mark the current conversation as read
+        updateConversation(currentConversation.id, (conv) => ({
+          ...conv,
+          hasUnread: false,
+        }));
+      }
+
+      const lastMessageId =
+        currentConversation.messages.at(-1)?.messageId ?? "";
+      scrollToId(lastMessageId);
+    }
+  }, [
+    currentConversation?.id,
+    currentConversation?.hasError,
+    currentConversation?.hasUnread,
+    currentConversation?.messages,
+    currentConversationId,
+    updateConversation,
+  ]);
 
   const sendMessage = useCallback(
     async (message?: string) => {
