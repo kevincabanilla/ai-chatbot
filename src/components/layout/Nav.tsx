@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { motion, type Transition } from "motion/react";
 import {
@@ -162,6 +162,25 @@ const NavActions = ({
 }) => {
   const currentConversationId = useGetQueryParam("c");
   const { state } = useStateManager();
+  const recentConversationsRef = useRef<HTMLUListElement>(null);
+  const [hasScrollbar, setHasScrollbar] = useState(false);
+
+  useEffect(() => {
+    const list = recentConversationsRef.current;
+    if (!list) return;
+
+    const updateScrollbarState = () => {
+      setHasScrollbar(list.scrollHeight > list.clientHeight);
+    };
+
+    updateScrollbarState();
+    const resizeObserver = new ResizeObserver(updateScrollbarState);
+    resizeObserver.observe(list);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [state.conversationOrder.length, isCollapsed]);
 
   const onNavigate = () => {
     if (isMobile) onToggle();
@@ -169,31 +188,39 @@ const NavActions = ({
   };
 
   return (
-    <nav className="min-h-0 flex flex-col flex-1 p-3">
-      <AppNavLink
-        to={`/`}
-        collapsed={isCollapsed}
-        icon={Plus}
-        onClick={onNavigate}
-      >
-        <span>New Chat</span>
-      </AppNavLink>
+    <nav className="min-h-0 flex flex-col flex-1">
+      <div className="flex flex-col gap-2 px-3 pt-3">
+        <AppNavLink
+          to={`/`}
+          collapsed={isCollapsed}
+          icon={Plus}
+          onClick={onNavigate}
+        >
+          <span>New Chat</span>
+        </AppNavLink>
 
-      <AppNavButton
-        collapsed={isCollapsed}
-        icon={Search}
-        onClick={onSearchClicked}
-      >
-        <span>Search Chat</span>
-      </AppNavButton>
+        <AppNavButton
+          collapsed={isCollapsed}
+          icon={Search}
+          onClick={onSearchClicked}
+        >
+          <span>Search Chat</span>
+        </AppNavButton>
+      </div>
 
       {!isCollapsed && state.conversationOrder.length > 0 && (
         <div className="flex flex-col flex-1 min-h-0 mt-1">
-          <div className="shrink-0 p-2">
+          <div className="shrink-0 px-5 py-2">
             <span className="text-xs font-medium">Recents</span>
           </div>
 
-          <ul className="space-y-2 min-h-0 flex-1 overflow-y-auto pr-1">
+          <ul
+            ref={recentConversationsRef}
+            className={cn(
+              "space-y-2 min-h-0 flex-1 overflow-y-auto py-2 pl-3",
+              hasScrollbar ? "pr-1" : "pr-3",
+            )}
+          >
             {state.conversationOrder.map((cid) => {
               const isActive = cid === currentConversationId;
               const { title, hasUnread, hasError } =
