@@ -247,66 +247,14 @@ const NavActions = ({
                         <HoverMarquee>{title}</HoverMarquee>
                       </div>
 
-                      <motion.button
-                        variants={{
-                          rest: {
-                            opacity: 0,
-                            scale: 0.8,
-                          },
-                          hover: {
-                            opacity: 1,
-                            scale: 1,
-                            transition: {
-                              delay: 0.15,
-                              duration: 0.15,
-                            },
-                          },
-                        }}
-                        className={cn(
-                          "shrink-0 size-5 rounded-sm cursor-pointer",
-                          "hidden group-hover:flex items-center justify-center",
-                          "bg-transparent hover:text-rose-500",
-                        )}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
+                      <DeleteButton
+                        onClick={() => {
                           onDeleteConversation(cid);
                         }}
-                        aria-label="Close conversation"
-                      >
-                        <XIcon />
-                      </motion.button>
+                      />
 
                       {(hasUnread ?? hasError) && (
-                        <motion.div
-                          variants={{
-                            rest: {
-                              opacity: 1,
-                              scale: 1,
-                            },
-                            hover: {
-                              opacity: 0,
-                              scale: 0.6,
-                              transition: {
-                                delay: 0.15,
-                                duration: 0.15,
-                              },
-                            },
-                          }}
-                          className="shrink-0 bg-transparent flex items-center justify-center group-hover:hidden"
-                          aria-label="Notification Badge"
-                        >
-                          <span
-                            className={cn(
-                              "inline-flex items-center justify-center rounded-full ",
-                              "size-5 px-1.5 py-0.5 text-xs font-medium ",
-                              hasUnread && "bg-accent text-blue-800",
-                              hasError && "bg-red-500 text-white",
-                            )}
-                          >
-                            {hasUnread ? 1 : "!"}
-                          </span>
-                        </motion.div>
+                        <AlertBadge hasUnread={hasUnread} hasError={hasError} />
                       )}
                     </AppNavLink>
                   </motion.div>
@@ -317,6 +265,80 @@ const NavActions = ({
         </div>
       )}
     </nav>
+  );
+};
+
+const DeleteButton = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <motion.button
+      variants={{
+        rest: {
+          opacity: 0,
+          scale: 0.8,
+        },
+        hover: {
+          opacity: 1,
+          scale: 1,
+          transition: {
+            delay: 0.15,
+            duration: 0.15,
+          },
+        },
+      }}
+      className={cn(
+        "shrink-0 size-5 rounded-sm cursor-pointer",
+        "hidden group-hover:flex items-center justify-center",
+        "bg-transparent hover:text-rose-500",
+      )}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick();
+      }}
+      aria-label="Close conversation"
+    >
+      <XIcon />
+    </motion.button>
+  );
+};
+
+const AlertBadge = ({
+  hasUnread,
+  hasError,
+}: {
+  hasUnread?: boolean | null;
+  hasError?: boolean | null;
+}) => {
+  return (
+    <motion.div
+      variants={{
+        rest: {
+          opacity: 1,
+          scale: 1,
+        },
+        hover: {
+          opacity: 0,
+          scale: 0.6,
+          transition: {
+            delay: 0.15,
+            duration: 0.15,
+          },
+        },
+      }}
+      className="shrink-0 bg-transparent flex items-center justify-center group-hover:hidden"
+      aria-label="Notification Badge"
+    >
+      <span
+        className={cn(
+          "inline-flex items-center justify-center rounded-full ",
+          "size-5 px-1.5 py-0.5 text-xs font-medium ",
+          hasUnread && "bg-accent text-blue-800",
+          hasError && "bg-red-500 text-white",
+        )}
+      >
+        {hasUnread ? 1 : "!"}
+      </span>
+    </motion.div>
   );
 };
 
