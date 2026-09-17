@@ -111,11 +111,11 @@ const NavHeader = ({
             setIsCollapseBtnHovered(false);
           }}
         >
-          <HeaderIcon className="shrink-0 p-0.5" />
+          <HeaderIcon className="shrink-0 p-0.5" aria-hidden="true" />
         </button>
       ) : (
         <Link to={"/"} className={HeaderIconClassName}>
-          <Bot className="shrink-0 p-0.5" />
+          <Bot className="shrink-0 p-0.5" aria-hidden="true" />
         </Link>
       )}
 
@@ -297,7 +297,7 @@ const DeleteButton = ({ onClick }: { onClick: () => void }) => {
       }}
       aria-label="Close conversation"
     >
-      <XIcon />
+      <XIcon aria-hidden="true" />
     </motion.button>
   );
 };

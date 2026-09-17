@@ -81,7 +81,7 @@ export const AppScrollDownButton = () => {
             }}
             onClick={onScrollDown}
           >
-            <ChevronDown size={16} />
+            <ChevronDown size={16} aria-hidden="true" />
           </motion.button>
         )}
       </AnimatePresence>

@@ -49,7 +49,7 @@ export const MessageBubble = ({
               "rounded-full border border-accent/60 ",
             )}
           >
-            <Bot className="full-size" />
+            <Bot className="full-size" aria-hidden="true" />
           </div>
         </div>
       )}
