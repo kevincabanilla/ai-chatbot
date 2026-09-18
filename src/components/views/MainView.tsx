@@ -88,7 +88,7 @@ export default function MainView() {
   ]);
 
   const sendMessage = useCallback(
-    async (message?: string) => {
+    async (message?: string, latestConversationMessages?: MessageItem[]) => {
       setShowAlert(false);
 
       // save current to prevent misplacing of new messages.
@@ -105,7 +105,7 @@ export default function MainView() {
 
       setLoadingId(conversationId);
 
-      const newMessages = [...messages];
+      const newMessages = [...(latestConversationMessages ?? messages)];
 
       if (currentConversation?.hasError || currentConversation?.errorMessage) {
         // reset the conversation's hasError to false and errorMessage to null.
@@ -244,7 +244,7 @@ export default function MainView() {
 
   const regenerateResponse = useCallback(
     (messageId: string) => {
-      if (!currentConversation) return;
+      if (!messageId || !currentConversation) return;
 
       const msgIdx = currentConversation.messages.findIndex(
         (msg) => msg.messageId === messageId,
@@ -262,7 +262,7 @@ export default function MainView() {
         }));
 
         // trigger resending
-        void sendMessage();
+        void sendMessage(undefined, messages);
       }
     },
     [currentConversation, sendMessage, updateConversation],
