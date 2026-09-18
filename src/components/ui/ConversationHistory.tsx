@@ -15,6 +15,7 @@ export interface ConversationHistoryProps {
   errorMessage?: string | null;
   messages: MessageItem[];
   onRetry: () => void;
+  onTryAgain: (messageId: string) => void;
 }
 
 export const ConversationHistory = ({
@@ -24,6 +25,7 @@ export const ConversationHistory = ({
   errorMessage,
   messages,
   onRetry,
+  onTryAgain,
 }: ConversationHistoryProps) => {
   return (
     <motion.div
@@ -71,7 +73,14 @@ export const ConversationHistory = ({
                 <p className="text-sm md:text-base">{item.content}</p>
               ) : (
                 <>
-                  {item.content && <MarkdownContent content={item.content} />}
+                  {item.content && (
+                    <MarkdownContent
+                      content={item.content}
+                      onTryAgain={() => {
+                        onTryAgain(item.messageId);
+                      }}
+                    />
+                  )}
 
                   {showLoaders &&
                     (!item.content ? (
