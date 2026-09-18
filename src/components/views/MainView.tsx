@@ -242,6 +242,32 @@ export default function MainView() {
     ],
   );
 
+  const regenerateResponse = useCallback(
+    (messageId: string) => {
+      if (!currentConversation) return;
+
+      const msgIdx = currentConversation.messages.findIndex(
+        (msg) => msg.messageId === messageId,
+      );
+
+      if (msgIdx !== -1) {
+        const messages = [...currentConversation.messages];
+
+        // delete the messages from current conversation starting from specified messageId to the last.
+        messages.splice(msgIdx);
+
+        updateConversation(currentConversation.id, (prev) => ({
+          ...prev,
+          messages,
+        }));
+
+        // trigger resending
+        void sendMessage();
+      }
+    },
+    [currentConversation, sendMessage, updateConversation],
+  );
+
   return (
     <main>
       <div
@@ -261,6 +287,9 @@ export default function MainView() {
                 messages={messages}
                 onRetry={() => {
                   void sendMessage();
+                }}
+                onTryAgain={(messageId) => {
+                  regenerateResponse(messageId);
                 }}
               />
             </div>
