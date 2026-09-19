@@ -39,7 +39,11 @@ export const AppDropdownMenu = ({
   ariaLabel,
 }: AppDropdownMenuProps) => {
   const [open, setOpen] = useState(false);
-  const [placement, setPlacement] = useState<"bottom" | "top">("bottom");
+  const [position, setPosition] = useState({
+    placement: "bottom" as "bottom" | "top",
+    left: 0,
+    maxHeight: 0,
+  });
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -68,14 +72,44 @@ export const AppDropdownMenu = ({
   useLayoutEffect(() => {
     if (!open || !contentRef.current) return;
 
-    const triggerRect = containerRef.current?.getBoundingClientRect();
-    const contentRect = contentRef.current.getBoundingClientRect();
-    if (!triggerRect) return;
+    const updatePosition = () => {
+      const containerRect = containerRef.current?.getBoundingClientRect();
+      const contentRect = contentRef.current?.getBoundingClientRect();
+      if (!containerRect || !contentRect) return;
 
-    const gap = 8;
-    const hasRoomBelow =
-      triggerRect.bottom + gap + contentRect.height <= window.innerHeight;
-    setPlacement(hasRoomBelow ? "bottom" : "top");
+      const gap = 8;
+      const viewportPadding = 8;
+      const spaceBelow = window.innerHeight - containerRect.bottom - gap;
+      const spaceAbove = containerRect.top - gap;
+      const fitsBelow = contentRect.height <= spaceBelow;
+      const fitsAbove = contentRect.height <= spaceAbove;
+      const placement = fitsBelow || (!fitsAbove && spaceBelow >= spaceAbove)
+        ? "bottom"
+        : "top";
+      const availableHeight = placement === "bottom" ? spaceBelow : spaceAbove;
+      const desiredLeft = containerRect.right - contentRect.width;
+      const minLeft = viewportPadding;
+      const maxLeft = Math.max(
+        minLeft,
+        window.innerWidth - contentRect.width - viewportPadding,
+      );
+      const viewportLeft = Math.min(Math.max(desiredLeft, minLeft), maxLeft);
+
+      setPosition({
+        placement,
+        left: viewportLeft - containerRect.left,
+        maxHeight: Math.max(0, availableHeight),
+      });
+    };
+
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
   }, [open, children]);
 
   const triggerElement = typeof trigger === "function" ? trigger(open) : trigger;
@@ -98,13 +132,18 @@ export const AppDropdownMenu = ({
             ref={contentRef}
             role={role}
             aria-label={ariaLabel}
-            initial={{ opacity: 0, scale: 0.96, y: placement === "bottom" ? -4 : 4 }}
+            initial={{ opacity: 0, scale: 0.96, y: position.placement === "bottom" ? -4 : 4 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: placement === "bottom" ? -4 : 4 }}
+            exit={{ opacity: 0, scale: 0.96, y: position.placement === "bottom" ? -4 : 4 }}
             transition={{ duration: 0.14, ease: "easeOut" }}
+            style={{
+              left: position.left,
+              maxHeight: position.maxHeight || undefined,
+              maxWidth: "calc(100vw - 16px)",
+            }}
             className={cn(
-              "absolute right-0 z-50 min-w-56 origin-top-right rounded-lg border border-accent/20 bg-bg-secondary p-3 shadow-xl",
-              placement === "bottom"
+              "absolute z-50 min-w-56 max-w-[calc(100vw-16px)] overflow-y-auto rounded-lg border border-accent/20 bg-bg-secondary p-3 shadow-xl",
+              position.placement === "bottom"
                 ? "top-full mt-2"
                 : "bottom-full mb-2 origin-bottom-right",
               contentClassName,
