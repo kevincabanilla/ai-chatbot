@@ -301,7 +301,7 @@ export default function MainView() {
 
           <div
             className={clsx(
-              hasStarted && "sticky bottom-0 z-1 flex flex-col justify-center",
+              hasStarted && "sticky bottom-0 z-10 flex flex-col justify-center",
             )}
           >
             <AppScrollDownButton
@@ -334,7 +334,7 @@ export default function MainView() {
             </div>
           </div>
 
-          <div className="fixed inset-x-0 bottom-0 bg-bg-primary/90 backdrop-blur-xs h-14 flex justify-center align-bottom" />
+          <div className="fixed inset-x-0 bottom-0 z-5 bg-bg-primary/90 backdrop-blur-xs h-14 flex justify-center align-bottom" />
         </div>
       </div>
 
