@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ComponentProps } from "react";
+import { useState, type ComponentProps } from "react";
 import {
   AnimatePresence,
   motion,
@@ -10,6 +10,7 @@ import { AppIconButton } from "../buttons/AppIconButton";
 import { useGetQueryParam, useStateManager } from "@/hooks";
 import { cn } from "@/libs/utils";
 import { AppNavButton } from "../buttons/AppNavButton";
+import { AppDropdownMenu } from "../containers/AppDropdownMenu";
 
 export interface TopToolbarProps extends ComponentProps<typeof motion.header> {
   isVisible: boolean;
@@ -24,38 +25,11 @@ export const TopToolbar = ({
   onDeleteConversation,
 }: TopToolbarProps) => {
   const [hidden, setHidden] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const currentConversationId = useGetQueryParam("c");
   const { getConversation, isConverstationExists } = useStateManager();
 
   const conversation = getConversation(currentConversationId);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-
-    // close when clicked outside the menu
-    const handlePointerDown = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setMenuOpen(false);
-      }
-    };
-
-    window.addEventListener("mousedown", handlePointerDown);
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("mousedown", handlePointerDown);
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [menuOpen]);
 
   useMotionValueEvent(scrollY, "change", (current) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -67,7 +41,6 @@ export const TopToolbar = ({
     }
 
     setHidden(current > previous); // Scrolling down when true
-    if (hidden && menuOpen) setMenuOpen(false);
   });
 
   return (
@@ -107,52 +80,31 @@ export const TopToolbar = ({
 
           {currentConversationId &&
             isConverstationExists(currentConversationId) && (
-              <div ref={menuRef} className="relative">
-                <AppIconButton
-                  variant="plain"
-                  label="Conversation actions"
-                  className={cn(
-                    "transition-transform",
-                    menuOpen && "rotate-180",
-                  )}
-                  icon={ChevronDown}
-                  aria-haspopup="menu"
-                  aria-expanded={menuOpen}
+              <AppDropdownMenu
+                role="menu"
+                ariaLabel="Conversation actions"
+                closeOnContentClick
+                trigger={(open) => (
+                  <AppIconButton
+                    variant="plain"
+                    label="Conversation actions"
+                    className={cn("transition-transform", open && "rotate-180")}
+                    icon={ChevronDown}
+                  />
+                )}
+              >
+                <AppNavButton
+                  type="button"
+                  role="menuitem"
+                  icon={Trash2}
+                  className="text-rose-400 hover:bg-rose-500/10 hover:text-rose-200 focus-visible:ring-rose-400"
                   onClick={() => {
-                    setMenuOpen((open) => !open);
+                    onDeleteConversation(currentConversationId);
                   }}
-                />
-
-                <AnimatePresence>
-                  {menuOpen && (
-                    <motion.div
-                      role="menu"
-                      aria-label="Conversation actions"
-                      initial={{ opacity: 0, scale: 0.95, y: -4 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95, y: -4 }}
-                      transition={{ duration: 0.14, ease: "easeOut" }}
-                      className={cn(
-                        "absolute right-0 top-full z-50 mt-2 min-w-48 origin-top-right p-2",
-                        "rounded-lg border border-accent/20 bg-bg-secondary shadow-xl",
-                      )}
-                    >
-                      <AppNavButton
-                        type="button"
-                        role="menuitem"
-                        icon={Trash2}
-                        className="text-rose-400 hover:bg-rose-500/10 hover:text-rose-200 focus-visible:ring-rose-400"
-                        onClick={() => {
-                          setMenuOpen(false);
-                          onDeleteConversation(currentConversationId);
-                        }}
-                      >
-                        <span>Delete conversation</span>
-                      </AppNavButton>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                >
+                  <span>Delete conversation</span>
+                </AppNavButton>
+              </AppDropdownMenu>
             )}
         </motion.header>
       )}
