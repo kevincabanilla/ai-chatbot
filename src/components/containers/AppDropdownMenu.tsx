@@ -118,8 +118,8 @@ export const AppDropdownMenu = ({
       const requestedHorizontalPlacement = placement.includes("left")
         ? "left"
         : "right";
-      const leftPosition = containerRect.left;
-      const rightPosition = containerRect.right - contentRect.width;
+      const leftPosition = containerRect.right - contentRect.width;
+      const rightPosition = containerRect.left;
       const leftFits =
         leftPosition >= minLeft && leftPosition <= maxViewportLeft;
       const rightFits =
