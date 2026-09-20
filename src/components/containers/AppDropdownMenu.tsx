@@ -192,7 +192,7 @@ export const AppDropdownMenu = ({
               transformOrigin: `${position.horizontalPlacement} ${position.placement === "bottom" ? "top" : "bottom"}`,
             }}
             className={cn(
-              "absolute z-50 min-w-56 max-w-[calc(100vw-16px)] overflow-y-auto rounded-lg border border-accent/20 bg-bg-secondary p-3 shadow-xl",
+              "absolute z-5 min-w-56 max-w-[calc(100vw-16px)] overflow-y-auto rounded-lg border border-accent/20 bg-bg-secondary p-3 shadow-xl",
               position.placement === "bottom"
                 ? "top-full mt-2"
                 : "bottom-full mb-2 ",
