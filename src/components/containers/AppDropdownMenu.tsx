@@ -17,6 +17,12 @@ interface TriggerProps {
   onClick?: (event: React.MouseEvent) => void;
 }
 
+type DropdownPlacement =
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right";
+
 export interface AppDropdownMenuProps {
   trigger:
     | ReactElement<TriggerProps>
@@ -27,6 +33,7 @@ export interface AppDropdownMenuProps {
   closeOnContentClick?: boolean;
   role?: "menu" | "dialog";
   ariaLabel?: string;
+  placement?: DropdownPlacement;
 }
 
 export const AppDropdownMenu = ({
@@ -37,10 +44,12 @@ export const AppDropdownMenu = ({
   closeOnContentClick = false,
   role = "dialog",
   ariaLabel,
+  placement = "bottom-right",
 }: AppDropdownMenuProps) => {
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState({
     placement: "bottom" as "bottom" | "top",
+    horizontalPlacement: "right" as "left" | "right",
     left: 0,
     maxHeight: 0,
   });
@@ -83,20 +92,60 @@ export const AppDropdownMenu = ({
       const spaceAbove = containerRect.top - gap;
       const fitsBelow = contentRect.height <= spaceBelow;
       const fitsAbove = contentRect.height <= spaceAbove;
-      const placement = fitsBelow || (!fitsAbove && spaceBelow >= spaceAbove)
-        ? "bottom"
-        : "top";
-      const availableHeight = placement === "bottom" ? spaceBelow : spaceAbove;
-      const desiredLeft = containerRect.right - contentRect.width;
+      const requestedVerticalPlacement = placement.startsWith("top")
+        ? "top"
+        : "bottom";
+      const verticalPlacement =
+        requestedVerticalPlacement === "bottom"
+          ? fitsBelow
+            ? "bottom"
+            : fitsAbove
+              ? "top"
+              : spaceBelow >= spaceAbove
+                ? "bottom"
+                : "top"
+          : fitsAbove
+            ? "top"
+            : fitsBelow
+              ? "bottom"
+              : spaceAbove >= spaceBelow
+                ? "top"
+                : "bottom";
+      const availableHeight =
+        verticalPlacement === "bottom" ? spaceBelow : spaceAbove;
       const minLeft = viewportPadding;
-      const maxLeft = Math.max(
-        minLeft,
-        window.innerWidth - contentRect.width - viewportPadding,
+      const maxViewportLeft = window.innerWidth - contentRect.width - viewportPadding;
+      const requestedHorizontalPlacement = placement.includes("left")
+        ? "left"
+        : "right";
+      const leftPosition = containerRect.left;
+      const rightPosition = containerRect.right - contentRect.width;
+      const leftFits =
+        leftPosition >= minLeft && leftPosition <= maxViewportLeft;
+      const rightFits =
+        rightPosition >= minLeft && rightPosition <= maxViewportLeft;
+      const horizontalPlacement =
+        requestedHorizontalPlacement === "left"
+          ? leftFits
+            ? "left"
+            : rightFits
+              ? "right"
+              : "left"
+          : rightFits
+            ? "right"
+            : leftFits
+              ? "left"
+              : "right";
+      const desiredLeft =
+        horizontalPlacement === "left" ? leftPosition : rightPosition;
+      const viewportLeft = Math.min(
+        Math.max(desiredLeft, minLeft),
+        Math.max(minLeft, maxViewportLeft),
       );
-      const viewportLeft = Math.min(Math.max(desiredLeft, minLeft), maxLeft);
 
       setPosition({
-        placement,
+        placement: verticalPlacement,
+        horizontalPlacement,
         left: viewportLeft - containerRect.left,
         maxHeight: Math.max(0, availableHeight),
       });
@@ -110,7 +159,7 @@ export const AppDropdownMenu = ({
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition, true);
     };
-  }, [open, children]);
+  }, [open, children, placement]);
 
   const triggerElement = typeof trigger === "function" ? trigger(open) : trigger;
   if (!isValidElement(triggerElement)) return null;
@@ -140,12 +189,13 @@ export const AppDropdownMenu = ({
               left: position.left,
               maxHeight: position.maxHeight || undefined,
               maxWidth: "calc(100vw - 16px)",
+              transformOrigin: `${position.horizontalPlacement} ${position.placement === "bottom" ? "top" : "bottom"}`,
             }}
             className={cn(
               "absolute z-50 min-w-56 max-w-[calc(100vw-16px)] overflow-y-auto rounded-lg border border-accent/20 bg-bg-secondary p-3 shadow-xl",
               position.placement === "bottom"
                 ? "top-full mt-2"
-                : "bottom-full mb-2 origin-bottom-right",
+                : "bottom-full mb-2 ",
               contentClassName,
             )}
             onClick={() => {
