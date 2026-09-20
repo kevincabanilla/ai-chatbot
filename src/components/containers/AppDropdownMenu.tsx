@@ -34,6 +34,8 @@ export interface AppDropdownMenuProps {
   role?: "menu" | "dialog";
   ariaLabel?: string;
   placement?: DropdownPlacement;
+  horizontalOffset?: number;
+  verticalOffset?: number;
 }
 
 export const AppDropdownMenu = ({
@@ -45,6 +47,8 @@ export const AppDropdownMenu = ({
   role = "dialog",
   ariaLabel,
   placement = "bottom-right",
+  horizontalOffset = 0,
+  verticalOffset = 0,
 }: AppDropdownMenuProps) => {
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState({
@@ -114,7 +118,8 @@ export const AppDropdownMenu = ({
       const availableHeight =
         verticalPlacement === "bottom" ? spaceBelow : spaceAbove;
       const minLeft = viewportPadding;
-      const maxViewportLeft = window.innerWidth - contentRect.width - viewportPadding;
+      const maxViewportLeft =
+        window.innerWidth - contentRect.width - viewportPadding;
       const requestedHorizontalPlacement = placement.includes("left")
         ? "left"
         : "right";
@@ -161,7 +166,8 @@ export const AppDropdownMenu = ({
     };
   }, [open, children, placement]);
 
-  const triggerElement = typeof trigger === "function" ? trigger(open) : trigger;
+  const triggerElement =
+    typeof trigger === "function" ? trigger(open) : trigger;
   if (!isValidElement(triggerElement)) return null;
 
   return (
@@ -181,14 +187,23 @@ export const AppDropdownMenu = ({
             ref={contentRef}
             role={role}
             aria-label={ariaLabel}
-            initial={{ opacity: 0, scale: 0.96, y: position.placement === "bottom" ? -4 : 4 }}
+            initial={{
+              opacity: 0,
+              scale: 0.96,
+              y: position.placement === "bottom" ? -4 : 4,
+            }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: position.placement === "bottom" ? -4 : 4 }}
+            exit={{
+              opacity: 0,
+              scale: 0.96,
+              y: position.placement === "bottom" ? -4 : 4,
+            }}
             transition={{ duration: 0.14, ease: "easeOut" }}
             style={{
               left: position.left,
               maxHeight: position.maxHeight || undefined,
               maxWidth: "calc(100vw - 16px)",
+              translate: `${horizontalOffset}px ${-verticalOffset}px`,
               transformOrigin: `${position.horizontalPlacement} ${position.placement === "bottom" ? "top" : "bottom"}`,
             }}
             className={cn(
