@@ -87,15 +87,18 @@ export const AppDropdownMenu = ({
 
     const updatePosition = () => {
       const containerRect = containerRef.current?.getBoundingClientRect();
-      const contentRect = contentRef.current?.getBoundingClientRect();
-      if (!containerRect || !contentRect) return;
+      const contentElement = contentRef.current;
+      if (!containerRect || !contentElement) return;
+
+      const contentWidth = contentElement.offsetWidth;
+      const contentHeight = contentElement.offsetHeight;
 
       const gap = 8;
       const viewportPadding = 8;
       const spaceBelow = window.innerHeight - containerRect.bottom - gap;
       const spaceAbove = containerRect.top - gap;
-      const fitsBelow = contentRect.height <= spaceBelow;
-      const fitsAbove = contentRect.height <= spaceAbove;
+      const fitsBelow = contentHeight <= spaceBelow;
+      const fitsAbove = contentHeight <= spaceAbove;
       const requestedVerticalPlacement = placement.startsWith("top")
         ? "top"
         : "bottom";
@@ -119,11 +122,11 @@ export const AppDropdownMenu = ({
         verticalPlacement === "bottom" ? spaceBelow : spaceAbove;
       const minLeft = viewportPadding;
       const maxViewportLeft =
-        window.innerWidth - contentRect.width - viewportPadding;
+        window.innerWidth - contentWidth - viewportPadding;
       const requestedHorizontalPlacement = placement.includes("left")
         ? "left"
         : "right";
-      const leftPosition = containerRect.right - contentRect.width;
+      const leftPosition = containerRect.right - contentWidth;
       const rightPosition = containerRect.left;
       const leftFits =
         leftPosition >= minLeft && leftPosition <= maxViewportLeft;
