@@ -132,6 +132,7 @@ export default function MarkdownContent({
         {onTryAgain && (
           <AppDropdownMenu
             placement="bottom-right"
+            verticalOffset={-5}
             trigger={(open) => (
               <AppIconButton
                 enableTooltip={!open}
