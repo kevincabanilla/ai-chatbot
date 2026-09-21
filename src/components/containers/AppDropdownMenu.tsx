@@ -207,10 +207,11 @@ export const AppDropdownMenu = ({
               maxHeight: position.maxHeight || undefined,
               maxWidth: "calc(100vw - 16px)",
               translate: `${horizontalOffset}px ${-verticalOffset}px`,
-              transformOrigin: `${position.horizontalPlacement} ${position.placement === "bottom" ? "top" : "bottom"}`,
+              transformOrigin: `${position.horizontalPlacement === "left" ? "right" : "left"} ${position.placement === "bottom" ? "top" : "bottom"}`,
             }}
             className={cn(
-              "absolute z-5 min-w-56 max-w-[calc(100vw-16px)] overflow-y-auto rounded-lg border border-accent/20 bg-bg-secondary p-3 shadow-xl",
+              "absolute z-5 min-w-56 max-w-[calc(100vw-16px)] overflow-y-auto p-3",
+              "rounded-lg border border-accent/20 bg-bg-secondary shadow-xl",
               position.placement === "bottom"
                 ? "top-full mt-2"
                 : "bottom-full mb-2 ",
