@@ -61,17 +61,14 @@ export const AppDialog = ({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-1000 flex items-center justify-center p-6"
+          className="fixed inset-0 z-1000 flex items-center justify-center p-6 bg-black/50 backdrop-blur-md"
           initial={{ opacity: 0, pointerEvents: "auto" }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, pointerEvents: "none" }}
         >
-          {/* Backdrop */}
-          <motion.div
-            className="absolute inset-0 bg-black/50 backdrop-blur-md"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          {/* Click outside handler */}
+          <div
+            className="absolute inset-0"
             onClick={() => {
               if (closeOnOutside) onClose();
             }}
