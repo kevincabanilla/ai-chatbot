@@ -8,6 +8,7 @@ import {
   isThisWeek,
   isValid,
   isThisYear,
+  type Day,
 } from "date-fns";
 import type { MessageItem } from "@/interfaces";
 
@@ -30,8 +31,10 @@ export function getMessageDate(item: MessageItem) {
 }
 
 export function getDateLabel(date: string | number | Date) {
+  const weekStartsOn = ((new Date().getDay() + 1) % 7) as Day;
+
   if (isToday(date)) return "Today";
   if (isYesterday(date)) return "Yesterday";
-  if (isThisWeek(date, { weekStartsOn: 1 })) return format(date, "EEEE");
+  if (isThisWeek(date, { weekStartsOn })) return format(date, "EEEE");
   return format(date, isThisYear(date) ? "MMM d" : "MMM d, yyyy");
 }
