@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { MessageItem } from "@/interfaces";
 import { motion } from "motion/react";
 import { staggerContainer, staggerItem } from "@/libs/animationVariants";
@@ -27,6 +28,10 @@ export const ConversationHistory = ({
   onRetry,
   onTryAgain,
 }: ConversationHistoryProps) => {
+  const [activeUserActionsId, setActiveUserActionsId] = useState<string | null>(
+    null,
+  );
+
   return (
     <motion.div
       key={currentConversationId}
@@ -68,6 +73,15 @@ export const ConversationHistory = ({
               onRetry={onRetry}
               date={date}
               content={item.content}
+              isUserActionsVisible={activeUserActionsId === item.messageId}
+              onToggleUserActions={() => {
+                if (!item.messageId) return;
+                setActiveUserActionsId(
+                  activeUserActionsId === item.messageId
+                    ? null
+                    : item.messageId,
+                );
+              }}
             >
               {isFromUser ? (
                 <p className="text-sm md:text-base">{item.content}</p>

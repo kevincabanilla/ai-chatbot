@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "motion/react";
 import { Bot } from "lucide-react";
 import type { ChatRole } from "@shared/types";
@@ -17,6 +16,8 @@ export interface MessageBubbleProps {
   children: React.ReactNode;
   date?: Date | null;
   onRetry?: () => void;
+  isUserActionsVisible?: boolean;
+  onToggleUserActions?: () => void;
 }
 
 export const MessageBubble = ({
@@ -28,8 +29,9 @@ export const MessageBubble = ({
   children,
   date = null,
   onRetry,
+  isUserActionsVisible = false,
+  onToggleUserActions,
 }: MessageBubbleProps) => {
-  const [isUserActionsVisible, setIsUserActionsVisible] = useState(false);
   const isTouchDevice = useMediaQuery("(pointer: coarse)");
   const isFromUser = messageRole === "user";
 
@@ -78,8 +80,7 @@ export const MessageBubble = ({
                 : "bg-rose-500/20",
             )}
             onPointerDown={(event) => {
-              if (event.pointerType === "touch")
-                setIsUserActionsVisible((visible) => !visible);
+              if (event.pointerType === "touch") onToggleUserActions?.();
             }}
           >
             {children}
