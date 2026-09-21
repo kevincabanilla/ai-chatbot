@@ -62,9 +62,9 @@ export const AppDialog = ({
       {open && (
         <motion.div
           className="fixed inset-0 z-1000 flex items-center justify-center p-6"
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 0, pointerEvents: "auto" }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          exit={{ opacity: 0, pointerEvents: "none" }}
         >
           {/* Backdrop */}
           <motion.div
@@ -95,7 +95,6 @@ export const AppDialog = ({
               scale: 0.8,
             }}
             transition={{
-              delay: 0.3,
               type: "spring",
               stiffness: 200,
               damping: 20,
