@@ -131,7 +131,7 @@ export default function MarkdownContent({
         <CopyButton onCopyToClipboard={() => void copyToClipboard(content)} />
         {onTryAgain && (
           <AppDropdownMenu
-            contentClassName="bg-bg-secondary/80 backdrop-blur-md"
+            contentClassName="min-w-48 bg-bg-secondary/80 backdrop-blur-md"
             placement="bottom-right"
             verticalOffset={-5}
             trigger={(open) => (
@@ -148,7 +148,7 @@ export default function MarkdownContent({
             {(close) => (
               <div className="flex flex-col gap-3">
                 <p className="text-sm leading-5">
-                  Retry this response? All messages after it will be deleted.
+                  Retry this response? All messages after it will be permanently deleted.
                 </p>
                 <div className="flex justify-end gap-2">
                   <AppButton variant="ghost" size="xs" onClick={close}>
