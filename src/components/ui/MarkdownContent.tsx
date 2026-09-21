@@ -131,6 +131,7 @@ export default function MarkdownContent({
         <CopyButton onCopyToClipboard={() => void copyToClipboard(content)} />
         {onTryAgain && (
           <AppDropdownMenu
+            contentClassName="bg-bg-secondary/80 backdrop-blur-md"
             placement="bottom-right"
             verticalOffset={-5}
             trigger={(open) => (
