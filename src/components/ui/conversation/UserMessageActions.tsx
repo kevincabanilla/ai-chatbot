@@ -14,18 +14,23 @@ export const UserMessageActions = ({
 }: UserMessageActionsProps) => {
   return (
     <motion.div
-      className={cn("flex items-center justify-end")}
+      className={cn("flex items-center justify-end overflow-hidden")}
+      initial={false}
       variants={{
         hide: {
           opacity: 0,
           y: -5,
+          height: 0,
+          pointerEvents: "none",
         },
         hover: {
           opacity: 1,
           y: 0,
+          height: "auto",
+          pointerEvents: "auto",
           transition: {
             duration: 0.2,
-            delay: 0.5,
+            delay: 0.6,
             ease: "easeOut",
           },
         },
