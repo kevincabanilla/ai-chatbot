@@ -88,7 +88,7 @@ export default function MainView() {
   ]);
 
   const sendMessage = useCallback(
-    async (message?: string) => {
+    async (message?: string, latestConversationMessages?: MessageItem[]) => {
       setShowAlert(false);
 
       // save current to prevent misplacing of new messages.
@@ -105,7 +105,7 @@ export default function MainView() {
 
       setLoadingId(conversationId);
 
-      const newMessages = [...messages];
+      const newMessages = [...(latestConversationMessages ?? messages)];
 
       if (currentConversation?.hasError || currentConversation?.errorMessage) {
         // reset the conversation's hasError to false and errorMessage to null.
@@ -242,6 +242,32 @@ export default function MainView() {
     ],
   );
 
+  const regenerateResponse = useCallback(
+    (messageId: string) => {
+      if (!messageId || !currentConversation) return;
+
+      const msgIdx = currentConversation.messages.findIndex(
+        (msg) => msg.messageId === messageId,
+      );
+
+      if (msgIdx !== -1) {
+        const messages = [...currentConversation.messages];
+
+        // delete the messages from current conversation starting from specified messageId to the last.
+        messages.splice(msgIdx);
+
+        updateConversation(currentConversation.id, (prev) => ({
+          ...prev,
+          messages,
+        }));
+
+        // trigger resending
+        void sendMessage(undefined, messages);
+      }
+    },
+    [currentConversation, sendMessage, updateConversation],
+  );
+
   return (
     <main>
       <div
@@ -262,6 +288,9 @@ export default function MainView() {
                 onRetry={() => {
                   void sendMessage();
                 }}
+                onTryAgain={(messageId) => {
+                  regenerateResponse(messageId);
+                }}
               />
             </div>
           ) : (
@@ -272,7 +301,7 @@ export default function MainView() {
 
           <div
             className={clsx(
-              hasStarted && "sticky bottom-0 z-1 flex flex-col justify-center",
+              hasStarted && "sticky bottom-0 z-10 flex flex-col justify-center",
             )}
           >
             <AppScrollDownButton
@@ -305,7 +334,7 @@ export default function MainView() {
             </div>
           </div>
 
-          <div className="fixed inset-x-0 bottom-0 bg-bg-primary/90 backdrop-blur-xs h-14 flex justify-center align-bottom" />
+          <div className="fixed inset-x-0 bottom-0 z-5 bg-bg-primary/90 backdrop-blur-xs h-14 flex justify-center align-bottom" />
         </div>
       </div>
 

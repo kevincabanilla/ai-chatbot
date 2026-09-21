@@ -6,7 +6,9 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Check, Copy, Repeat, Split } from "lucide-react";
 import clsx from "clsx";
 import { AppIconButton } from "../buttons/AppIconButton";
+import AppButton from "../buttons/AppButton";
 import { CopyButton } from "../buttons/CopyButton";
+import { AppDropdownMenu } from "../containers/AppDropdownMenu";
 import { copyToClipboard } from "@/libs/utils";
 
 interface MarkdownContentProps {
@@ -127,15 +129,45 @@ export default function MarkdownContent({
 
       <div className="flex items-center gap-0.5 mt-3">
         <CopyButton onCopyToClipboard={() => void copyToClipboard(content)} />
-        <AppIconButton
-          enableTooltip
-          size="sm"
-          variant="ghost"
-          label="Retry"
-          tooltip="Try again..."
-          icon={Repeat}
-          onClick={onTryAgain}
-        />
+        {onTryAgain && (
+          <AppDropdownMenu
+            contentClassName="min-w-48 bg-bg-secondary/80 backdrop-blur-md"
+            placement="bottom-right"
+            verticalOffset={-5}
+            trigger={(open) => (
+              <AppIconButton
+                enableTooltip={!open}
+                size="sm"
+                variant="ghost"
+                label="Retry"
+                tooltip="Try again..."
+                icon={Repeat}
+              />
+            )}
+          >
+            {(close) => (
+              <div className="flex flex-col gap-3">
+                <p className="text-sm leading-5">
+                  Retry this response? All messages after it will be permanently deleted.
+                </p>
+                <div className="flex justify-end gap-2">
+                  <AppButton variant="ghost" size="xs" onClick={close}>
+                    Cancel
+                  </AppButton>
+                  <AppButton
+                    size="xs"
+                    onClick={() => {
+                      close();
+                      onTryAgain();
+                    }}
+                  >
+                    Try again
+                  </AppButton>
+                </div>
+              </div>
+            )}
+          </AppDropdownMenu>
+        )}
         <AppIconButton
           enableTooltip
           className="rotate-90"

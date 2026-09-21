@@ -171,9 +171,7 @@ export const AppTooltip = ({
     );
   }
 
-  return disabled ? (
-    <>{children}</>
-  ) : (
+  return (
     <div className="relative inline-flex">
       {cloneElement(children, {
         "aria-describedby": open ? tooltipId : undefined,
@@ -207,7 +205,7 @@ export const AppTooltip = ({
       })}
 
       <AnimatePresence>
-        {open && title != null && (
+        {!disabled && open && title != null && (
           <TooltipBubble
             id={tooltipId}
             placement={placement}
