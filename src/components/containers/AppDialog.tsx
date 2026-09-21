@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/libs/utils";
 
 const dialogVariants = cva(
-  "relative w-full rounded-2xl border border-white/10 bg-zinc-900 shadow-2xl",
+  "relative w-full rounded-2xl border border-white/10 bg-zinc-900 shadow-lg shadow-black/20",
   {
     variants: {
       size: {
