@@ -99,6 +99,7 @@ export const MessageBubble = ({
           <UserMessageActions
             date={date}
             onCopy={() => void copyToClipboard(content)}
+            isTouchDevice={isTouchDevice}
           />
         )}
       </motion.div>

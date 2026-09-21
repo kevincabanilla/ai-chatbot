@@ -5,11 +5,13 @@ import { CopyButton } from "@/components/buttons/CopyButton";
 
 export interface UserMessageActionsProps {
   date?: Date | null;
+  isTouchDevice?: boolean;
   onCopy: () => void;
 }
 
 export const UserMessageActions = ({
   date = null,
+  isTouchDevice = false,
   onCopy,
 }: UserMessageActionsProps) => {
   return (
@@ -30,7 +32,7 @@ export const UserMessageActions = ({
           pointerEvents: "auto",
           transition: {
             duration: 0.2,
-            delay: 0.6,
+            delay: isTouchDevice ? 0 : 0.6,
             ease: "easeOut",
           },
         },
