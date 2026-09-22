@@ -65,7 +65,6 @@ export const MessageBubble = ({
         initial="hide"
         animate={isTouchDevice && isUserActionsVisible ? "hover" : "hide"}
         whileHover="hover"
-        whileTap={isTouchDevice ? "hover" : undefined}
       >
         <div className={cn("flex", isFromUser && "flex-row-reverse")}>
           <AppCard
