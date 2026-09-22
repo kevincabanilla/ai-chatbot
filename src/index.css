@@ -39,6 +39,7 @@
 }
 
 .app-scrollbar {
+  overflow-anchor: none;
   scrollbar-color: var(--color-scrollbar) transparent;
   scrollbar-width: thin;
 }

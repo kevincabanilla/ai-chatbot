@@ -190,16 +190,15 @@ const NavActions = ({
   }, [state.conversationOrder.length, isCollapsed]);
 
   useEffect(() => {
-    // scroll to top when started a new conversation.
+    // Reset after the reordered list has been committed.
     recentConversationsRef.current?.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  }, [state.conversationOrder.length]);
+  }, [state.conversationOrder]);
 
   useEffect(() => {
-    // scroll to active conversation on load
-    // this should not fire when navigating or collapsing the Nav
+    // Scroll to the active conversation only when the page loads
     selectedItemRef.current?.scrollIntoView({ block: "center" });
   }, []);
 
