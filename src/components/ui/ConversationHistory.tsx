@@ -1,20 +1,20 @@
 import { useState } from "react";
-import type { MessageItem } from "@/interfaces";
 import { motion } from "motion/react";
+import { isSameDay } from "date-fns";
+import { Link } from "react-router";
+import type { Conversation, MessageItem } from "@/interfaces";
 import { staggerContainer } from "@/libs/animationVariants";
+import { getDateLabel, getMessageDate } from "@/libs/utils";
+import { QUERY_PARAM, useStore } from "@/hooks";
 import MarkdownContent from "./MarkdownContent";
 import { TypingDots } from "../common/TypingDots";
 import ParagraphSkeletonLoader from "../common/ParagraphSkeletonLoader";
-import { isSameDay } from "date-fns";
-import { getDateLabel, getMessageDate } from "@/libs/utils";
 import { MessageBubble } from "./conversation/MessageBubble";
 import { MessageSeparator } from "./conversation/MessageSeparator";
 
 export interface ConversationHistoryProps {
-  currentConversationId: string | null;
+  conversation: Conversation | null;
   loadingId: string;
-  showRetry?: boolean | null;
-  errorMessage?: string | null;
   messages: MessageItem[];
   onRetry: () => void;
   onTryAgain: (messageId: string) => void;
@@ -22,10 +22,8 @@ export interface ConversationHistoryProps {
 }
 
 export const ConversationHistory = ({
-  currentConversationId,
+  conversation,
   loadingId,
-  showRetry,
-  errorMessage,
   messages,
   onRetry,
   onTryAgain,
@@ -35,9 +33,12 @@ export const ConversationHistory = ({
     null,
   );
 
+  const { state } = useStore();
+  const { hasError: showRetry, errorMessage } = conversation ?? {};
+
   return (
     <motion.div
-      key={currentConversationId}
+      key={conversation?.id}
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
@@ -46,7 +47,7 @@ export const ConversationHistory = ({
       {messages.map((item, i) => {
         const isFromUser = item.role === "user";
         const isLastMessage = i === messages.length - 1;
-        const showLoaders = isLastMessage && currentConversationId == loadingId;
+        const showLoaders = isLastMessage && conversation?.id === loadingId;
         const date = getMessageDate(item);
         const previousDate = i > 0 ? getMessageDate(messages[i - 1]) : null;
         const showDateSeparator =
@@ -106,6 +107,26 @@ export const ConversationHistory = ({
                 </>
               )}
             </MessageBubble>
+
+            {item.messageId &&
+              item.messageId === conversation?.branchedOutFrom?.messageId && (
+                <MessageSeparator>
+                  <span className="flex gap-1">
+                    Branched from
+                    <Link
+                      className="font-medium underline"
+                      rel="noopener noreferrer"
+                      to={`/?${QUERY_PARAM.ChatId}=${conversation.branchedOutFrom.conversationId}`}
+                    >
+                      {
+                        state.conversationsById[
+                          conversation.branchedOutFrom.conversationId
+                        ].title
+                      }
+                    </Link>
+                  </span>
+                </MessageSeparator>
+              )}
           </div>
         );
       })}

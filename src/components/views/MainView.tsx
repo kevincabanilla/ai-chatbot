@@ -301,14 +301,10 @@ export default function MainView() {
           {hasStarted ? (
             <div className="grow">
               <ConversationHistory
-                currentConversationId={currentConversationId}
+                conversation={currentConversation}
                 loadingId={loadingId}
-                showRetry={currentConversation?.hasError}
-                errorMessage={currentConversation?.errorMessage}
                 messages={messages}
-                onRetry={() => {
-                  void sendMessage();
-                }}
+                onRetry={() => void sendMessage()}
                 onTryAgain={regenerateResponse}
                 onBranchOut={branchOutFromMessage}
               />
