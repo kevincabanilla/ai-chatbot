@@ -16,7 +16,7 @@ export const UserMessageActions = ({
 }: UserMessageActionsProps) => {
   return (
     <motion.div
-      className={cn("flex items-center justify-end overflow-hidden")}
+      className={cn("flex items-center justify-end")}
       initial={false}
       variants={{
         hide: {
