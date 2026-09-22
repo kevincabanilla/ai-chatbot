@@ -190,6 +190,14 @@ const NavActions = ({
   }, [state.conversationOrder.length, isCollapsed]);
 
   useEffect(() => {
+    // scroll to top when started a new conversation.
+    recentConversationsRef.current?.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [state.conversationOrder.length]);
+
+  useEffect(() => {
     // scroll to active conversation on load
     // this should not fire when navigating or collapsing the Nav
     selectedItemRef.current?.scrollIntoView({ block: "center" });
