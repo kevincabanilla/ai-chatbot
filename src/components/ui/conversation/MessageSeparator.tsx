@@ -11,12 +11,12 @@ export interface MessageSeparatorProps extends ComponentProps<
 export const MessageSeparator = ({ children }: MessageSeparatorProps) => {
   return (
     <motion.div
-      className="my-4 flex items-center gap-3 text-xs text-muted"
+      className="my-4 flex items-center gap-1.5 md:gap-3 text-xs text-muted"
       variants={staggerItem}
     >
-      <div className="h-px flex-1 border-t border-accent/25" />
+      <div className="h-px min-w-4 flex-1 border-t border-accent/25" />
       {children}
-      <div className="h-px flex-1 border-t border-accent/25" />
+      <div className="h-px min-w-4 flex-1 border-t border-accent/25" />
     </motion.div>
   );
 };
