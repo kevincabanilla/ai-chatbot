@@ -170,6 +170,7 @@ const NavActions = ({
   const { state } = useStateManager();
   const recentConversationsRef = useRef<HTMLUListElement>(null);
   const selectedItemRef = useRef<HTMLLIElement>(null);
+  const previousConversationOrderRef = useRef<string[] | null>(null);
   const [hasScrollbar, setHasScrollbar] = useState(false);
 
   useEffect(() => {
@@ -190,7 +191,12 @@ const NavActions = ({
   }, [state.conversationOrder.length, isCollapsed]);
 
   useEffect(() => {
-    // Reset after the reordered list has been committed.
+    const previousOrder = previousConversationOrderRef.current;
+    previousConversationOrderRef.current = state.conversationOrder;
+
+    if (state.conversationOrder.length < (previousOrder?.length ?? 0)) return;
+
+    // Reset after the list has been reordered or a conversation has been added.
     recentConversationsRef.current?.scrollTo({
       top: 0,
       behavior: "smooth",
