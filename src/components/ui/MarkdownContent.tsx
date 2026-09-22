@@ -132,7 +132,7 @@ export default function MarkdownContent({
         {onTryAgain && (
           <AppDropdownMenu
             contentClassName="min-w-48 bg-bg-secondary/80 backdrop-blur-md"
-            placement="bottom-right"
+            placement="top-right"
             verticalOffset={-5}
             trigger={(open) => (
               <AppIconButton
