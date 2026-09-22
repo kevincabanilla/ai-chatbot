@@ -42,7 +42,13 @@ export function Nav({
         // isCollapsed ? "w-18 min-w-18" : "w-64 min-w-64",
       )}
       initial={{ x: isMobile ? "-100%" : "0", width: isMobile ? 256 : 0 }}
-      animate={isMobile ? { x: 0 } : isCollapsed ? "collapsed" : "expanded"}
+      animate={
+        isMobile
+          ? { x: isCollapsed ? "-100%" : 0 }
+          : isCollapsed
+            ? "collapsed"
+            : "expanded"
+      }
       exit={{ x: "-100%" }} // Mobile only
       transition={SIDEBAR_TRANSITION}
       variants={sidebarVariants}
