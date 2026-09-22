@@ -21,7 +21,7 @@ export const CopyButton = ({ onCopyToClipboard }: CopyButtonProps) => {
   return (
     <AppIconButton
       enableTooltip
-      className={cn(!contentCopied && "rotate-90")}
+      className={cn(contentCopied ? "text-green-400" : "rotate-90")}
       size="sm"
       variant="ghost"
       label="Copy"
