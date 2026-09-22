@@ -1,13 +1,14 @@
 import { useState } from "react";
 import type { MessageItem } from "@/interfaces";
 import { motion } from "motion/react";
-import { staggerContainer, staggerItem } from "@/libs/animationVariants";
+import { staggerContainer } from "@/libs/animationVariants";
 import MarkdownContent from "./MarkdownContent";
 import { TypingDots } from "../common/TypingDots";
 import ParagraphSkeletonLoader from "../common/ParagraphSkeletonLoader";
 import { isSameDay } from "date-fns";
 import { getDateLabel, getMessageDate } from "@/libs/utils";
 import { MessageBubble } from "./conversation/MessageBubble";
+import { MessageSeparator } from "./conversation/MessageSeparator";
 
 export interface ConversationHistoryProps {
   currentConversationId: string | null;
@@ -58,14 +59,9 @@ export const ConversationHistory = ({
             className="w-full"
           >
             {showDateSeparator && (
-              <motion.div
-                className="my-4 flex items-center gap-3 text-xs text-muted"
-                variants={staggerItem}
-              >
-                <div className="h-px flex-1 border-t border-accent/25" />
+              <MessageSeparator>
                 <span>{getDateLabel(date)}</span>
-                <div className="h-px flex-1 border-t border-accent/25" />
-              </motion.div>
+              </MessageSeparator>
             )}
 
             <MessageBubble
