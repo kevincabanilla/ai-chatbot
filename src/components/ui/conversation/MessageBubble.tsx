@@ -79,7 +79,8 @@ export const MessageBubble = ({
                 : "bg-rose-500/20",
             )}
             onPointerDown={(event) => {
-              if (event.pointerType === "touch") onToggleUserActions?.();
+              if (event.pointerType === "touch" && isFromUser)
+                onToggleUserActions?.();
             }}
           >
             {children}
