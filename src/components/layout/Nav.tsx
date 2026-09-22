@@ -223,8 +223,17 @@ const NavActions = ({
         )}
       </div>
 
-      {!isCollapsed && state.conversationOrder.length > 0 && (
-        <div className="flex flex-col flex-1 min-h-0 mt-1">
+      {state.conversationOrder.length > 0 && (
+        <motion.div
+          className="flex flex-col flex-1 min-h-0 mt-1"
+          initial={{ opacity: 0, visibility: "hidden" }}
+          animate={
+            isCollapsed
+              ? { opacity: 0, visibility: "hidden" }
+              : { opacity: 1, visibility: "visible" }
+          }
+          transition={{ duration: 0.25 }}
+        >
           <div className="shrink-0 px-5 py-2">
             <span className="text-xs font-medium">Recents</span>
           </div>
@@ -275,7 +284,7 @@ const NavActions = ({
               );
             })}
           </ul>
-        </div>
+        </motion.div>
       )}
     </nav>
   );
