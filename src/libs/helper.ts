@@ -9,7 +9,10 @@ const getTextareaRows = (textarea: HTMLTextAreaElement) => {
   return Math.ceil(textarea.scrollHeight / lineHeight);
 };
 
-const scrollToId = (id: string | number) => {
+const scrollToId = (
+  id: string | number,
+  block: ScrollLogicalPosition = "start",
+) => {
   const el = document.getElementById(
     typeof id == "string" && id.startsWith("#") ? id.slice(1) : String(id),
   );
@@ -17,7 +20,7 @@ const scrollToId = (id: string | number) => {
 
   el.scrollIntoView({
     behavior: "smooth",
-    block: "start",
+    block,
   });
 };
 
