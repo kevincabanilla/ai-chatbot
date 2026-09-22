@@ -9,6 +9,7 @@ import {
   useAppContext,
   useChat,
   useChatStream,
+  useUpdateDocumentTitle,
   useGetQueryParam,
   useStateManager,
   useTitleGenerator,
@@ -19,6 +20,8 @@ import { PromptTextArea } from "../ui/PromptTextArea";
 import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
 import { AppScrollDownButton } from "../buttons/AppScrollDownButton";
+
+const APP_TITLE = import.meta.env.VITE_APP_TITLE;
 
 export default function MainView() {
   const navigate = useNavigate();
@@ -32,6 +35,7 @@ export default function MainView() {
     deleteMessage,
     getConversation,
     updateConversation,
+    branchOutToNewConversation,
   } = useStateManager();
 
   const [showAlert, setShowAlert] = useState(false);
@@ -61,6 +65,12 @@ export default function MainView() {
       Helper.scrollToId(id);
     });
   };
+
+  useUpdateDocumentTitle(
+    !currentConversation
+      ? APP_TITLE
+      : `${currentConversation.title} | ${APP_TITLE}`,
+  );
 
   useEffect(() => {
     latestConversationId.current = currentConversationId;
@@ -268,6 +278,26 @@ export default function MainView() {
     [currentConversation, sendMessage, updateConversation],
   );
 
+  const branchOutFromMessage = useCallback(
+    (messageId: string) => {
+      if (!messageId || !currentConversation) return;
+
+      const newConversationId = branchOutToNewConversation(
+        currentConversation.id,
+        messageId,
+      );
+
+      const branchOutUrl = `/?${QUERY_PARAM.ChatId}=${newConversationId}`;
+      const newWindow = window.open(
+        branchOutUrl,
+        "_blank",
+        "noopener,noreferrer",
+      );
+      newWindow?.focus();
+    },
+    [branchOutToNewConversation, currentConversation],
+  );
+
   return (
     <main>
       <div
@@ -280,17 +310,12 @@ export default function MainView() {
           {hasStarted ? (
             <div className="grow">
               <ConversationHistory
-                currentConversationId={currentConversationId}
+                conversation={currentConversation}
                 loadingId={loadingId}
-                showRetry={currentConversation?.hasError}
-                errorMessage={currentConversation?.errorMessage}
                 messages={messages}
-                onRetry={() => {
-                  void sendMessage();
-                }}
-                onTryAgain={(messageId) => {
-                  regenerateResponse(messageId);
-                }}
+                onRetry={() => void sendMessage()}
+                onTryAgain={regenerateResponse}
+                onBranchOut={branchOutFromMessage}
               />
             </div>
           ) : (

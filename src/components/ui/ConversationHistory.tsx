@@ -1,40 +1,54 @@
 import { useState } from "react";
-import type { MessageItem } from "@/interfaces";
 import { motion } from "motion/react";
-import { staggerContainer, staggerItem } from "@/libs/animationVariants";
+import { isSameDay } from "date-fns";
+import { Link } from "react-router";
+import type { Conversation, MessageItem } from "@/interfaces";
+import { staggerContainer } from "@/libs/animationVariants";
+import { Helper } from "@/libs/helper";
+import { getDateLabel, getMessageDate } from "@/libs/utils";
+import { QUERY_PARAM, useStore } from "@/hooks";
 import MarkdownContent from "./MarkdownContent";
 import { TypingDots } from "../common/TypingDots";
 import ParagraphSkeletonLoader from "../common/ParagraphSkeletonLoader";
-import { isSameDay } from "date-fns";
-import { getDateLabel, getMessageDate } from "@/libs/utils";
 import { MessageBubble } from "./conversation/MessageBubble";
+import { MessageSeparator } from "./conversation/MessageSeparator";
 
 export interface ConversationHistoryProps {
-  currentConversationId: string | null;
+  conversation: Conversation | null;
   loadingId: string;
-  showRetry?: boolean | null;
-  errorMessage?: string | null;
   messages: MessageItem[];
   onRetry: () => void;
   onTryAgain: (messageId: string) => void;
+  onBranchOut: (messageId: string) => void;
 }
 
 export const ConversationHistory = ({
-  currentConversationId,
+  conversation,
   loadingId,
-  showRetry,
-  errorMessage,
   messages,
   onRetry,
   onTryAgain,
+  onBranchOut,
 }: ConversationHistoryProps) => {
   const [activeUserActionsId, setActiveUserActionsId] = useState<string | null>(
     null,
   );
 
+  const { state } = useStore();
+
+  const {
+    branchedOutFrom,
+    hasError: showRetry,
+    errorMessage,
+  } = conversation ?? {};
+
+  const branchedFromConversation = !branchedOutFrom
+    ? undefined
+    : state.conversationsById[branchedOutFrom.conversationId];
+
   return (
     <motion.div
-      key={currentConversationId}
+      key={conversation?.id}
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
@@ -43,7 +57,7 @@ export const ConversationHistory = ({
       {messages.map((item, i) => {
         const isFromUser = item.role === "user";
         const isLastMessage = i === messages.length - 1;
-        const showLoaders = isLastMessage && currentConversationId == loadingId;
+        const showLoaders = isLastMessage && conversation?.id === loadingId;
         const date = getMessageDate(item);
         const previousDate = i > 0 ? getMessageDate(messages[i - 1]) : null;
         const showDateSeparator =
@@ -56,14 +70,9 @@ export const ConversationHistory = ({
             className="w-full"
           >
             {showDateSeparator && (
-              <motion.div
-                className="my-4 flex items-center gap-3 text-xs text-muted"
-                variants={staggerItem}
-              >
-                <div className="h-px flex-1 border-t border-accent/25" />
+              <MessageSeparator>
                 <span>{getDateLabel(date)}</span>
-                <div className="h-px flex-1 border-t border-accent/25" />
-              </motion.div>
+              </MessageSeparator>
             )}
 
             <MessageBubble
@@ -93,6 +102,9 @@ export const ConversationHistory = ({
                       onTryAgain={() => {
                         onTryAgain(item.messageId);
                       }}
+                      onBranchOut={() => {
+                        onBranchOut(item.messageId);
+                      }}
                     />
                   )}
 
@@ -105,6 +117,31 @@ export const ConversationHistory = ({
                 </>
               )}
             </MessageBubble>
+
+            {item.messageId &&
+              item.messageId === branchedOutFrom?.messageId && (
+                <MessageSeparator>
+                  <span className="truncate">
+                    Branched from&nbsp;
+                    {branchedFromConversation ? (
+                      <Link
+                        className="font-medium underline"
+                        to={`/?${QUERY_PARAM.ChatId}=${branchedOutFrom.conversationId}`}
+                        onClick={() => {
+                          Helper.scrollToId(
+                            branchedOutFrom.conversationId,
+                            "center",
+                          );
+                        }}
+                      >
+                        {branchedFromConversation.title}
+                      </Link>
+                    ) : (
+                      <span>a deleted conversation</span>
+                    )}
+                  </span>
+                </MessageSeparator>
+              )}
           </div>
         );
       })}

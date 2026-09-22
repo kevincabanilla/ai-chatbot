@@ -21,4 +21,8 @@ export interface Conversation {
   hasUnread?: boolean | null;
   hasError?: boolean | null;
   errorMessage?: string | null;
+  branchedOutFrom?: {
+    conversationId: string;
+    messageId: string;
+  };
 }

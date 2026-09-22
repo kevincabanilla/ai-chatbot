@@ -22,6 +22,10 @@ export interface StateManager extends StoreContextType {
   ) => void;
   deleteConversation: (id: string) => void;
   moveConversationToTop: (id: string) => void;
+  branchOutToNewConversation: (
+    conversationId: string,
+    messageId: string,
+  ) => string;
 }
 
 export function useStateManager(): StateManager {
@@ -211,6 +215,48 @@ export function useStateManager(): StateManager {
     }
   };
 
+  const branchOutToNewConversation = (
+    conversationId: string,
+    messageId: string,
+  ) => {
+    const newConversationId = crypto.randomUUID();
+
+    setState((prev) => {
+      const selectedConversation = state.conversationsById[conversationId];
+
+      const msgIdx = selectedConversation.messages.findIndex(
+        (msg) => msg.messageId === messageId,
+      );
+
+      const messages = msgIdx === -1 ? [] : [...selectedConversation.messages];
+
+      // remove the messages after the selected message id.
+      if (messages.length > msgIdx) messages.splice(msgIdx + 1);
+
+      const conversation: Conversation = {
+        ...selectedConversation,
+        id: newConversationId,
+        title: `Branch · ${selectedConversation.title}`,
+        messages,
+        branchedOutFrom: {
+          conversationId,
+          messageId,
+        },
+      };
+
+      return {
+        ...prev,
+        conversationsById: {
+          ...prev.conversationsById,
+          [conversation.id]: conversation,
+        },
+        conversationOrder: [conversation.id, ...prev.conversationOrder],
+      };
+    });
+
+    return newConversationId;
+  };
+
   return {
     state,
     setState,
@@ -223,5 +269,6 @@ export function useStateManager(): StateManager {
     updateConversation,
     deleteConversation,
     moveConversationToTop,
+    branchOutToNewConversation,
   };
 }

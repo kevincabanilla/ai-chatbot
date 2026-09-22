@@ -24,6 +24,18 @@ export const copyToClipboard = async (text: string) => {
   }
 };
 
+export const shareText = async (text: string, title?: string) => {
+  try {
+    await navigator.share({
+      text,
+      title,
+    });
+  } catch (error) {
+    // User may have cancelled the share sheet
+    console.log("Share cancelled", error);
+  }
+};
+
 export function getMessageDate(item: MessageItem) {
   // eslint-disable-next-line @typescript-eslint/no-deprecated
   const date = new Date(item.dateCreated || (item.timestamp ?? Date.now()));
