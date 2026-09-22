@@ -121,7 +121,7 @@ export const ConversationHistory = ({
             {item.messageId &&
               item.messageId === branchedOutFrom?.messageId && (
                 <MessageSeparator>
-                  <span className="">
+                  <span className="truncate">
                     Branched from&nbsp;
                     {branchedFromConversation ? (
                       <Link
