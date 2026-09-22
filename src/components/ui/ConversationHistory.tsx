@@ -118,29 +118,30 @@ export const ConversationHistory = ({
               )}
             </MessageBubble>
 
-            {item.messageId === branchedOutFrom?.messageId && (
-              <MessageSeparator>
-                <span className="">
-                  Branched from&nbsp;
-                  {branchedFromConversation ? (
-                    <Link
-                      className="font-medium underline"
-                      to={`/?${QUERY_PARAM.ChatId}=${branchedOutFrom.conversationId}`}
-                      onClick={() => {
-                        Helper.scrollToId(
-                          branchedOutFrom.conversationId,
-                          "center",
-                        );
-                      }}
-                    >
-                      {branchedFromConversation.title}
-                    </Link>
-                  ) : (
-                    <span>a deleted conversation</span>
-                  )}
-                </span>
-              </MessageSeparator>
-            )}
+            {item.messageId &&
+              item.messageId === branchedOutFrom?.messageId && (
+                <MessageSeparator>
+                  <span className="">
+                    Branched from&nbsp;
+                    {branchedFromConversation ? (
+                      <Link
+                        className="font-medium underline"
+                        to={`/?${QUERY_PARAM.ChatId}=${branchedOutFrom.conversationId}`}
+                        onClick={() => {
+                          Helper.scrollToId(
+                            branchedOutFrom.conversationId,
+                            "center",
+                          );
+                        }}
+                      >
+                        {branchedFromConversation.title}
+                      </Link>
+                    ) : (
+                      <span>a deleted conversation</span>
+                    )}
+                  </span>
+                </MessageSeparator>
+              )}
           </div>
         );
       })}
