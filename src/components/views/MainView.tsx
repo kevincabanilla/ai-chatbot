@@ -9,6 +9,7 @@ import {
   useAppContext,
   useChat,
   useChatStream,
+  useUpdateDocumentTitle,
   useGetQueryParam,
   useStateManager,
   useTitleGenerator,
@@ -19,6 +20,8 @@ import { PromptTextArea } from "../ui/PromptTextArea";
 import { ConversationHistory } from "../ui/ConversationHistory";
 import Toast from "../alerts/Toast";
 import { AppScrollDownButton } from "../buttons/AppScrollDownButton";
+
+const APP_TITLE = import.meta.env.VITE_APP_TITLE;
 
 export default function MainView() {
   const navigate = useNavigate();
@@ -62,6 +65,12 @@ export default function MainView() {
       Helper.scrollToId(id);
     });
   };
+
+  useUpdateDocumentTitle(
+    !currentConversation
+      ? APP_TITLE
+      : `${currentConversation.title} | ${APP_TITLE}`,
+  );
 
   useEffect(() => {
     latestConversationId.current = currentConversationId;
