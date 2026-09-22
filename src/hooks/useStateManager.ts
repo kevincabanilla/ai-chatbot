@@ -196,16 +196,19 @@ export function useStateManager(): StateManager {
   };
 
   const moveConversationToTop = (id: string) => {
-    setState((prev) => {
-      const newOrder = [
-        id,
-        ...prev.conversationOrder.filter((cid) => cid !== id),
-      ];
-      return {
-        ...prev,
-        conversationOrder: newOrder,
-      };
-    });
+    const { conversationOrder } = state;
+    if (conversationOrder.includes(id) && conversationOrder[0] !== id) {
+      setState((prev) => {
+        const newOrder = [
+          id,
+          ...prev.conversationOrder.filter((cid) => cid !== id),
+        ];
+        return {
+          ...prev,
+          conversationOrder: newOrder,
+        };
+      });
+    }
   };
 
   return {
