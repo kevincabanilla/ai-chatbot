@@ -34,7 +34,16 @@ export const ConversationHistory = ({
   );
 
   const { state } = useStore();
-  const { hasError: showRetry, errorMessage } = conversation ?? {};
+
+  const {
+    branchedOutFrom,
+    hasError: showRetry,
+    errorMessage,
+  } = conversation ?? {};
+
+  const branchedFromConversation = !branchedOutFrom
+    ? undefined
+    : state.conversationsById[branchedOutFrom.conversationId];
 
   return (
     <motion.div
@@ -108,25 +117,23 @@ export const ConversationHistory = ({
               )}
             </MessageBubble>
 
-            {item.messageId &&
-              item.messageId === conversation?.branchedOutFrom?.messageId && (
-                <MessageSeparator>
-                  <span className="flex gap-1">
-                    Branched from
+            {item.messageId === branchedOutFrom?.messageId && (
+              <MessageSeparator>
+                <span className="">
+                  Branched from&nbsp;
+                  {branchedFromConversation ? (
                     <Link
                       className="font-medium underline"
-                      rel="noopener noreferrer"
-                      to={`/?${QUERY_PARAM.ChatId}=${conversation.branchedOutFrom.conversationId}`}
+                      to={`/?${QUERY_PARAM.ChatId}=${branchedOutFrom.conversationId}`}
                     >
-                      {
-                        state.conversationsById[
-                          conversation.branchedOutFrom.conversationId
-                        ].title
-                      }
+                      {branchedFromConversation.title}
                     </Link>
-                  </span>
-                </MessageSeparator>
-              )}
+                  ) : (
+                    <span>a deleted conversation</span>
+                  )}
+                </span>
+              </MessageSeparator>
+            )}
           </div>
         );
       })}
