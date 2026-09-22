@@ -32,6 +32,7 @@ export default function MainView() {
     deleteMessage,
     getConversation,
     updateConversation,
+    branchOutToNewConversation,
   } = useStateManager();
 
   const [showAlert, setShowAlert] = useState(false);
@@ -268,6 +269,26 @@ export default function MainView() {
     [currentConversation, sendMessage, updateConversation],
   );
 
+  const branchOutFromMessage = useCallback(
+    (messageId: string) => {
+      if (!messageId || !currentConversation) return;
+
+      const newConversationId = branchOutToNewConversation(
+        currentConversation.id,
+        messageId,
+      );
+
+      const branchOutUrl = `/?${QUERY_PARAM.ChatId}=${newConversationId}`;
+      const newWindow = window.open(
+        branchOutUrl,
+        "_blank",
+        "noopener,noreferrer",
+      );
+      newWindow?.focus();
+    },
+    [branchOutToNewConversation, currentConversation],
+  );
+
   return (
     <main>
       <div
@@ -288,9 +309,8 @@ export default function MainView() {
                 onRetry={() => {
                   void sendMessage();
                 }}
-                onTryAgain={(messageId) => {
-                  regenerateResponse(messageId);
-                }}
+                onTryAgain={regenerateResponse}
+                onBranchOut={branchOutFromMessage}
               />
             </div>
           ) : (

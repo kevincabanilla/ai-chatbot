@@ -17,6 +17,7 @@ export interface ConversationHistoryProps {
   messages: MessageItem[];
   onRetry: () => void;
   onTryAgain: (messageId: string) => void;
+  onBranchOut: (messageId: string) => void;
 }
 
 export const ConversationHistory = ({
@@ -27,6 +28,7 @@ export const ConversationHistory = ({
   messages,
   onRetry,
   onTryAgain,
+  onBranchOut,
 }: ConversationHistoryProps) => {
   const [activeUserActionsId, setActiveUserActionsId] = useState<string | null>(
     null,
@@ -92,6 +94,9 @@ export const ConversationHistory = ({
                       content={item.content}
                       onTryAgain={() => {
                         onTryAgain(item.messageId);
+                      }}
+                      onBranchOut={() => {
+                        onBranchOut(item.messageId);
                       }}
                     />
                   )}
