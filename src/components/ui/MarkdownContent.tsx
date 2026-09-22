@@ -3,13 +3,13 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Check, Copy, Repeat, Split } from "lucide-react";
+import { Check, Copy, Repeat, Share, Split } from "lucide-react";
 import clsx from "clsx";
 import { AppIconButton } from "../buttons/AppIconButton";
 import AppButton from "../buttons/AppButton";
 import { CopyButton } from "../buttons/CopyButton";
 import { AppDropdownMenu } from "../containers/AppDropdownMenu";
-import { copyToClipboard } from "@/libs/utils";
+import { copyToClipboard, shareText } from "@/libs/utils";
 
 interface MarkdownContentProps {
   content: string;
@@ -129,6 +129,16 @@ export default function MarkdownContent({
 
       <div className="flex items-center gap-0.5 mt-3">
         <CopyButton onCopyToClipboard={() => void copyToClipboard(content)} />
+
+        <AppIconButton
+          enableTooltip
+          size="sm"
+          variant="ghost"
+          label="Share"
+          icon={Share}
+          onClick={() => void shareText(content)}
+        />
+
         {onTryAgain && (
           <AppDropdownMenu
             contentClassName="min-w-48 bg-bg-secondary/80 backdrop-blur-md"
@@ -148,7 +158,8 @@ export default function MarkdownContent({
             {(close) => (
               <div className="flex flex-col gap-3">
                 <p className="text-sm leading-5">
-                  Retry this response? All messages after it will be permanently deleted.
+                  Retry this response? All messages after it will be permanently
+                  deleted.
                 </p>
                 <div className="flex justify-end gap-2">
                   <AppButton variant="ghost" size="xs" onClick={close}>
@@ -168,6 +179,7 @@ export default function MarkdownContent({
             )}
           </AppDropdownMenu>
         )}
+
         <AppIconButton
           enableTooltip
           className="rotate-90"
