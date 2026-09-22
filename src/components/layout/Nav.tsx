@@ -264,7 +264,11 @@ const NavActions = ({
                 state.conversationsById[cid];
 
               return (
-                <li key={cid} ref={isActive ? selectedItemRef : undefined}>
+                <li
+                  key={cid}
+                  id={cid}
+                  ref={isActive ? selectedItemRef : undefined}
+                >
                   <motion.div
                     initial="rest"
                     whileHover="hover"

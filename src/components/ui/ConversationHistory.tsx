@@ -4,6 +4,7 @@ import { isSameDay } from "date-fns";
 import { Link } from "react-router";
 import type { Conversation, MessageItem } from "@/interfaces";
 import { staggerContainer } from "@/libs/animationVariants";
+import { Helper } from "@/libs/helper";
 import { getDateLabel, getMessageDate } from "@/libs/utils";
 import { QUERY_PARAM, useStore } from "@/hooks";
 import MarkdownContent from "./MarkdownContent";
@@ -125,6 +126,12 @@ export const ConversationHistory = ({
                     <Link
                       className="font-medium underline"
                       to={`/?${QUERY_PARAM.ChatId}=${branchedOutFrom.conversationId}`}
+                      onClick={() => {
+                        Helper.scrollToId(
+                          branchedOutFrom.conversationId,
+                          "center",
+                        );
+                      }}
                     >
                       {branchedFromConversation.title}
                     </Link>
