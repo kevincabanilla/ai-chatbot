@@ -163,6 +163,7 @@ const NavActions = ({
   const currentConversationId = useGetQueryParam("c");
   const { state } = useStateManager();
   const recentConversationsRef = useRef<HTMLUListElement>(null);
+  const selectedItemRef = useRef<HTMLLIElement>(null);
   const [hasScrollbar, setHasScrollbar] = useState(false);
 
   useEffect(() => {
@@ -181,6 +182,12 @@ const NavActions = ({
       resizeObserver.disconnect();
     };
   }, [state.conversationOrder.length, isCollapsed]);
+
+  useEffect(() => {
+    // scroll to active conversation on load
+    // this should not fire when navigating or collapsing the Nav
+    selectedItemRef.current?.scrollIntoView({ block: "center" });
+  }, []);
 
   const onNavigate = () => {
     if (isMobile) onToggle();
@@ -229,7 +236,7 @@ const NavActions = ({
                 state.conversationsById[cid];
 
               return (
-                <li key={cid}>
+                <li key={cid} ref={isActive ? selectedItemRef : undefined}>
                   <motion.div
                     initial="rest"
                     whileHover="hover"
