@@ -17,7 +17,9 @@ import type { AiModel } from "@shared/types";
 import { useGetAiModelsApi } from "@/api/modelApi";
 import { useStore } from "@/hooks";
 import { cn } from "@/libs/utils";
+import GitHubIcon from "@/assets/icons/GitHub.svg";
 import AppButton from "../buttons/AppButton";
+import { GITHUB_URL } from "../ui/AboutDialog";
 
 const MODE_DETAILS: Record<
   AISkill,
@@ -112,9 +114,22 @@ export default function SetupView() {
               {import.meta.env.VITE_APP_TITLE || "AI Chatbot"}
             </h1>
           </div>
-          <span className="text-xs uppercase tracking-[0.18em] text-white/40">
-            First-time setup
-          </span>
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "inline-flex items-center justify-center",
+              "rounded-full bg-transparent p-2",
+            )}
+          >
+            <img
+              src={GitHubIcon}
+              alt="Github"
+              aria-hidden="true"
+              className="size-6"
+            />
+          </a>
         </motion.header>
 
         <div className="grid flex-1 items-start gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16">
