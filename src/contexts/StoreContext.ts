@@ -6,7 +6,6 @@ const STORAGE_KEY = "app-store";
 export interface Store {
   conversationsById: Record<string, Conversation>;
   conversationOrder: string[];
-  // currentConversationId: string | null; // removed, this will now come from the url query.
   settings: AppSettings;
 }
 
