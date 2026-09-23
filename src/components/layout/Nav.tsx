@@ -175,6 +175,7 @@ const NavActions = ({
   const recentConversationsRef = useRef<HTMLUListElement>(null);
   const selectedItemRef = useRef<HTMLLIElement>(null);
   const previousConversationOrderRef = useRef<string[] | null>(null);
+  const isFirstRender = useRef(true);
   const [hasScrollbar, setHasScrollbar] = useState(false);
 
   useEffect(() => {
@@ -195,6 +196,11 @@ const NavActions = ({
   }, [state.conversationOrder.length, isCollapsed]);
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     const previousOrder = previousConversationOrderRef.current;
     previousConversationOrderRef.current = state.conversationOrder;
 
