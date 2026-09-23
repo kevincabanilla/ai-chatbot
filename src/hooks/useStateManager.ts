@@ -188,7 +188,6 @@ export function useStateManager(): StateManager {
 
   const deleteConversation = (id: string) => {
     setState((prev) => {
-      // const { [id]: _, ...conversationsById } = prev.conversationsById;
       return {
         ...prev,
         conversationOrder: prev.conversationOrder.filter((cid) => cid != id),

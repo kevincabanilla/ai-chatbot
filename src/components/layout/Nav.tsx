@@ -39,7 +39,6 @@ export function Nav({
       className={cn(
         "h-full max-h-full flex flex-col overflow-hidden bg-bg-primary border-r border-accent/20",
         isMobile ? "absolute inset-y-0 left-0" : "sticky top-0",
-        // isCollapsed ? "w-18 min-w-18" : "w-64 min-w-64",
       )}
       initial={{ x: isMobile ? "-100%" : "0", width: isMobile ? 256 : 0 }}
       animate={

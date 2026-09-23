@@ -43,10 +43,7 @@ export const UserMessageActions = ({
       {date && (
         <time
           dateTime={date.toISOString()}
-          className={cn(
-            // "invisible group-hover:visible",
-            "px-1 text-xs text-muted",
-          )}
+          className={cn("px-1 text-xs text-muted")}
         >
           {format(date, "p")}
         </time>
