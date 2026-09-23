@@ -120,7 +120,11 @@ const NavHeader = ({
           <HeaderIcon className="shrink-0 p-0.5" aria-hidden="true" />
         </button>
       ) : (
-        <Link to={"/"} className={HeaderIconClassName}>
+        <Link
+          className={HeaderIconClassName}
+          to={"/"}
+          onClick={isMobile ? onToggle : undefined}
+        >
           <Bot className="shrink-0 p-0.5" aria-hidden="true" />
         </Link>
       )}
