@@ -241,7 +241,7 @@ const TooltipBubble = ({
   className,
   children,
 }: TooltipBubbleProps) => {
-  const COMMON_CLASS = "absolute z-2000 bg-bg-secondary border-white/10";
+  const COMMON_CLASS = "absolute bg-bg-secondary border-white/10";
   const motionState = motionVariants[placement];
 
   return (
