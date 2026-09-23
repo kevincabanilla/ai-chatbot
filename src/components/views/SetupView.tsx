@@ -399,6 +399,12 @@ export default function SetupView() {
             </div>
           </motion.section>
         </div>
+
+        <footer className="pb-4 pt-8 lg:pt-12 text-center text-xs text-white/35">
+          &copy; {new Date().getFullYear()} &middot;
+          {` ${import.meta.env.VITE_APP_TITLE} `}
+          &middot; v{import.meta.env.VITE_APP_VERSION}
+        </footer>
       </div>
     </main>
   );
