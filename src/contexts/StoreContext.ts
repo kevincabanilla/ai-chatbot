@@ -1,12 +1,12 @@
 import { createContext } from "react";
-import type { AppSettings, Conversation } from "@/interfaces";
+import type { ApplicationSettings, Conversation } from "@/interfaces";
 
 const STORAGE_KEY = "app-store";
 
 export interface Store {
   conversationsById: Record<string, Conversation>;
   conversationOrder: string[];
-  settings: AppSettings;
+  settings: ApplicationSettings;
 }
 
 const defaultState: Store = {
