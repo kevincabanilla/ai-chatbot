@@ -120,6 +120,8 @@ interface TooltipChildProps {
   onMouseEnter?: (event: MouseEvent) => void;
   onMouseLeave?: (event: MouseEvent) => void;
   onTouchStart?: (event: TouchEvent) => void;
+  onTouchEnd?: (event: TouchEvent) => void;
+  onTouchCancel?: (event: TouchEvent) => void;
 }
 
 export const AppTooltip = ({
@@ -197,10 +199,15 @@ export const AppTooltip = ({
         },
         onTouchStart: (event: TouchEvent) => {
           children.props.onTouchStart?.(event);
-          if (!disableTouchListener) {
-            if (open) hideTooltip();
-            else showTooltip();
-          }
+          if (!disableTouchListener) showTooltip();
+        },
+        onTouchEnd: (event: TouchEvent) => {
+          children.props.onTouchEnd?.(event);
+          if (!disableTouchListener) hideTooltip();
+        },
+        onTouchCancel: (event: TouchEvent) => {
+          children.props.onTouchCancel?.(event);
+          if (!disableTouchListener) hideTooltip();
         },
       })}
 
