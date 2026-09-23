@@ -4,13 +4,13 @@ import type { ChatRole } from "@shared/types";
 import { cn, copyToClipboard } from "@/libs/utils";
 import { staggerItem } from "@/libs/animationVariants";
 import { AppCard } from "@/components/containers/AppCard";
-import { useMediaQuery } from "@/hooks";
 import { UserMessageActions } from "./UserMessageActions";
 
 export interface MessageBubbleProps {
   id?: string;
   messageRole: ChatRole;
   content?: string;
+  isTouchDevice?: boolean;
   failed?: boolean;
   showRetry?: boolean | null;
   children: React.ReactNode;
@@ -24,6 +24,7 @@ export const MessageBubble = ({
   id,
   messageRole,
   content = "",
+  isTouchDevice = false,
   failed,
   showRetry,
   children,
@@ -32,7 +33,6 @@ export const MessageBubble = ({
   isUserActionsVisible = false,
   onToggleUserActions,
 }: MessageBubbleProps) => {
-  const isTouchDevice = useMediaQuery("(pointer: coarse)");
   const isFromUser = messageRole === "user";
 
   return (
