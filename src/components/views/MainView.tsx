@@ -287,15 +287,12 @@ export default function MainView() {
         messageId,
       );
 
-      const branchOutUrl = `/?${QUERY_PARAM.ChatId}=${newConversationId}`;
-      const newWindow = window.open(
-        branchOutUrl,
-        "_blank",
-        "noopener,noreferrer",
-      );
-      newWindow?.focus();
+      void navigate({
+        pathname: "/",
+        search: `?${QUERY_PARAM.ChatId}=${newConversationId}`,
+      });
     },
-    [branchOutToNewConversation, currentConversation],
+    [branchOutToNewConversation, currentConversation, navigate],
   );
 
   return (
