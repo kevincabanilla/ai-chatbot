@@ -76,6 +76,7 @@ export const AppIconButton = ({
 }: AppIconButtonProps) => {
   return (
     <AppTooltip
+      className="z-11"
       disabled={!enableTooltip}
       arrow
       enterDelay={300}
