@@ -242,6 +242,8 @@ export function useStateManager(): StateManager {
           conversationId,
           messageId,
         },
+        hasError: false,
+        errorMessage: null,
       };
 
       return {
