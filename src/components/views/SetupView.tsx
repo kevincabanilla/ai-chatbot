@@ -228,7 +228,7 @@ export default function SetupView() {
                     Select a row, or keep the current default.
                   </p>
                 </div>
-                <span className="text-xs tabular-nums text-white/35">
+                <span className="text-xs tabular-nums text-white/35 text-nowrap">
                   {models.length} available
                 </span>
               </div>
@@ -262,7 +262,10 @@ export default function SetupView() {
                       <th scope="col" className="px-2 py-3 font-medium">
                         Model name
                       </th>
-                      <th scope="col" className="px-2 md:px-4 py-3 font-medium">
+                      <th
+                        scope="col"
+                        className="hidden sm:table-cell px-2 md:px-4 py-3 font-medium"
+                      >
                         Owner
                       </th>
                     </tr>
@@ -324,7 +327,7 @@ export default function SetupView() {
                             <td className="max-w-0 truncate px-2 py-3 font-medium text-white/85">
                               {model.id}
                             </td>
-                            <td className="max-w-0 truncate px-2 md:px-4 py-3 text-white/45">
+                            <td className="hidden sm:table-cell max-w-0 truncate px-2 md:px-4 py-3 text-white/45">
                               {model.ownedBy}
                             </td>
                           </tr>
