@@ -99,7 +99,7 @@ export default function SetupView() {
       {/* grid-pattern background */}
       <div className="pointer-events-none absolute inset-0 opacity-20 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-size-[42px_42px]" />
 
-      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-8 sm:px-8 lg:px-12 lg:py-12">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 pt-8 sm:px-8 lg:px-12 lg:pt-12">
         <motion.header
           className="mb-10 flex items-center justify-between"
           initial={{ opacity: 0, y: -12 }}
@@ -142,7 +142,7 @@ export default function SetupView() {
             <p className="mb-4 text-xs md:text-sm font-medium uppercase tracking-[0.22em] text-sky-300/80">
               Make it yours
             </p>
-            <h2 className="text-lg sm:text-2xl md:text-4xl font-semibold leading-tight tracking-normal md:tracking-tight text-white">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight tracking-normal md:tracking-tight text-white">
               A better conversation starts with the right settings.
             </h2>
             <p className="mt-3 md:mt-6 text-sm md:text-base leading-7 text-white/55">
@@ -170,7 +170,7 @@ export default function SetupView() {
             </div>
 
             <fieldset>
-              <legend className="mb-3 text-xs md:text-sm font-medium text-white/75">
+              <legend className="mb-3 text-sm font-medium text-white/75">
                 How will you use it?
               </legend>
               <div
@@ -236,11 +236,11 @@ export default function SetupView() {
             <div className="mt-8">
               <div className="mb-3 flex items-end justify-between gap-3">
                 <div>
-                  <h3 className="text-xs md:text-sm font-medium text-white/75">
+                  <h3 className="text-sm font-medium text-white/75">
                     Choose a model
                   </h3>
                   <p className="mt-1 text-xs text-white/40">
-                    Select a row, or keep the current default.
+                    Select or keep the current default.
                   </p>
                 </div>
                 <span className="text-xs tabular-nums text-white/35 text-nowrap">
