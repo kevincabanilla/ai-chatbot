@@ -4,10 +4,11 @@ import { cn } from "@/libs/utils";
 import AppButton from "../buttons/AppButton";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 
+export const GITHUB_URL = "https://github.com/kevincabanilla/ai-chatbot";
+
 export const AboutDialog = ({ onClose, ...props }: DialogProps) => {
   const appTitle = import.meta.env.VITE_APP_TITLE;
   const appVersion = import.meta.env.VITE_APP_VERSION;
-  const githubUrl = "https://github.com/kevincabanilla/ai-chatbot";
 
   return (
     <AppDialog onClose={onClose} {...props}>
@@ -50,7 +51,7 @@ export const AboutDialog = ({ onClose, ...props }: DialogProps) => {
 
           <div className="flex flex-row justify-between gap-3">
             <a
-              href={githubUrl}
+              href={GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
