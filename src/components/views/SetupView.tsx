@@ -255,14 +255,14 @@ export default function SetupView() {
               </label>
 
               <div className="app-scrollbar mt-3 max-h-64 overflow-auto rounded-lg border border-white/10">
-                <table className="w-full min-w-90 border-collapse text-left text-xs md:text-sm">
+                <table className="w-full min-w-0 table-fixed border-collapse text-left text-xs md:text-sm">
                   <thead className="sticky top-0 z-10 bg-[#202e3b] text-xs uppercase tracking-wider text-white/40">
                     <tr>
-                      <th scope="col" className="w-12" />
+                      <th scope="col" className="w-9 md:w-12 px-2" />
                       <th scope="col" className="px-2 py-3 font-medium">
                         Model name
                       </th>
-                      <th scope="col" className="px-4 py-3 font-medium">
+                      <th scope="col" className="px-2 md:px-4 py-3 font-medium">
                         Owner
                       </th>
                     </tr>
@@ -303,7 +303,7 @@ export default function SetupView() {
                               handleRowKeyDown(event, model);
                             }}
                           >
-                            <td className="px-4 py-3">
+                            <td className="px-2.5 md:px-4 py-3">
                               <span
                                 className={cn(
                                   "flex size-4 items-center justify-center rounded-full border",
@@ -321,10 +321,10 @@ export default function SetupView() {
                                 )}
                               </span>
                             </td>
-                            <td className="max-w-60 truncate px-2 py-3 font-medium text-white/85">
+                            <td className="max-w-0 truncate px-2 py-3 font-medium text-white/85">
                               {model.id}
                             </td>
-                            <td className="px-4 py-3 text-white/45 text-nowrap">
+                            <td className="max-w-0 truncate px-2 md:px-4 py-3 text-white/45">
                               {model.ownedBy}
                             </td>
                           </tr>
