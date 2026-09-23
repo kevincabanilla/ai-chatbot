@@ -1,18 +1,12 @@
 import { createContext } from "react";
-import type { Conversation } from "@/interfaces";
+import type { ApplicationSettings, Conversation } from "@/interfaces";
 
 const STORAGE_KEY = "app-store";
 
 export interface Store {
   conversationsById: Record<string, Conversation>;
   conversationOrder: string[];
-  // currentConversationId: string | null; // removed, this will now come from the url query.
-  settings: {
-    initialized: boolean;
-    mode: string | null;
-    model: string | null;
-    streamResponse?: boolean;
-  };
+  settings: ApplicationSettings;
 }
 
 const defaultState: Store = {
