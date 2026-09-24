@@ -26,7 +26,7 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
   };
 
   return (
-    <AppDialog size="lg" onClose={closeDialog} {...props}>
+    <AppDialog className="max-w-2xl" onClose={closeDialog} {...props}>
       <div className="flex flex-col gap-6 p-6">
         <div className="text-xl">
           <h1>Search</h1>

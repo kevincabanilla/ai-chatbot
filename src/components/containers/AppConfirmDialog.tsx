@@ -19,7 +19,7 @@ export const AppConfirmDialog = ({
   ...props
 }: AppConfirmDialogProps) => {
   return (
-    <AppDialog {...props}>
+    <AppDialog className="max-w-lg" {...props}>
       <div className="flex flex-col gap-6 p-6">
         {dialogTitle && (
           <div className="text-lg sm:text-xl">
