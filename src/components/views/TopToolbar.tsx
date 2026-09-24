@@ -84,6 +84,7 @@ export const TopToolbar = ({
                 role="menu"
                 ariaLabel="Conversation actions"
                 closeOnContentClick
+                placement="bottom-left"
                 trigger={(open) => (
                   <AppIconButton
                     variant="plain"
