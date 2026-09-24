@@ -1,10 +1,9 @@
 import { Sparkles } from "lucide-react";
 import GitHubIcon from "@/assets/icons/GitHub.svg";
 import { cn } from "@/libs/utils";
+import { GITHUB_URL } from "@/constants";
 import AppButton from "../buttons/AppButton";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
-
-export const GITHUB_URL = "https://github.com/kevincabanilla/ai-chatbot";
 
 export const AboutDialog = ({ onClose, ...props }: DialogProps) => {
   const appTitle = import.meta.env.VITE_APP_TITLE;
