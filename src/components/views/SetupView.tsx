@@ -74,7 +74,16 @@ export default function SetupView() {
           .toLowerCase()
           .includes(normalizedSearch);
       })
-      .sort((first, second) => first.id.localeCompare(second.id));
+      .sort((first, second) => {
+        const firstIsOpenAI = first.ownedBy.toLowerCase().includes("openai");
+        const secondIsOpenAI = second.ownedBy.toLowerCase().includes("openai");
+
+        if (firstIsOpenAI !== secondIsOpenAI) {
+          return Number(secondIsOpenAI) - Number(firstIsOpenAI);
+        }
+
+        return first.id.localeCompare(second.id);
+      });
   }, [data?.models, search]);
 
   const chooseModel = (model: AiModel) => {
@@ -379,7 +388,7 @@ export default function SetupView() {
                 }}
               >
                 <SkipForward className="size-4" aria-hidden="true" />
-                Skip for now
+                Skip
               </AppButton>
               <AppButton
                 type="button"

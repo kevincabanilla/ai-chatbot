@@ -65,14 +65,18 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
           }`,
           value: model.id,
         }))
-        .sort((a, b) => a.label.localeCompare(b.label)) ?? [],
+        .sort((first, second) => {
+          const firstIsOpenAI = first.label.toLowerCase().includes("openai");
+          const secondIsOpenAI = second.label.toLowerCase().includes("openai");
+
+          if (firstIsOpenAI !== secondIsOpenAI) {
+            return Number(secondIsOpenAI) - Number(firstIsOpenAI);
+          }
+
+          return first.label.localeCompare(second.label);
+        }) ?? [],
     [data?.models],
   );
-
-  const defaultModel = models.find((model) => model.value === defaultAiModel);
-  const modelOptions = !defaultModel
-    ? models
-    : [defaultModel, ...models.filter((model) => model !== defaultModel)];
 
   const canSave = Boolean(selectedMode && aiModel);
 
@@ -150,7 +154,7 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
               <AppCombobox
                 value={aiModel}
                 onValueChange={setAiModel}
-                options={modelOptions}
+                options={models}
                 placeholder="Choose a model"
                 emptyMessage="No matching models."
                 searchPlaceholder="Search models..."
