@@ -12,6 +12,7 @@ import type { AiModel } from "../../shared/types/model.js";
 import { handleGroqError } from "../handlers/groq.js";
 import { type AISkill } from "../../shared/ai/skills.js";
 import aiSkills from "../data/skills.json" with { type: "json" };
+import "../libs/env.js";
 
 const TITLE_GENERATOR_MODEL = "openai/gpt-oss-20b";
 
