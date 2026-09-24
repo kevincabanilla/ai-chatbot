@@ -22,7 +22,6 @@ Chatbudd is a full-stack AI chat application built with React, TypeScript, Vite,
 ## Features
 
 - Persistent conversation history backed by `localStorage`
-- Shareable conversation URLs using the `?c=` query parameter
 - Search across existing conversations
 - General and Coding assistant modes
 - Runtime model discovery from the Groq Models API
@@ -48,6 +47,7 @@ Chatbudd is a full-stack AI chat application built with React, TypeScript, Vite,
 
 - Node.js 20 or newer
 - npm
+- vercel cli
 - A [Groq API key](https://console.groq.com/keys)
 
 ### Install and run
@@ -55,12 +55,13 @@ Chatbudd is a full-stack AI chat application built with React, TypeScript, Vite,
 ```bash
 git clone https://github.com/kevincabanilla/ai-chatbot.git
 cd ai-chatbot
-npm install
-cp .env .env.local
-npm run dev
+npm i -g vercel@latest
+npm i
+cp .env.template .env.local
+npm run serve
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser. On Windows PowerShell, use `Copy-Item .env .env.local` instead of `cp`. Add your `GROQ_API_KEY` to the local env file before testing chat responses.
+Open [http://localhost:3000](http://localhost:3000) in your browser. On Windows PowerShell, use `Copy-Item .env.template .env.local` instead of `cp`. Add your `GROQ_API_KEY` to the local env file before testing chat responses.
 
 > This repository currently includes `.env` as a local reference. Do not commit real credentials. Create or update your own ignored local env file before running the API.
 
@@ -68,27 +69,26 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. On Windows 
 
 The client-side `VITE_*` values are exposed to the browser, so never put secrets in them. `GROQ_API_KEY` is read only by the server-side API functions.
 
-| Variable                | Required        | Purpose                                | Example                            |
-| ----------------------- | --------------- | -------------------------------------- | ---------------------------------- |
-| `GROQ_API_KEY`          | Yes             | Authenticates requests to Groq         | `gsk_...`                          |
+| Variable                | Required        | Purpose                                | Example                          |
+| ----------------------- | --------------- | -------------------------------------- | -------------------------------- |
+| `GROQ_API_KEY`          | Yes             | Authenticates requests to Groq         | `gsk_...`                        |
 | `VITE_BASE_URL`         | Yes for deploys | Canonical site and social metadata URL | `https://chatbudd-ai.vercel.app` |
-| `VITE_DEFAULT_AI_MODEL` | No              | Default model for new conversations    | `openai/gpt-oss-120b`              |
-| `GROQ_MAX_TOKENS`       | No              | Maximum response tokens                | `1000`                             |
-| `GROQ_CHAT_TEMPERATURE` | No              | Response sampling temperature          | `0.7`                              |
-| `VITE_APP_TITLE`        | No              | Browser and Open Graph title           | `Chatbudd`                         |
-| `VITE_APP_DESCRIPTION`  | No              | SEO description                        | `Your AI assistant buddy.`         |
+| `VITE_DEFAULT_AI_MODEL` | No              | Default model for new conversations    | `openai/gpt-oss-120b`            |
+| `GROQ_MAX_TOKENS`       | No              | Maximum response tokens                | `1000`                           |
+| `GROQ_CHAT_TEMPERATURE` | No              | Response sampling temperature          | `0.7`                            |
+| `VITE_APP_TITLE`        | No              | Browser and Open Graph title           | `Chatbudd`                       |
+| `VITE_APP_DESCRIPTION`  | No              | SEO description                        | `Your AI assistant buddy.`       |
 
 For local development, use `VITE_BASE_URL=http://localhost:3000`. The checked-in production configuration currently points to `https://chatbudd-ai.vercel.app`; update that value when the deployment domain changes.
 
 ## Scripts
 
-| Command              | Description                                                          |
-| -------------------- | -------------------------------------------------------------------- |
-| `npm run dev`        | Start the Vite development server                                    |
-| `npm run dev:vercel` | Run the Vite app and Vercel Functions through Vercel's local runtime |
-| `npm run build`      | Type-check and create a production build                             |
-| `npm run preview`    | Preview the production build locally                                 |
-| `npm run lint`       | Run ESLint across the repository                                     |
+| Command           | Description                                                          |
+| ----------------- | -------------------------------------------------------------------- |
+| `npm run serve`   | Run the Vite app and Vercel Functions through Vercel's local runtime |
+| `npm run build`   | Type-check and create a production build                             |
+| `npm run preview` | Preview the production build locally                                 |
+| `npm run lint`    | Run ESLint across the repository                                     |
 
 ## API Surface
 
@@ -122,7 +122,7 @@ public/               Static assets, including the social preview image
 1. Create a feature branch.
 2. Make the smallest focused change that solves the problem.
 3. Run `npm run lint` and `npm run build` before opening a pull request.
-4. Include a clear description and screenshots for user-facing changes.
+4. Include a clear description and screenshots for UI changes.
 
 ## License
 
