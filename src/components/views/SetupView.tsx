@@ -2,44 +2,21 @@ import { useMemo, useState, type KeyboardEvent } from "react";
 import { motion } from "motion/react";
 import {
   ArrowRight,
-  BrainCircuit,
   Check,
-  CodeXml,
   LoaderCircle,
   Search,
   Settings,
   SkipForward,
   Sparkles,
-  type LucideIcon,
 } from "lucide-react";
-import { AI_SKILL, type AISkill } from "@shared/ai/skills";
 import type { AiModel } from "@shared/types";
 import { useGetAiModelsApi } from "@/api/modelApi";
 import { useStore } from "@/hooks";
 import { cn } from "@/libs/utils";
+import { AI_MODE_DETAILS, AI_MODES, GITHUB_URL } from "@/constants";
 import GitHubIcon from "@/assets/icons/GitHub.svg";
 import AppButton from "../buttons/AppButton";
-import { GITHUB_URL } from "../ui/AboutDialog";
-
-const MODE_DETAILS: Record<
-  AISkill,
-  { label: string; description: string; icon: LucideIcon; color: string }
-> = {
-  GENERAL: {
-    label: "General",
-    description: "A thoughtful all-rounder for everyday questions and ideas.",
-    icon: BrainCircuit,
-    color: "text-sky-300",
-  },
-  CODING: {
-    label: "Coding",
-    description: "Focused help for building, debugging, and shipping software.",
-    icon: CodeXml,
-    color: "text-amber-300",
-  },
-};
-
-const modes = Object.keys(AI_SKILL) as AISkill[];
+import { ModeSelectionItem } from "../ui/settings/ModeSelectionItem";
 
 const finishSetup = (
   setState: ReturnType<typeof useStore>["setState"],
@@ -187,56 +164,19 @@ export default function SetupView() {
                 role="radiogroup"
                 aria-label="Mode"
               >
-                {modes.map((mode) => {
-                  const details = MODE_DETAILS[mode];
-                  const Icon = details.icon;
+                {AI_MODES.map((mode) => {
+                  const details = AI_MODE_DETAILS[mode];
                   const selected = selectedMode === mode;
 
                   return (
-                    <button
+                    <ModeSelectionItem
+                      {...details}
                       key={mode}
-                      type="button"
-                      role="radio"
-                      aria-checked={selected}
-                      className={cn(
-                        "relative rounded-xl border p-4 text-left transition-colors",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300",
-                        selected
-                          ? "border-sky-300/65 bg-sky-300/12"
-                          : "border-white/10 bg-white/2.5 hover:border-white/25 hover:bg-white/5",
-                      )}
+                      selected={selected}
                       onClick={() => {
                         setSelectedMode(mode);
                       }}
-                    >
-                      <div className="mb-5 flex gap-3 flex-row md:flex-col items-center md:items-start">
-                        <span
-                          className={cn(
-                            "flex size-9 items-center justify-center rounded-lg bg-white/5",
-                            details.color,
-                          )}
-                        >
-                          <Icon className="size-5" aria-hidden="true" />
-                        </span>
-                        <span className="block text-sm md:text-base font-semibold text-white">
-                          {details.label}
-                        </span>
-                      </div>
-
-                      <span className="block text-xs leading-5 text-white/45">
-                        {details.description}
-                      </span>
-
-                      {selected && (
-                        <span className="absolute right-3 top-3 flex size-5 items-center justify-center rounded-full bg-sky-300 text-[#101923]">
-                          <Check
-                            className="size-3.5"
-                            strokeWidth={3}
-                            aria-hidden="true"
-                          />
-                        </span>
-                      )}
-                    </button>
+                    />
                   );
                 })}
               </div>
