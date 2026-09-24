@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type Ref } from "react";
+import { createPortal } from "react-dom";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/libs/utils";
@@ -70,8 +71,14 @@ export const AppCombobox = ({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [highlighted, setHighlighted] = useState(-1);
+  const [menuPosition, setMenuPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const selectedOptionRef = useRef<HTMLLIElement>(null);
 
@@ -94,6 +101,31 @@ export const AppCombobox = ({
   useEffect(() => {
     if (!open) return;
 
+    const updateMenuPosition = () => {
+      const trigger = wrapperRef.current?.getBoundingClientRect();
+
+      if (!trigger) return;
+
+      setMenuPosition({
+        top: trigger.bottom,
+        left: trigger.left,
+        width: trigger.width,
+      });
+    };
+
+    updateMenuPosition();
+    window.addEventListener("resize", updateMenuPosition);
+    window.addEventListener("scroll", updateMenuPosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updateMenuPosition);
+      window.removeEventListener("scroll", updateMenuPosition, true);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+
     selectedOptionRef.current?.scrollIntoView({ block: "start" });
   }, [open]);
 
@@ -101,7 +133,8 @@ export const AppCombobox = ({
     const handler = (e: MouseEvent) => {
       if (
         wrapperRef.current &&
-        !wrapperRef.current.contains(e.target as Node)
+        !wrapperRef.current.contains(e.target as Node) &&
+        !menuRef.current?.contains(e.target as Node)
       ) {
         setOpen(false);
       }
@@ -179,62 +212,72 @@ export const AppCombobox = ({
         />
       </button>
 
-      {open && (
-        <div className="absolute z-50 w-full rounded-b-lg border border-t-0 border-accent/30 bg-bg-secondary shadow-lg">
-          <div className="border-b border-accent/30 p-3">
-            <input
-              ref={inputRef}
-              className="w-full rounded-md bg-transparent text-xs md:text-sm outline-none"
-              placeholder={searchPlaceholder}
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-              }}
-              onKeyDown={onKeyDown}
-            />
-          </div>
+      {open &&
+        createPortal(
+          <div
+            ref={menuRef}
+            className="fixed z-1050 rounded-b-lg border border-t-0 border-accent/30 bg-bg-secondary shadow-lg"
+            style={{
+              top: menuPosition.top,
+              left: menuPosition.left,
+              width: menuPosition.width,
+            }}
+          >
+            <div className="border-b border-accent/30 p-3">
+              <input
+                ref={inputRef}
+                className="w-full rounded-md bg-transparent text-xs md:text-sm outline-none"
+                placeholder={searchPlaceholder}
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                }}
+                onKeyDown={onKeyDown}
+              />
+            </div>
 
-          <ul className="max-h-60 overflow-y-auto p-1">
-            {filtered.length === 0 && (
-              <li className="px-3 py-6 text-center text-xs md:text-sm text-slate-400/60">
-                {emptyMessage}
-              </li>
-            )}
-
-            {filtered.map((option, index) => {
-              const active = option.value === value;
-
-              return (
-                <li
-                  key={option.value}
-                  ref={active ? selectedOptionRef : undefined}
-                  role="option"
-                  aria-selected={active}
-                  className={cn(
-                    "flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-xs md:text-sm transition-colors",
-                    highlighted === index && "bg-accent/20",
-                    active && "font-medium text-accent",
-                    option.disabled && "pointer-events-none opacity-50",
-                  )}
-                  onMouseEnter={() => {
-                    setHighlighted(index);
-                  }}
-                  onMouseLeave={() => {
-                    setHighlighted(-1);
-                  }}
-                  onClick={() => {
-                    select(option);
-                  }}
-                >
-                  {option.label}
-
-                  {active && <Check size={16} className="text-green-400" />}
+            <ul className="max-h-60 overflow-y-auto p-1">
+              {filtered.length === 0 && (
+                <li className="px-3 py-6 text-center text-xs md:text-sm text-slate-400/60">
+                  {emptyMessage}
                 </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
+              )}
+
+              {filtered.map((option, index) => {
+                const active = option.value === value;
+
+                return (
+                  <li
+                    key={option.value}
+                    ref={active ? selectedOptionRef : undefined}
+                    role="option"
+                    aria-selected={active}
+                    className={cn(
+                      "flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-xs md:text-sm transition-colors",
+                      highlighted === index && "bg-accent/20",
+                      active && "font-medium text-accent",
+                      option.disabled && "pointer-events-none opacity-50",
+                    )}
+                    onMouseEnter={() => {
+                      setHighlighted(index);
+                    }}
+                    onMouseLeave={() => {
+                      setHighlighted(-1);
+                    }}
+                    onClick={() => {
+                      select(option);
+                    }}
+                  >
+                    {option.label}
+
+                    {active && <Check size={16} className="text-green-400" />}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 };
