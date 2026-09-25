@@ -233,6 +233,25 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
       </div>
 
       <div className="flex justify-end gap-3 border-t border-white/10 pt-4">
+        <div className="flex-1">
+          {import.meta.env.DEV && (
+            <AppButton
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setState((prev) => ({
+                  ...prev,
+                  settings: {
+                    ...prev.settings,
+                    initialized: false,
+                  },
+                }));
+              }}
+            >
+              Setup (DEV)
+            </AppButton>
+          )}
+        </div>
         <AppButton
           type="button"
           variant="ghost"
