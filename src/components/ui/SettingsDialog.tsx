@@ -23,6 +23,7 @@ const defaultAiModel = import.meta.env.VITE_DEFAULT_AI_MODEL;
 export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
   return (
     <AppDialog
+      mobileFullScreen
       aria-labelledby="settings-dialog-title"
       onClose={onClose}
       className="max-w-xl"
