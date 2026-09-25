@@ -7,6 +7,7 @@ import {
   type Store,
   type StoreContextType,
 } from "@/contexts/StoreContext";
+import { AppSplashLoader } from "@/components/common/AppSplashLoader";
 
 export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
   const [isReady, setIsReady] = useState(false);
@@ -53,14 +54,7 @@ export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   if (!isReady) {
-    return (
-      <main className="flex min-h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="size-8 animate-spin rounded-full border-2 border-white/15 border-t-sky-300" />
-          <p className="text-sm text-white/55">Loading...</p>
-        </div>
-      </main>
-    );
+    return <AppSplashLoader />;
   }
 
   return (
