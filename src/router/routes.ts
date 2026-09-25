@@ -1,5 +1,6 @@
-import { createElement, lazy } from "react";
+import { createElement, lazy, Suspense } from "react";
 import { Navigate, createBrowserRouter, redirect } from "react-router";
+import { AppSplashLoader } from "@/components/common/AppSplashLoader";
 import AppLayout from "@/components/layout/AppLayout";
 import { useStore } from "@/hooks";
 
@@ -11,7 +12,11 @@ const MainRoute = () => {
   const { state } = useStore();
 
   return state.settings.initialized
-    ? createElement(MainView)
+    ? createElement(
+        Suspense,
+        { fallback: createElement(AppSplashLoader) },
+        createElement(MainView),
+      )
     : createElement(Navigate, { to: "/setup", replace: true });
 };
 
