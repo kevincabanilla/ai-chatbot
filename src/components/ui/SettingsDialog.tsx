@@ -1,9 +1,18 @@
 import { useMemo, useState } from "react";
-import { AlertCircle, LoaderCircle, RefreshCw } from "lucide-react";
+import {
+  AlertCircle,
+  LoaderCircle,
+  RefreshCcw,
+  RefreshCw,
+  Trash2,
+  TriangleAlert,
+} from "lucide-react";
 import clsx from "clsx";
 import { useGetAiModelsApi } from "@/api/modelApi";
-import { useStore } from "@/hooks";
+import { DEFAULT_SETTINGS } from "@/contexts/StoreContext";
+import { useStateManager } from "@/hooks";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
+import { AppConfirmDialog } from "../containers/AppConfirmDialog";
 import AppButton from "../buttons/AppButton";
 import { AppCombobox, type ComboboxOption } from "../inputs/AppCombobox";
 import { ModeSelectionItem } from "./settings/ModeSelectionItem";
@@ -25,7 +34,8 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
 };
 
 const SettingsContent = ({ onClose }: { onClose: () => void }) => {
-  const { state, setState } = useStore();
+  const { state, setState, clearConversations } = useStateManager();
+  const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
   const [selectedMode, setSelectedMode] = useState(state.settings.mode);
   const [aiModel, setAiModel] = useState(state.settings.model);
   const [streamResponse, setStreamResponse] = useState(
@@ -57,6 +67,12 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
   );
 
   const canSave = Boolean(selectedMode && aiModel);
+
+  const resetSettings = () => {
+    setSelectedMode(DEFAULT_SETTINGS.mode);
+    setAiModel(DEFAULT_SETTINGS.model);
+    setStreamResponse(DEFAULT_SETTINGS.streamResponse ?? false);
+  };
 
   const saveSettings = () => {
     if (!canSave) return;
@@ -181,6 +197,37 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
           Mode and model changes apply to new conversations. Existing
           conversations will keep their current settings.
         </p>
+
+        <div className="flex flex-col gap-3 border-t border-white/10 pt-4">
+          <div>
+            <h2 className="text-sm font-medium">Data</h2>
+            <p className="mt-1 text-xs leading-relaxed text-white/40">
+              Manage your saved settings and conversations.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+            <AppButton
+              type="button"
+              variant="ghost"
+              className="flex items-center gap-2"
+              onClick={resetSettings}
+            >
+              <RefreshCcw className="size-4" aria-hidden="true" />
+              Reset settings
+            </AppButton>
+            <AppButton
+              type="button"
+              variant="ghost"
+              className="flex items-center gap-2 text-rose-400 hover:text-rose-300"
+              onClick={() => {
+                setIsClearDialogOpen(true);
+              }}
+            >
+              <Trash2 className="size-4" aria-hidden="true" />
+              Clear conversations
+            </AppButton>
+          </div>
+        </div>
       </div>
 
       <div className="flex justify-end gap-3 border-t border-white/10 pt-4">
@@ -196,6 +243,29 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
           Save changes
         </AppButton>
       </div>
+
+      <AppConfirmDialog
+        autoClose
+        open={isClearDialogOpen}
+        dialogTitle="Clear all conversations?"
+        confirmButtonText="Clear conversations"
+        declineButtonText="Cancel"
+        onConfirm={clearConversations}
+        onClose={() => {
+          setIsClearDialogOpen(false);
+        }}
+      >
+        <div className="flex gap-3 text-sm text-white/70">
+          <TriangleAlert
+            className="mt-0.5 size-5 shrink-0 text-rose-400"
+            aria-hidden="true"
+          />
+          <p>
+            This will permanently delete all saved conversations. This cannot be
+            undone.
+          </p>
+        </div>
+      </AppConfirmDialog>
     </div>
   );
 };
