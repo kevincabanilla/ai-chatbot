@@ -22,6 +22,7 @@ const defaultState: Store = {
 
 export interface StoreContextType {
   state: Store;
+  isReady: boolean;
   setState: (updater: Partial<Store> | ((prev: Store) => Store)) => void;
   reset: () => void;
 }

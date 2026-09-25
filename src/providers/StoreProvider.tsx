@@ -30,6 +30,8 @@ export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
     () => ({
       state,
 
+      isReady,
+
       setState: (updater) => {
         setState((prev) => {
           if (typeof updater === "function") {
@@ -47,7 +49,7 @@ export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
         setState(resetState());
       },
     }),
-    [state],
+    [isReady, state],
   );
 
   if (!isReady) {
