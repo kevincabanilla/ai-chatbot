@@ -21,6 +21,7 @@ export interface StateManager extends StoreContextType {
     updater: (msg: Conversation) => Conversation,
   ) => void;
   deleteConversation: (id: string) => void;
+  clearConversations: () => void;
   moveConversationToTop: (id: string) => void;
   branchOutToNewConversation: (
     conversationId: string,
@@ -29,7 +30,7 @@ export interface StateManager extends StoreContextType {
 }
 
 export function useStateManager(): StateManager {
-  const { state, setState, reset } = useStore();
+  const { state, isReady, setState, reset } = useStore();
 
   const isConverstationExists = (id: string) =>
     state.conversationOrder.some((cid) => cid == id);
@@ -198,6 +199,14 @@ export function useStateManager(): StateManager {
     });
   };
 
+  const clearConversations = () => {
+    setState((prev) => ({
+      ...prev,
+      conversationsById: {},
+      conversationOrder: [],
+    }));
+  };
+
   const moveConversationToTop = (id: string) => {
     const { conversationOrder } = state;
     if (conversationOrder.includes(id) && conversationOrder[0] !== id) {
@@ -260,6 +269,7 @@ export function useStateManager(): StateManager {
 
   return {
     state,
+    isReady,
     setState,
     reset,
     isConverstationExists,
@@ -269,6 +279,7 @@ export function useStateManager(): StateManager {
     getConversation,
     updateConversation,
     deleteConversation,
+    clearConversations,
     moveConversationToTop,
     branchOutToNewConversation,
   };
