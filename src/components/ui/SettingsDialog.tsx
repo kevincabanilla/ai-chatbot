@@ -220,6 +220,7 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
               type="button"
               variant="ghost"
               className="flex items-center gap-2 text-rose-400 hover:text-rose-300"
+              disabled={state.conversationOrder.length === 0}
               onClick={() => {
                 setIsClearDialogOpen(true);
               }}
