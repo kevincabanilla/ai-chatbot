@@ -4,6 +4,7 @@ import { cn } from "@/libs/utils";
 
 export interface DialogProps extends HTMLAttributes<HTMLDivElement> {
   open: boolean;
+  mobileFullScreen?: boolean;
   onClose: () => void;
   closeOnOutside?: boolean;
 }
@@ -14,6 +15,7 @@ export const AppDialog = ({
   children,
   className,
   closeOnOutside = true,
+  mobileFullScreen = false,
 }: DialogProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -75,7 +77,10 @@ export const AppDialog = ({
               damping: 20,
             }}
             className={cn(
-              "relative w-full rounded-2xl border border-white/10 bg-zinc-900 shadow-lg shadow-black/20",
+              mobileFullScreen
+                ? "fixed inset-0 h-full max-sm:max-w-none! sm:h-auto sm:relative sm:rounded-2xl"
+                : "relative rounded-2xl",
+              "w-full border border-white/10 bg-zinc-900 shadow-lg shadow-black/20",
               className,
             )}
             onClick={(e) => {
