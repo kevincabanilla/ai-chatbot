@@ -6,7 +6,7 @@ import type { Conversation, MessageItem } from "@/interfaces";
 import { staggerContainer } from "@/libs/animationVariants";
 import { Helper } from "@/libs/helper";
 import { getDateLabel, getMessageDate } from "@/libs/utils";
-import { QUERY_PARAM, useMediaQuery, useStore } from "@/hooks";
+import { QUERY_PARAM, useMediaQuery, useStore, useUrlHash } from "@/hooks";
 import MarkdownContent from "./MarkdownContent";
 import { TypingDots } from "../common/TypingDots";
 import ParagraphSkeletonLoader from "../common/ParagraphSkeletonLoader";
@@ -30,6 +30,7 @@ export const ConversationHistory = ({
   onTryAgain,
   onBranchOut,
 }: ConversationHistoryProps) => {
+  const messageId = useUrlHash();
   const isTouchDevice = useMediaQuery("(pointer: coarse)");
   const [activeUserActionsId, setActiveUserActionsId] = useState<string | null>(
     null,
@@ -84,6 +85,7 @@ export const ConversationHistory = ({
               content={item.content}
               isTouchDevice={isTouchDevice}
               isUserActionsVisible={activeUserActionsId === item.messageId}
+              highlight={messageId === item.messageId}
               onToggleUserActions={() => {
                 if (!item.messageId) return;
                 setActiveUserActionsId(

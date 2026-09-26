@@ -14,6 +14,7 @@ import {
   useStateManager,
   useTitleGenerator,
   useTypingAnimation,
+  useUrlHash,
 } from "@/hooks";
 import type { MessageItem } from "@/interfaces";
 import { PromptTextArea } from "../ui/PromptTextArea";
@@ -23,8 +24,15 @@ import { AppScrollDownButton } from "../buttons/AppScrollDownButton";
 
 const APP_TITLE = import.meta.env.VITE_APP_TITLE;
 
+const scrollToId = (id: string | number) => {
+  requestAnimationFrame(() => {
+    Helper.scrollToId(id);
+  });
+};
+
 export default function MainView() {
   const navigate = useNavigate();
+  const messageId = useUrlHash();
   const currentConversationId = useGetQueryParam("c");
   const { isMobile, openSettings } = useAppContext();
   const {
@@ -60,17 +68,19 @@ export default function MainView() {
 
   const latestConversationId = useRef(currentConversationId);
 
-  const scrollToId = (id: string | number) => {
-    requestAnimationFrame(() => {
-      Helper.scrollToId(id);
-    });
-  };
-
   useUpdateDocumentTitle(
     !currentConversation
       ? APP_TITLE
       : `${currentConversation.title} | ${APP_TITLE}`,
   );
+
+  useEffect(() => {
+    if (!messageId) return;
+
+    requestAnimationFrame(() => {
+      scrollToId(messageId);
+    });
+  }, [messageId]);
 
   useEffect(() => {
     latestConversationId.current = currentConversationId;

@@ -1,17 +1,16 @@
 import { Sparkles } from "lucide-react";
 import GitHubIcon from "@/assets/icons/GitHub.svg";
 import { cn } from "@/libs/utils";
+import { GITHUB_URL } from "@/constants";
 import AppButton from "../buttons/AppButton";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
-
-export const GITHUB_URL = "https://github.com/kevincabanilla/ai-chatbot";
 
 export const AboutDialog = ({ onClose, ...props }: DialogProps) => {
   const appTitle = import.meta.env.VITE_APP_TITLE;
   const appVersion = import.meta.env.VITE_APP_VERSION;
 
   return (
-    <AppDialog onClose={onClose} {...props}>
+    <AppDialog className="max-w-md" onClose={onClose} {...props}>
       <div className="overflow-hidden rounded-2xl">
         <div className="relative border-b border-white/10 bg-linear-to-br from-accent/15 via-bg-secondary/60 to-transparent px-6 pb-7 pt-8 sm:px-8">
           <div className="absolute -right-12 -top-16 size-40 rounded-full bg-accent/10 blur-3xl" />

@@ -9,19 +9,22 @@ export interface Store {
   settings: ApplicationSettings;
 }
 
-const defaultState: Store = {
+export const DEFAULT_SETTINGS: ApplicationSettings = {
+  initialized: false,
+  mode: "GENERAL",
+  model: import.meta.env.VITE_DEFAULT_AI_MODEL || null,
+  streamResponse: false,
+};
+
+const DEFAULT_STATE: Store = {
   conversationsById: {},
   conversationOrder: [],
-  settings: {
-    initialized: false,
-    mode: "GENERAL",
-    model: import.meta.env.VITE_DEFAULT_AI_MODEL || null,
-    streamResponse: false,
-  },
+  settings: { ...DEFAULT_SETTINGS },
 };
 
 export interface StoreContextType {
   state: Store;
+  isReady: boolean;
   setState: (updater: Partial<Store> | ((prev: Store) => Store)) => void;
   reset: () => void;
 }
@@ -30,14 +33,14 @@ export const loadState = (): Store => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
 
-    if (!saved) return defaultState;
+    if (!saved) return { ...DEFAULT_STATE };
 
     return {
-      ...defaultState,
+      ...DEFAULT_STATE,
       ...JSON.parse(saved),
     } as Store;
   } catch {
-    return defaultState;
+    return { ...DEFAULT_STATE };
   }
 };
 
@@ -47,7 +50,7 @@ export const saveState = (state: Store) => {
 
 export const resetState = () => {
   localStorage.removeItem(STORAGE_KEY);
-  return { ...defaultState };
+  return { ...DEFAULT_STATE };
 };
 
 export const StoreContext = createContext<StoreContextType | null>(null);

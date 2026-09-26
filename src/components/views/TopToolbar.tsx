@@ -27,7 +27,7 @@ export const TopToolbar = ({
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
   const currentConversationId = useGetQueryParam("c");
-  const { getConversation, isConverstationExists } = useStateManager();
+  const { getConversation, isConversationExists } = useStateManager();
 
   const conversation = getConversation(currentConversationId);
 
@@ -79,11 +79,12 @@ export const TopToolbar = ({
           <div className="grow" />
 
           {currentConversationId &&
-            isConverstationExists(currentConversationId) && (
+            isConversationExists(currentConversationId) && (
               <AppDropdownMenu
                 role="menu"
                 ariaLabel="Conversation actions"
                 closeOnContentClick
+                placement="bottom-left"
                 trigger={(open) => (
                   <AppIconButton
                     variant="plain"

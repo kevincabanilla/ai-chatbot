@@ -3,7 +3,7 @@ import { useStore } from "./useStore";
 import type { Conversation, MessageItem } from "@/interfaces";
 
 export interface StateManager extends StoreContextType {
-  isConverstationExists: (id: string) => boolean;
+  isConversationExists: (id: string) => boolean;
   appendMessage: (
     conversationId: string,
     newMessage: MessageItem,
@@ -21,6 +21,7 @@ export interface StateManager extends StoreContextType {
     updater: (msg: Conversation) => Conversation,
   ) => void;
   deleteConversation: (id: string) => void;
+  clearConversations: () => void;
   moveConversationToTop: (id: string) => void;
   branchOutToNewConversation: (
     conversationId: string,
@@ -29,9 +30,9 @@ export interface StateManager extends StoreContextType {
 }
 
 export function useStateManager(): StateManager {
-  const { state, setState, reset } = useStore();
+  const { state, isReady, setState, reset } = useStore();
 
-  const isConverstationExists = (id: string) =>
+  const isConversationExists = (id: string) =>
     state.conversationOrder.some((cid) => cid == id);
 
   const appendMessage = (
@@ -198,6 +199,14 @@ export function useStateManager(): StateManager {
     });
   };
 
+  const clearConversations = () => {
+    setState((prev) => ({
+      ...prev,
+      conversationsById: {},
+      conversationOrder: [],
+    }));
+  };
+
   const moveConversationToTop = (id: string) => {
     const { conversationOrder } = state;
     if (conversationOrder.includes(id) && conversationOrder[0] !== id) {
@@ -260,15 +269,17 @@ export function useStateManager(): StateManager {
 
   return {
     state,
+    isReady,
     setState,
     reset,
-    isConverstationExists,
+    isConversationExists,
     appendMessage,
     updateMessage,
     deleteMessage,
     getConversation,
     updateConversation,
     deleteConversation,
+    clearConversations,
     moveConversationToTop,
     branchOutToNewConversation,
   };

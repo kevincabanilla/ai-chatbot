@@ -28,7 +28,7 @@ const appButtonStyles = cva(
       },
 
       disabled: {
-        true: "opacity-60 cursor-not-allowed",
+        true: "opacity-60 cursor-not-allowed text-muted!",
         false: "opacity-100 cursor-pointer",
       },
     },

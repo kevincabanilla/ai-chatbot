@@ -1,44 +1,32 @@
 import { useMemo, useState } from "react";
 import {
   AlertCircle,
-  BrainCircuit,
-  CheckCircle,
-  CodeXml,
   LoaderCircle,
+  RefreshCcw,
   RefreshCw,
-  type LucideIcon,
+  Trash2,
+  TriangleAlert,
 } from "lucide-react";
 import clsx from "clsx";
-import { AI_SKILL, type AISkill } from "@shared/ai/skills";
 import { useGetAiModelsApi } from "@/api/modelApi";
-import { useStore } from "@/hooks";
+import { DEFAULT_SETTINGS } from "@/contexts/StoreContext";
+import { useStateManager } from "@/hooks";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
+import { AppConfirmDialog } from "../containers/AppConfirmDialog";
 import AppButton from "../buttons/AppButton";
 import { AppCombobox, type ComboboxOption } from "../inputs/AppCombobox";
-import { cn } from "@/libs/utils";
-
-const LUCIDE_ICON: Record<AISkill, LucideIcon> = {
-  GENERAL: BrainCircuit,
-  CODING: CodeXml,
-};
-
-interface AiMode {
-  text: string;
-  icon: (typeof LUCIDE_ICON)[AISkill];
-}
-
-const AiModes: AiMode[] = Object.keys(AI_SKILL).map((key) => ({
-  text: key,
-  icon: LUCIDE_ICON[key as AISkill],
-}));
+import { ModeSelectionItem } from "./settings/ModeSelectionItem";
+import { AI_MODE_DETAILS, AI_MODES } from "@/constants";
 
 const defaultAiModel = import.meta.env.VITE_DEFAULT_AI_MODEL;
 
 export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
   return (
     <AppDialog
+      mobileFullScreen
       aria-labelledby="settings-dialog-title"
       onClose={onClose}
+      className="max-w-xl"
       {...props}
     >
       <SettingsContent key={props.open ? "open" : "closed"} onClose={onClose} />
@@ -47,7 +35,8 @@ export const SettingsDialog = ({ onClose, ...props }: DialogProps) => {
 };
 
 const SettingsContent = ({ onClose }: { onClose: () => void }) => {
-  const { state, setState } = useStore();
+  const { state, setState, clearConversations } = useStateManager();
+  const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
   const [selectedMode, setSelectedMode] = useState(state.settings.mode);
   const [aiModel, setAiModel] = useState(state.settings.model);
   const [streamResponse, setStreamResponse] = useState(
@@ -65,16 +54,26 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
           }`,
           value: model.id,
         }))
-        .sort((a, b) => a.label.localeCompare(b.label)) ?? [],
+        .sort((first, second) => {
+          const firstIsOpenAI = first.label.toLowerCase().includes("openai");
+          const secondIsOpenAI = second.label.toLowerCase().includes("openai");
+
+          if (firstIsOpenAI !== secondIsOpenAI) {
+            return Number(secondIsOpenAI) - Number(firstIsOpenAI);
+          }
+
+          return first.label.localeCompare(second.label);
+        }) ?? [],
     [data?.models],
   );
 
-  const defaultModel = models.find((model) => model.value === defaultAiModel);
-  const modelOptions = !defaultModel
-    ? models
-    : [defaultModel, ...models.filter((model) => model !== defaultModel)];
-
   const canSave = Boolean(selectedMode && aiModel);
+
+  const resetSettings = () => {
+    setSelectedMode(DEFAULT_SETTINGS.mode);
+    setAiModel(DEFAULT_SETTINGS.model);
+    setStreamResponse(DEFAULT_SETTINGS.streamResponse ?? false);
+  };
 
   const saveSettings = () => {
     if (!canSave) return;
@@ -92,7 +91,7 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-5 sm:p-6">
+    <div className="flex flex-col gap-6 p-5 sm:p-6 max-h-dvh sm:max-h-[calc(100dvh-2rem)] overflow-auto">
       <div>
         <h1 id="settings-dialog-title" className="text-xl font-semibold">
           Settings
@@ -100,17 +99,18 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
       </div>
 
       <div className="grow flex flex-col gap-5">
-        <fieldset className="flex flex-col gap-2">
-          <legend className="text-sm font-medium text-accent">Mode</legend>
-          <div className="grid grid-cols-2 gap-3" role="radiogroup">
-            {AiModes.map(({ text, icon }) => (
-              <ModeItem
-                key={text}
-                text={text}
-                icon={icon}
-                selected={selectedMode == text}
+        <fieldset>
+          <legend className="text-sm md:text-base font-medium mb-2">
+            Mode
+          </legend>
+          <div className="grid sm:grid-cols-2 gap-3" role="radiogroup">
+            {AI_MODES.map((mode) => (
+              <ModeSelectionItem
+                {...AI_MODE_DETAILS[mode]}
+                key={mode}
+                selected={selectedMode === mode}
                 onClick={() => {
-                  setSelectedMode(text);
+                  setSelectedMode(mode);
                 }}
               />
             ))}
@@ -118,7 +118,7 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
         </fieldset>
 
         <div className="flex flex-col gap-2">
-          <span className="text-sm font-medium text-accent">Model</span>
+          <span className="text-sm md:text-base font-medium">Model</span>
           <div>
             {isLoading ? (
               <div className="h-10 flex items-center gap-2 rounded-lg border border-accent/30 bg-bg-secondary px-3 text-sm text-white/50">
@@ -150,7 +150,7 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
               <AppCombobox
                 value={aiModel}
                 onValueChange={setAiModel}
-                options={modelOptions}
+                options={models}
                 placeholder="Choose a model"
                 emptyMessage="No matching models."
                 searchPlaceholder="Search models..."
@@ -198,9 +198,60 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
           Mode and model changes apply to new conversations. Existing
           conversations will keep their current settings.
         </p>
+
+        <div className="flex flex-col gap-3 border-t border-white/10 pt-4">
+          <div>
+            <h2 className="text-sm font-medium">Data</h2>
+            <p className="mt-1 text-xs leading-relaxed text-white/40">
+              Manage your saved settings and conversations.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+            <AppButton
+              type="button"
+              variant="ghost"
+              className="flex items-center gap-2"
+              onClick={resetSettings}
+            >
+              <RefreshCcw className="size-4" aria-hidden="true" />
+              Reset settings
+            </AppButton>
+            <AppButton
+              type="button"
+              variant="ghost"
+              className="flex items-center gap-2 text-rose-400 hover:text-rose-300"
+              disabled={state.conversationOrder.length === 0}
+              onClick={() => {
+                setIsClearDialogOpen(true);
+              }}
+            >
+              <Trash2 className="size-4" aria-hidden="true" />
+              Clear conversations
+            </AppButton>
+          </div>
+        </div>
       </div>
 
       <div className="flex justify-end gap-3 border-t border-white/10 pt-4">
+        <div className="flex-1">
+          {import.meta.env.DEV && (
+            <AppButton
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setState((prev) => ({
+                  ...prev,
+                  settings: {
+                    ...prev.settings,
+                    initialized: false,
+                  },
+                }));
+              }}
+            >
+              Setup (DEV)
+            </AppButton>
+          )}
+        </div>
         <AppButton
           type="button"
           variant="ghost"
@@ -213,38 +264,29 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
           Save changes
         </AppButton>
       </div>
-    </div>
-  );
-};
 
-const ModeItem = ({
-  text,
-  icon: Icon,
-  selected,
-  onClick,
-}: AiMode & { selected?: boolean; onClick: () => void }) => {
-  return (
-    <button
-      type="button"
-      role="radio"
-      aria-checked={selected}
-      className={cn(
-        "relative flex min-h-36 flex-col items-center justify-center gap-3 rounded-lg border p-4 text-accent transition-colors select-none",
-        "border-sky-300/20 bg-bg-secondary hover:border-sky-300/50 hover:bg-accent/20",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70",
-        selected && "border-accent/60 bg-accent/15",
-      )}
-      onClick={onClick}
-    >
-      {selected && (
-        <CheckCircle
-          size={24}
-          className="absolute right-3 top-3 text-green-500"
-          aria-hidden="true"
-        />
-      )}
-      <Icon className="size-8 md:size-10" aria-hidden="true" />
-      <span className="md:text-lg font-medium">{text}</span>
-    </button>
+      <AppConfirmDialog
+        autoClose
+        open={isClearDialogOpen}
+        dialogTitle="Clear all conversations?"
+        confirmButtonText="Clear conversations"
+        declineButtonText="Cancel"
+        onConfirm={clearConversations}
+        onClose={() => {
+          setIsClearDialogOpen(false);
+        }}
+      >
+        <div className="flex gap-3 text-sm text-white/70">
+          <TriangleAlert
+            className="mt-0.5 size-5 shrink-0 text-rose-400"
+            aria-hidden="true"
+          />
+          <p>
+            This will permanently delete all saved conversations. This cannot be
+            undone.
+          </p>
+        </div>
+      </AppConfirmDialog>
+    </div>
   );
 };

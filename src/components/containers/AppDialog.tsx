@@ -1,31 +1,11 @@
-import { type HTMLAttributes, type ReactNode, useEffect, useRef } from "react";
+import { type HTMLAttributes, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/libs/utils";
 
-const dialogVariants = cva(
-  "relative w-full rounded-2xl border border-white/10 bg-zinc-900 shadow-lg shadow-black/20",
-  {
-    variants: {
-      size: {
-        sm: "max-w-sm",
-        md: "max-w-md",
-        lg: "max-w-2xl",
-        xl: "max-w-4xl",
-        full: "max-w-7xl",
-      },
-    },
-    defaultVariants: {
-      size: "md",
-    },
-  },
-);
-
-export interface DialogProps
-  extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof dialogVariants> {
+export interface DialogProps extends HTMLAttributes<HTMLDivElement> {
   open: boolean;
+  mobileFullScreen?: boolean;
   onClose: () => void;
-  children?: ReactNode;
   closeOnOutside?: boolean;
 }
 
@@ -34,8 +14,8 @@ export const AppDialog = ({
   onClose,
   children,
   className,
-  size,
   closeOnOutside = true,
+  mobileFullScreen = false,
 }: DialogProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -96,7 +76,13 @@ export const AppDialog = ({
               stiffness: 200,
               damping: 20,
             }}
-            className={cn(dialogVariants({ size }), className)}
+            className={cn(
+              mobileFullScreen
+                ? "fixed inset-0 h-full max-sm:max-w-none! sm:h-auto sm:relative sm:rounded-2xl"
+                : "relative rounded-2xl",
+              "w-full border border-white/10 bg-zinc-900 shadow-lg shadow-black/20",
+              className,
+            )}
             onClick={(e) => {
               e.stopPropagation();
             }}

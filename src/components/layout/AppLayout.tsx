@@ -8,6 +8,7 @@ import { AppContext } from "@/contexts/AppContext";
 import { DeleteConversationDialog } from "../ui/DeleteConversationDialog";
 import { AboutDialog } from "../ui/AboutDialog";
 import clsx from "clsx";
+import { Helper } from "@/libs/helper";
 
 export default function AppLayout() {
   const isMobile = useMediaQuery(MEDIA_QUERIES.lg);
@@ -43,6 +44,10 @@ export default function AppLayout() {
 
       <SearchDialog
         open={isSearchOpen}
+        onSelectItem={(conversationId) => {
+          if (isMobile) setIsCollapsed(true);
+          Helper.scrollToId(conversationId, "center");
+        }}
         onClose={() => {
           setIsSearchOpen(false);
         }}
