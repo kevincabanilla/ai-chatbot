@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, X } from "lucide-react";
 import clsx from "clsx";
 import { QUERY_PARAM, useGetQueryParam, useStore } from "@/hooks";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
-import AppButton from "../buttons/AppButton";
+import { AppIconButton } from "../buttons/AppIconButton";
 import { AppCard } from "../containers/AppCard";
 
 export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
@@ -32,6 +32,16 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
       onClose={closeDialog}
       {...props}
     >
+      <div className="absolute top-1.5 right-1.5">
+        <AppIconButton
+          label="Close"
+          variant="plain"
+          className="hover:text-rose-600"
+          icon={X}
+          onClick={closeDialog}
+        />
+      </div>
+
       <div className="flex flex-col gap-6 p-6">
         <div className="text-xl">
           <h1>Search</h1>
@@ -95,16 +105,6 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
               </div>
             </div>
           )}
-        </div>
-
-        <div className="flex justify-between">
-          <AppButton
-            variant="ghost"
-            className="text-rose-500/90 bg-rose-500/2 hover:text-rose-500 hover:bg-rose-500/5"
-            onClick={closeDialog}
-          >
-            Close
-          </AppButton>
         </div>
       </div>
     </AppDialog>
