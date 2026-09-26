@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import clsx from "clsx";
 import type { ChatMessage } from "@shared/types";
 import { GREETINGS } from "@/constants/greetings";
@@ -14,6 +14,7 @@ import {
   useStateManager,
   useTitleGenerator,
   useTypingAnimation,
+  useUrlHash,
 } from "@/hooks";
 import type { MessageItem } from "@/interfaces";
 import { PromptTextArea } from "../ui/PromptTextArea";
@@ -31,7 +32,7 @@ const scrollToId = (id: string | number) => {
 
 export default function MainView() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const messageId = useUrlHash();
   const currentConversationId = useGetQueryParam("c");
   const { isMobile, openSettings } = useAppContext();
   const {
@@ -74,13 +75,12 @@ export default function MainView() {
   );
 
   useEffect(() => {
-    if (!location.hash) return;
+    if (!messageId) return;
 
-    const messageId = decodeURIComponent(location.hash.slice(1));
     requestAnimationFrame(() => {
       scrollToId(messageId);
     });
-  }, [location.hash]);
+  }, [messageId]);
 
   useEffect(() => {
     latestConversationId.current = currentConversationId;
