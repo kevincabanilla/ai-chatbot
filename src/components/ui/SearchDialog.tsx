@@ -143,7 +143,7 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
                                 "group block rounded-xl border border-white/8 bg-white/2.5 p-3.5 transition-colors",
                                 "hover:border-accent/35 hover:bg-white/6 focus-visible:outline-2 focus-visible:outline-accent",
                               )}
-                              to={`/?${QUERY_PARAM.ChatId}=${encodeURIComponent(conversation.id)}&${QUERY_PARAM.MessageId}=${encodeURIComponent(message.messageId)}`}
+                              to={`/?${QUERY_PARAM.ChatId}=${encodeURIComponent(conversation.id)}#${encodeURIComponent(message.messageId)}`}
                               onClick={onClose}
                             >
                               <div className="mb-1.5 flex min-w-0 items-center gap-2 text-xs">

@@ -2,7 +2,6 @@ import { useSearchParams } from "react-router";
 
 export const QUERY_PARAM = {
   ChatId: "c",
-  MessageId: "m",
 } as const;
 
 export type QUERY_PARAM_KEYS = keyof typeof QUERY_PARAM;

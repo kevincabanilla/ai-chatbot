@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import clsx from "clsx";
 import type { ChatMessage } from "@shared/types";
 import { GREETINGS } from "@/constants/greetings";
@@ -23,8 +23,15 @@ import { AppScrollDownButton } from "../buttons/AppScrollDownButton";
 
 const APP_TITLE = import.meta.env.VITE_APP_TITLE;
 
+const scrollToId = (id: string | number) => {
+  requestAnimationFrame(() => {
+    Helper.scrollToId(id);
+  });
+};
+
 export default function MainView() {
   const navigate = useNavigate();
+  const location = useLocation();
   const currentConversationId = useGetQueryParam("c");
   const { isMobile, openSettings } = useAppContext();
   const {
@@ -60,17 +67,20 @@ export default function MainView() {
 
   const latestConversationId = useRef(currentConversationId);
 
-  const scrollToId = (id: string | number) => {
-    requestAnimationFrame(() => {
-      Helper.scrollToId(id);
-    });
-  };
-
   useUpdateDocumentTitle(
     !currentConversation
       ? APP_TITLE
       : `${currentConversation.title} | ${APP_TITLE}`,
   );
+
+  useEffect(() => {
+    if (!location.hash) return;
+
+    const messageId = decodeURIComponent(location.hash.slice(1));
+    requestAnimationFrame(() => {
+      scrollToId(messageId);
+    });
+  }, [location.hash]);
 
   useEffect(() => {
     latestConversationId.current = currentConversationId;
