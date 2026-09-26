@@ -69,8 +69,8 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
 
       <div className="flex max-h-dvh sm:max-h-[min(80vh,48rem)] flex-col gap-5 p-5 sm:p-6">
         <div className="flex items-center gap-3 pr-10">
-          <div className="flex size-10 shrink-0 items-center justify-center   bg-accent/15 text-accent">
-            <Search size={19} aria-hidden="true" />
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent/15  text-accent">
+            <Search size={18} aria-hidden="true" />
           </div>
           <div>
             <h1 className="text-lg font-semibold">Search messages</h1>
