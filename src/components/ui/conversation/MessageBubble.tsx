@@ -50,10 +50,7 @@ export const MessageBubble = ({
         <div className="hidden md:block pr-2.5">
           <div
             className={cn(
-              "w-7 md:w-10.5",
-              "h-7 md:h-10.5",
-              "p-1 md:p-2",
-              "flex justify-center items-center",
+              "flex justify-center items-center size-10.5 p-2",
               "rounded-full border border-accent/60 ",
             )}
           >
