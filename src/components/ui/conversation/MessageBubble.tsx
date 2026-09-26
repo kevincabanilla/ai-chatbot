@@ -15,8 +15,9 @@ export interface MessageBubbleProps {
   showRetry?: boolean | null;
   children: React.ReactNode;
   date?: Date | null;
-  onRetry?: () => void;
   isUserActionsVisible?: boolean;
+  highlight?: boolean;
+  onRetry?: () => void;
   onToggleUserActions?: () => void;
 }
 
@@ -29,8 +30,9 @@ export const MessageBubble = ({
   showRetry,
   children,
   date = null,
-  onRetry,
   isUserActionsVisible = false,
+  highlight = false,
+  onRetry,
   onToggleUserActions,
 }: MessageBubbleProps) => {
   const isFromUser = messageRole === "user";
@@ -77,6 +79,7 @@ export const MessageBubble = ({
               !failed && !showRetry
                 ? isFromUser && "bg-accent/30"
                 : "bg-rose-500/20",
+              highlight && "bg-yellow-200/10",
             )}
             onPointerDown={(event) => {
               if (event.pointerType === "touch" && isFromUser)
