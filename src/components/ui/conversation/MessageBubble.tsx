@@ -76,7 +76,7 @@ export const MessageBubble = ({
               !failed && !showRetry
                 ? isFromUser && "bg-accent/30"
                 : "bg-rose-500/20",
-              highlight && "bg-yellow-200/10",
+              highlight && "bg-yellow-200/5",
             )}
             onPointerDown={(event) => {
               if (event.pointerType === "touch" && isFromUser)
