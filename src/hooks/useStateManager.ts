@@ -3,7 +3,7 @@ import { useStore } from "./useStore";
 import type { Conversation, MessageItem } from "@/interfaces";
 
 export interface StateManager extends StoreContextType {
-  isConverstationExists: (id: string) => boolean;
+  isConversationExists: (id: string) => boolean;
   appendMessage: (
     conversationId: string,
     newMessage: MessageItem,
@@ -32,7 +32,7 @@ export interface StateManager extends StoreContextType {
 export function useStateManager(): StateManager {
   const { state, isReady, setState, reset } = useStore();
 
-  const isConverstationExists = (id: string) =>
+  const isConversationExists = (id: string) =>
     state.conversationOrder.some((cid) => cid == id);
 
   const appendMessage = (
@@ -272,7 +272,7 @@ export function useStateManager(): StateManager {
     isReady,
     setState,
     reset,
-    isConverstationExists,
+    isConversationExists,
     appendMessage,
     updateMessage,
     deleteMessage,
