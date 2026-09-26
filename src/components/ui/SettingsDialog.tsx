@@ -91,7 +91,7 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-5 sm:p-6 max-h-[calc(100dvh-2rem)] overflow-auto">
+    <div className="flex flex-col gap-6 p-5 sm:p-6 max-h-dvh sm:max-h-[calc(100dvh-2rem)] overflow-auto">
       <div>
         <h1 id="settings-dialog-title" className="text-xl font-semibold">
           Settings
