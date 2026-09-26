@@ -1,24 +1,49 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router";
-import { CheckCircle, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { Search, X } from "lucide-react";
 import clsx from "clsx";
 import { QUERY_PARAM, useGetQueryParam, useStore } from "@/hooks";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 import { AppIconButton } from "../buttons/AppIconButton";
-import { AppCard } from "../containers/AppCard";
+
+const getMatchPreview = (content: string, query: string) => {
+  const matchIndex = content
+    .toLocaleLowerCase()
+    .indexOf(query.toLocaleLowerCase());
+  if (matchIndex < 0) return null;
+
+  const start = Math.max(0, matchIndex - 48);
+  const end = Math.min(content.length, matchIndex + query.length + 88);
+
+  return {
+    before: `${start > 0 ? "..." : ""}${content.slice(start, matchIndex)}`,
+    match: content.slice(matchIndex, matchIndex + query.length),
+    after: `${content.slice(matchIndex + query.length, end)}${end < content.length ? "..." : ""}`,
+  };
+};
 
 export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
   const { state } = useStore();
   const [searchVal, setSearchVal] = useState("");
   const currentConversationId = useGetQueryParam("c");
+  const searchTerm = searchVal.trim();
 
-  const results = state.conversationOrder
-    .map((key) => state.conversationsById[key])
-    .filter((x) =>
-      x.messages.some((m) =>
-        m.content.toLowerCase().includes(searchVal.toLocaleLowerCase()),
-      ),
-    );
+  const results = useMemo(
+    () =>
+      !searchTerm
+        ? []
+        : state.conversationOrder.flatMap((conversationId) => {
+            const conversation = state.conversationsById[conversationId];
+
+            return conversation.messages.flatMap((message) => {
+              if (!message.messageId) return [];
+              const preview = getMatchPreview(message.content, searchTerm);
+              return preview ? [{ conversation, message, preview }] : [];
+            });
+          }),
+    [searchTerm, state.conversationOrder, state.conversationsById],
+  );
 
   const closeDialog = () => {
     setSearchVal("");
@@ -42,66 +67,133 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
         />
       </div>
 
-      <div className="flex flex-col gap-6 p-6">
-        <div className="text-xl">
-          <h1>Search</h1>
+      <div className="flex max-h-dvh sm:max-h-[min(80vh,48rem)] flex-col gap-5 p-5 sm:p-6">
+        <div className="flex items-center gap-3 pr-10">
+          <div className="flex size-10 shrink-0 items-center justify-center   bg-accent/15 text-accent">
+            <Search size={19} aria-hidden="true" />
+          </div>
+          <div>
+            <h1 className="text-lg font-semibold">Search messages</h1>
+          </div>
         </div>
 
-        <div className="grow flex flex-col gap-3">
-          {/* Search textbar */}
-          <div className="flex flex-col gap-1">
+        <div className="flex min-h-0 grow flex-col gap-3">
+          <div className="relative flex">
+            <Search
+              size={17}
+              className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-white/40"
+              aria-hidden="true"
+            />
             <input
               autoFocus
+              aria-label="Search messages"
               placeholder="What do you want to search?"
               className={clsx(
-                "block w-full rounded-lg border border-accent/40 bg-bg-secondary px-4 py-3 text-sm",
-                "placeholder:text-gray-400",
-                "outline-none",
-                "transition",
-                "hover:border-accent/60",
-                "focus:border-accent",
-                "focus:ring-4 focus:ring-blue-500/10",
-                "disabled:cursor-not-allowed disabled:bg-gray-100",
+                "block w-full rounded-xl border border-white/10 bg-bg-secondary py-3 pr-11 pl-10 text-sm",
+                "placeholder:text-white/35 outline-none transition",
+                "hover:border-white/20 focus:border-accent/70 focus:ring-4 focus:ring-accent/10",
               )}
               value={searchVal}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                setSearchVal(inputValue);
+              onChange={(event) => {
+                setSearchVal(event.target.value);
               }}
             />
+            {searchVal && (
+              <AppIconButton
+                label="Clear search"
+                variant="plain"
+                className="absolute top-1/2 right-2 -translate-y-1/2 text-white/55 hover:text-white"
+                icon={X}
+                onClick={() => {
+                  setSearchVal("");
+                }}
+              />
+            )}
           </div>
 
-          {/* Result list */}
-          {searchVal && (
-            <div className="flex flex-col gap-1">
-              <div className="max-h-64 overflow-y-auto">
-                {results.length > 0 ? (
-                  <>
-                    <span className="text-accent">Results:</span>
-                    {results.map((x) => (
-                      <Link
-                        key={x.id}
-                        to={`/?${QUERY_PARAM.ChatId}=${x.id}`}
-                        onClick={closeDialog}
-                      >
-                        <AppCard className="flex items-center rounded-md p-3 my-3 cursor-pointer">
-                          <div className="truncate">{x.title}</div>
-
-                          {x.id === currentConversationId && (
-                            <CheckCircle
-                              size={16}
-                              className="ml-1 shrink-0 text-green-500"
-                            />
-                          )}
-                        </AppCard>
-                      </Link>
-                    ))}
-                  </>
-                ) : (
-                  <div className="mt-5 italic text-center text-white/60">
-                    <h2>No results.</h2>
-                  </div>
-                )}
+          {searchTerm && (
+            <div className="flex min-h-0 flex-col gap-2">
+              <div className="flex items-center justify-between px-1 text-xs text-white/50">
+                <span>Matching messages</span>
+                <span>{results.length}</span>
+              </div>
+              <div className="app-scrollbar min-h-0 overflow-y-auto pr-1">
+                <AnimatePresence mode="wait" initial={false}>
+                  {results.length > 0 ? (
+                    <motion.div
+                      key={searchTerm}
+                      className="flex flex-col gap-2"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      {results.map(
+                        ({ conversation, message, preview }, index) => (
+                          <motion.div
+                            key={`${conversation.id}-${message.messageId}`}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                              duration: 0.16,
+                              delay: Math.min(index * 0.025, 0.2),
+                            }}
+                          >
+                            <Link
+                              className={clsx(
+                                "group block rounded-xl border border-white/8 bg-white/2.5 p-3.5 transition-colors",
+                                "hover:border-accent/35 hover:bg-white/6 focus-visible:outline-2 focus-visible:outline-accent",
+                              )}
+                              to={`/?${QUERY_PARAM.ChatId}=${encodeURIComponent(conversation.id)}&${QUERY_PARAM.MessageId}=${encodeURIComponent(message.messageId)}`}
+                              onClick={onClose}
+                            >
+                              <div className="mb-1.5 flex min-w-0 items-center gap-2 text-xs">
+                                <span className="truncate font-medium text-white/80">
+                                  {conversation.title}
+                                </span>
+                                <span className="shrink-0 rounded-md bg-white/7 px-1.5 py-0.5 text-white/50">
+                                  {message.role === "user"
+                                    ? "You"
+                                    : "Assistant"}
+                                </span>
+                                {conversation.id === currentConversationId && (
+                                  <span className="ml-auto shrink-0 rounded-md bg-accent/40 px-1.5 py-0.5">
+                                    Current
+                                  </span>
+                                )}
+                              </div>
+                              <p className="line-clamp-3 text-sm leading-relaxed text-white/65 group-hover:text-white/85">
+                                {preview.before}
+                                <mark className="rounded-sm bg-accent/25 px-0.5 text-sky-100">
+                                  {preview.match}
+                                </mark>
+                                {preview.after}
+                              </p>
+                            </Link>
+                          </motion.div>
+                        ),
+                      )}
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="empty"
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex flex-col items-center gap-2 py-10 text-center"
+                    >
+                      <Search
+                        size={22}
+                        className="text-white/30"
+                        aria-hidden="true"
+                      />
+                      <p className="text-sm text-white/65">
+                        No matching messages
+                      </p>
+                      <p className="text-xs text-white/40">
+                        Try a different phrase
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           )}
