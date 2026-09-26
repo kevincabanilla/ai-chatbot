@@ -111,9 +111,10 @@ export default function MainView() {
     async (message?: string, latestConversationMessages?: MessageItem[]) => {
       setShowAlert(false);
 
+      const isNewConversation = !currentConversation;
+
       // save current to prevent misplacing of new messages.
       let conversationId = currentConversationId ?? "";
-      const isNewConversation = !conversationId;
 
       if (isNewConversation) {
         conversationId = crypto.randomUUID();
