@@ -2,11 +2,14 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { Search, X } from "lucide-react";
+import { format, formatDistanceToNow } from "date-fns";
 import clsx from "clsx";
 import { QUERY_PARAM, useGetQueryParam, useStore } from "@/hooks";
 import { Helper } from "@/libs/helper";
+import { getMessageDate } from "@/libs/utils";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 import { AppIconButton } from "../buttons/AppIconButton";
+import { AppTooltip } from "../indicators/AppTooltip";
 
 const getMatchPreview = (content: string, query: string) => {
   const matchIndex = content
@@ -40,7 +43,16 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
             return conversation.messages.flatMap((message) => {
               if (!message.messageId) return [];
               const preview = getMatchPreview(message.content, searchTerm);
-              return preview ? [{ conversation, message, preview }] : [];
+              return preview
+                ? [
+                    {
+                      conversation,
+                      message,
+                      preview,
+                      date: getMessageDate(message),
+                    },
+                  ]
+                : [];
             });
           }),
     [searchTerm, state.conversationOrder, state.conversationsById],
@@ -129,7 +141,7 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
                       exit={{ opacity: 0 }}
                     >
                       {results.map(
-                        ({ conversation, message, preview }, index) => (
+                        ({ conversation, message, preview, date }, index) => (
                           <motion.div
                             key={`${conversation.id}-${message.messageId}`}
                             initial={{ opacity: 0, y: 8 }}
@@ -159,11 +171,30 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
                                     ? "You"
                                     : "Assistant"}
                                 </span>
-                                {conversation.id === currentConversationId && (
-                                  <span className="ml-auto shrink-0 rounded-md bg-accent/40 px-1.5 py-0.5">
-                                    Current
-                                  </span>
-                                )}
+                                <span className="ml-auto flex shrink-0 items-center gap-2">
+                                  {date && (
+                                    <AppTooltip
+                                      arrow
+                                      placement="left"
+                                      title={format(date, "PPpp")}
+                                    >
+                                      <time
+                                        dateTime={date.toISOString()}
+                                        className="text-white/40 underline underline-offset-2 decoration-dotted"
+                                      >
+                                        {formatDistanceToNow(date, {
+                                          addSuffix: true,
+                                        })}
+                                      </time>
+                                    </AppTooltip>
+                                  )}
+                                  {conversation.id ===
+                                    currentConversationId && (
+                                    <span className="rounded-md bg-accent/40 px-1.5 py-0.5 text-white/80">
+                                      Current
+                                    </span>
+                                  )}
+                                </span>
                               </div>
                               <p className="line-clamp-3 text-sm leading-relaxed text-white/65 group-hover:text-white/85">
                                 {preview.before}
