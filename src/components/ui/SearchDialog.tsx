@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Search, X } from "lucide-react";
 import clsx from "clsx";
 import { QUERY_PARAM, useGetQueryParam, useStore } from "@/hooks";
+import { Helper } from "@/libs/helper";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 import { AppIconButton } from "../buttons/AppIconButton";
 
@@ -144,7 +145,10 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
                                 "hover:border-accent/35 hover:bg-white/6 focus-visible:outline-2 focus-visible:outline-accent",
                               )}
                               to={`/?${QUERY_PARAM.ChatId}=${encodeURIComponent(conversation.id)}#${encodeURIComponent(message.messageId)}`}
-                              onClick={onClose}
+                              onClick={() => {
+                                Helper.scrollToId(conversation.id, "center");
+                                onClose();
+                              }}
                             >
                               <div className="mb-1.5 flex min-w-0 items-center gap-2 text-xs">
                                 <span className="truncate font-medium text-white/80">
