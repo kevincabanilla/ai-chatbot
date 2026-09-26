@@ -5,7 +5,6 @@ import { Search, X } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import clsx from "clsx";
 import { QUERY_PARAM, useGetQueryParam, useStore } from "@/hooks";
-import { Helper } from "@/libs/helper";
 import { getMessageDate } from "@/libs/utils";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 import { AppIconButton } from "../buttons/AppIconButton";
@@ -27,7 +26,15 @@ const getMatchPreview = (content: string, query: string) => {
   };
 };
 
-export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
+export interface SearchDialogProps extends DialogProps {
+  onSelectItem?: (conversationId: string) => void;
+}
+
+export const SearchDialog = ({
+  onSelectItem,
+  onClose,
+  ...props
+}: SearchDialogProps) => {
   const { state } = useStore();
   const [searchVal, setSearchVal] = useState("");
   const currentConversationId = useGetQueryParam("c");
@@ -158,7 +165,7 @@ export const SearchDialog = ({ onClose, ...props }: DialogProps) => {
                               )}
                               to={`/?${QUERY_PARAM.ChatId}=${encodeURIComponent(conversation.id)}#${encodeURIComponent(message.messageId)}`}
                               onClick={() => {
-                                Helper.scrollToId(conversation.id, "center");
+                                onSelectItem?.(conversation.id);
                                 onClose();
                               }}
                             >
