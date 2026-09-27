@@ -20,6 +20,7 @@ import { QUERY_PARAM, useGetQueryParam, useStateManager } from "@/hooks";
 import { Helper } from "@/libs/helper";
 import { AppNavLink } from "../buttons/AppNavLink";
 import { HoverMarquee } from "../ui/HoverMarquee";
+import { AppLoadingDots } from "../indicators/AppLoadingDots";
 
 export function Nav({
   isMobile,
@@ -170,7 +171,7 @@ const NavActions = ({
   onDeleteConversation: (cid: string) => void;
 }) => {
   const currentConversationId = useGetQueryParam("c");
-  const { state } = useStateManager();
+  const { state, loadingConversationId } = useStateManager();
   const recentConversationsRef = useRef<HTMLUListElement>(null);
   const selectedItemRef = useRef<HTMLLIElement>(null);
   const previousConversationOrderRef = useRef<string[] | null>(null);
@@ -303,6 +304,10 @@ const NavActions = ({
 
                       {(hasUnread ?? hasError) && (
                         <AlertBadge hasUnread={hasUnread} hasError={hasError} />
+                      )}
+
+                      {loadingConversationId === cid && (
+                        <AppLoadingDots size="sm" />
                       )}
                     </AppNavLink>
                   </motion.div>
