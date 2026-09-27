@@ -10,7 +10,6 @@ import {
   useChat,
   useChatStream,
   useUpdateDocumentTitle,
-  useGetQueryParam,
   useStateManager,
   useTitleGenerator,
   useTypingAnimation,
@@ -33,8 +32,12 @@ const scrollToId = (id: string | number) => {
 export default function MainView() {
   const navigate = useNavigate();
   const messageId = useUrlHash();
-  const currentConversationId = useGetQueryParam("c");
-  const { isMobile, openSettings } = useAppContext();
+  const {
+    isMobile,
+    conversationId: currentConversationId,
+    conversation: currentConversation,
+    openSettings,
+  } = useAppContext();
   const {
     state,
     loadingConversationId,
@@ -42,7 +45,6 @@ export default function MainView() {
     appendMessage,
     updateMessage,
     deleteMessage,
-    getConversation,
     updateConversation,
     branchOutToNewConversation,
     setLoadingConversationId,
@@ -57,8 +59,6 @@ export default function MainView() {
 
   const streamResponse = state.settings.streamResponse ?? false;
   const isLoading = streamResponse ? isStreaming : isChatLoading;
-
-  const currentConversation = getConversation(currentConversationId);
 
   const messages = useMemo(
     () => currentConversation?.messages ?? [],

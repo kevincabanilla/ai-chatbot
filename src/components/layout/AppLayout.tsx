@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Outlet } from "react-router";
-import { MEDIA_QUERIES, useMediaQuery } from "@/hooks";
+import {
+  MEDIA_QUERIES,
+  useGetQueryParam,
+  useMediaQuery,
+  useStateManager,
+} from "@/hooks";
 import { TopToolbar, LeftSidebar } from "@/components/views";
 import { SearchDialog } from "@/components/ui/SearchDialog";
 import { SettingsDialog } from "@/components/ui/SettingsDialog";
@@ -18,6 +23,10 @@ export default function AppLayout() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deleteConversationId, setDeleteConversationId] = useState("");
+
+  const { getConversation } = useStateManager();
+  const conversationId = useGetQueryParam("c");
+  const conversation = getConversation(conversationId);
 
   const onDeleteConversation = (cid: string) => {
     setDeleteConversationId(cid);
@@ -56,7 +65,8 @@ export default function AppLayout() {
       <div className={clsx("min-w-0 flex-1", isMobile && "pt-16")}>
         <TopToolbar
           className="h-16"
-          isVisible={isMobile}
+          visible={isMobile}
+          conversation={conversation}
           onOpenDrawer={(shouldOpen) => {
             setIsCollapsed(!shouldOpen);
           }}
@@ -66,6 +76,8 @@ export default function AppLayout() {
         <AppContext.Provider
           value={{
             isMobile,
+            conversationId,
+            conversation,
             openSettings: () => {
               setIsSettingsOpen(true);
             },
