@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Search, X } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import clsx from "clsx";
-import { QUERY_PARAM, useGetQueryParam, useStore } from "@/hooks";
+import { QUERY_PARAM, useStore } from "@/hooks";
 import { getMessageDate } from "@/libs/utils";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 import { AppIconButton } from "../buttons/AppIconButton";
@@ -27,17 +27,18 @@ const getMatchPreview = (content: string, query: string) => {
 };
 
 export interface SearchDialogProps extends DialogProps {
+  currentConversationId?: string | null;
   onSelectItem?: (conversationId: string) => void;
 }
 
 export const SearchDialog = ({
+  currentConversationId = null,
   onSelectItem,
   onClose,
   ...props
 }: SearchDialogProps) => {
   const { state } = useStore();
   const [searchVal, setSearchVal] = useState("");
-  const currentConversationId = useGetQueryParam("c");
   const searchTerm = searchVal.trim();
 
   const results = useMemo(

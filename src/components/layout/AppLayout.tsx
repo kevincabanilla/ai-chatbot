@@ -53,6 +53,7 @@ export default function AppLayout() {
 
       <SearchDialog
         open={isSearchOpen}
+        currentConversationId={conversation?.id}
         onSelectItem={(conversationId) => {
           if (isMobile) setIsCollapsed(true);
           Helper.scrollToId(conversationId, "center");
