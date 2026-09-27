@@ -43,6 +43,7 @@ export interface ComboboxProps extends VariantProps<typeof comboboxVariants> {
   className?: string;
   disabled?: boolean;
   autofocus?: boolean;
+  enableSearch?: boolean;
   emptyMessage?: string;
   placeholder?: string;
   searchPlaceholder?: string;
@@ -55,8 +56,9 @@ export interface ComboboxProps extends VariantProps<typeof comboboxVariants> {
 
 export const AppCombobox = ({
   className,
-  disabled,
-  autofocus,
+  disabled = false,
+  autofocus = false,
+  enableSearch = false,
   emptyMessage = "No results.",
   placeholder = "Select...",
   searchPlaceholder = "Search...",
@@ -83,12 +85,12 @@ export const AppCombobox = ({
   const selectedOptionRef = useRef<HTMLLIElement>(null);
 
   const filtered = useMemo(() => {
-    if (!query) return options;
+    if (!query || !enableSearch) return options;
 
     return options.filter((o) =>
       o.label.toLowerCase().includes(query.toLowerCase()),
     );
-  }, [options, query]);
+  }, [enableSearch, options, query]);
 
   const selected = options.find((o) => o.value === value);
 
@@ -223,18 +225,20 @@ export const AppCombobox = ({
               width: menuPosition.width,
             }}
           >
-            <div className="border-b border-accent/30 p-3">
-              <input
-                ref={inputRef}
-                className="w-full rounded-md bg-transparent text-xs md:text-sm outline-none"
-                placeholder={searchPlaceholder}
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                }}
-                onKeyDown={onKeyDown}
-              />
-            </div>
+            {enableSearch && (
+              <div className="border-b border-accent/30 p-3">
+                <input
+                  ref={inputRef}
+                  className="w-full rounded-md bg-transparent text-xs md:text-sm outline-none"
+                  placeholder={searchPlaceholder}
+                  value={query}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                  }}
+                  onKeyDown={onKeyDown}
+                />
+              </div>
+            )}
 
             <ul className="max-h-60 overflow-y-auto p-1">
               {filtered.length === 0 && (
