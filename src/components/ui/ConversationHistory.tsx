@@ -8,7 +8,7 @@ import { Helper } from "@/libs/helper";
 import { getDateLabel, getMessageDate } from "@/libs/utils";
 import { QUERY_PARAM, useMediaQuery, useStore, useUrlHash } from "@/hooks";
 import MarkdownContent from "./MarkdownContent";
-import { TypingDots } from "../common/TypingDots";
+import { AppLoadingDots } from "../indicators/AppLoadingDots";
 import ParagraphSkeletonLoader from "../common/ParagraphSkeletonLoader";
 import { MessageBubble } from "./conversation/MessageBubble";
 import { MessageSeparator } from "./conversation/MessageSeparator";
@@ -113,7 +113,11 @@ export const ConversationHistory = ({
 
                   {showLoaders &&
                     (!item.content ? (
-                      <TypingDots />
+                      <AppLoadingDots
+                        size="custom"
+                        dotClassName="size-1.5 md:size-2"
+                        animation="bounce"
+                      />
                     ) : (
                       <ParagraphSkeletonLoader />
                     ))}
