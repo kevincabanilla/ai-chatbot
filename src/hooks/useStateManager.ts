@@ -30,7 +30,14 @@ export interface StateManager extends StoreContextType {
 }
 
 export function useStateManager(): StateManager {
-  const { state, isReady, setState, reset } = useStore();
+  const {
+    state,
+    isReady,
+    loadingConversationId,
+    setState,
+    reset,
+    setLoadingConversationId,
+  } = useStore();
 
   const isConversationExists = (id: string) =>
     state.conversationOrder.some((cid) => cid == id);
@@ -270,8 +277,10 @@ export function useStateManager(): StateManager {
   return {
     state,
     isReady,
+    loadingConversationId,
     setState,
     reset,
+    setLoadingConversationId,
     isConversationExists,
     appendMessage,
     updateMessage,
