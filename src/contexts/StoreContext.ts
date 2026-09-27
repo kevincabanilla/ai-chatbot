@@ -24,9 +24,13 @@ const DEFAULT_STATE: Store = {
 
 export interface StoreContextType {
   state: Store;
+  /** Whether the StoreProvider has mounted */
   isReady: boolean;
+  /** Used to identify conversations with pending response. */
+  loadingConversationId: string;
   setState: (updater: Partial<Store> | ((prev: Store) => Store)) => void;
   reset: () => void;
+  setLoadingConversationId: (id: string) => void;
 }
 
 export const loadState = (): Store => {
