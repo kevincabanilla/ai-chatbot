@@ -45,7 +45,7 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
 
   const { data, error, isLoading, mutate } = useGetAiModelsApi();
 
-  const models = useMemo<ComboboxOption[]>(
+  const models = useMemo<ComboboxOption<string>[]>(
     () =>
       data?.models
         .map((model) => ({
@@ -148,13 +148,14 @@ const SettingsContent = ({ onClose }: { onClose: () => void }) => {
               </div>
             ) : models.length > 0 ? (
               <AppCombobox
+                enableSearch
                 value={aiModel}
-                onValueChange={setAiModel}
                 options={models}
                 placeholder="Choose a model"
                 emptyMessage="No matching models."
                 searchPlaceholder="Search models..."
                 aria-label="Model"
+                onValueChange={setAiModel}
               />
             ) : (
               <div className="h-10 flex items-center rounded-lg border border-white/10 bg-bg-secondary px-3 text-sm text-white/50">

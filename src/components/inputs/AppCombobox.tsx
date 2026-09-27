@@ -33,13 +33,15 @@ const comboboxVariants = cva(
   },
 );
 
-export interface ComboboxOption {
+export interface ComboboxOption<T> {
   label: string;
-  value: string;
+  value: T;
   disabled?: boolean;
 }
 
-export interface ComboboxProps extends VariantProps<typeof comboboxVariants> {
+export interface ComboboxProps<T> extends VariantProps<
+  typeof comboboxVariants
+> {
   className?: string;
   disabled?: boolean;
   autofocus?: boolean;
@@ -48,13 +50,13 @@ export interface ComboboxProps extends VariantProps<typeof comboboxVariants> {
   placeholder?: string;
   searchPlaceholder?: string;
   "aria-label"?: string;
-  options: ComboboxOption[];
+  options: ComboboxOption<T>[];
   ref?: Ref<HTMLButtonElement>;
-  value?: string | null;
-  onValueChange?: (value: string) => void;
+  value?: T | null;
+  onValueChange?: (value: T) => void;
 }
 
-export const AppCombobox = ({
+export const AppCombobox = <T extends string | number>({
   className,
   disabled = false,
   autofocus = false,
@@ -69,7 +71,7 @@ export const AppCombobox = ({
   ref,
   value,
   onValueChange,
-}: ComboboxProps) => {
+}: ComboboxProps<T>) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [highlighted, setHighlighted] = useState(-1);
@@ -128,7 +130,7 @@ export const AppCombobox = ({
   useEffect(() => {
     if (!open) return;
 
-    selectedOptionRef.current?.scrollIntoView({ block: "start" });
+    selectedOptionRef.current?.scrollIntoView({ block: "center" });
   }, [open]);
 
   useEffect(() => {
@@ -149,7 +151,7 @@ export const AppCombobox = ({
     };
   }, []);
 
-  const select = (option?: ComboboxOption | null) => {
+  const select = (option?: ComboboxOption<T> | null) => {
     if (!option || option.disabled) return;
 
     onValueChange?.(option.value);
