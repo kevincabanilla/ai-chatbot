@@ -37,6 +37,7 @@ export default function MainView() {
   const { isMobile, openSettings } = useAppContext();
   const {
     state,
+    loadingConversationId,
     moveConversationToTop,
     appendMessage,
     updateMessage,
@@ -44,10 +45,10 @@ export default function MainView() {
     getConversation,
     updateConversation,
     branchOutToNewConversation,
+    setLoadingConversationId,
   } = useStateManager();
 
   const [showAlert, setShowAlert] = useState(false);
-  const [loadingId, setLoadingId] = useState(""); // Used to identify conversations with pending response.
   const [errorMessage, setErrorMessage] = useState("");
 
   const { sendChatMessage, isMutating: isChatLoading } = useChat();
@@ -124,7 +125,7 @@ export default function MainView() {
         });
       }
 
-      setLoadingId(conversationId);
+      setLoadingConversationId(conversationId);
 
       const newMessages = [...(latestConversationMessages ?? messages)];
 
@@ -241,7 +242,7 @@ export default function MainView() {
           errorMessage: errorMessage,
         }));
       } finally {
-        setLoadingId("");
+        setLoadingConversationId("");
       }
     },
     [
@@ -254,6 +255,7 @@ export default function MainView() {
       moveConversationToTop,
       navigate,
       sendChatMessage,
+      setLoadingConversationId,
       state.settings.mode,
       state.settings.model,
       streamMessage,
@@ -319,7 +321,7 @@ export default function MainView() {
             <div className="grow">
               <ConversationHistory
                 conversation={currentConversation}
-                loadingId={loadingId}
+                loadingId={loadingConversationId}
                 messages={messages}
                 onRetry={() => void sendMessage()}
                 onTryAgain={regenerateResponse}
