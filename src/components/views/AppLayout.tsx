@@ -42,6 +42,7 @@ export default function AppLayout() {
         setIsCollapsed={setIsCollapsed}
         onSearchClicked={() => {
           setIsSearchOpen((isOpen) => !isOpen);
+          if (isMobile) setIsCollapsed(true);
         }}
         onSettingsClicked={() => {
           setIsSettingsOpen(true);
@@ -103,10 +104,7 @@ export default function AppLayout() {
         open={isSearchOpen}
         currentConversationId={conversation?.id}
         onSelectItem={(cid) => {
-          if (isMobile) {
-            setIsSearchOpen(false);
-            setIsCollapsed(true);
-          }
+          if (isMobile) setIsSearchOpen(false);
           if (cid !== conversationId) Helper.scrollToId(cid, "center");
         }}
         onClose={() => {

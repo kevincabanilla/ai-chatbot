@@ -1,21 +1,46 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/libs/utils";
-import { MEDIA_QUERIES, useMediaQuery } from "@/hooks";
+import {
+  MEDIA_QUERIES,
+  useDebounceValue,
+  useMediaQuery,
+  useSearchConversations,
+  type SearchInType,
+} from "@/hooks";
 import { MobileBackdrop } from "@/components/common/MobileBackdrop";
-import { SearchComponent, type SearchComponentProps } from "./SearchComponent";
+import { SearchComponent } from "./SearchComponent";
 
-export interface SearchSidebarProps extends SearchComponentProps {
-  open?: boolean;
+export interface SearchSidebarProps {
+  open: boolean;
+  currentConversationId?: string | null;
+  onSelectItem: (conversationId: string) => void;
+  onClose: () => void;
 }
 
 export const SearchSidebar = ({
-  open = false,
-  ...props
+  open,
+  currentConversationId,
+  onSelectItem,
+  onClose,
 }: SearchSidebarProps) => {
   const isMobile = useMediaQuery(MEDIA_QUERIES.xl);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchIn, setSearchIn] = useState<SearchInType>("all");
+  const searchTerm = useDebounceValue(searchQuery.trim(), 300);
 
-  const { onClose } = props;
+  const results = useSearchConversations(searchTerm, {
+    currentConversationId,
+    searchIn,
+  });
+
+  useEffect(() => {
+    const resetSearchIn = () => {
+      setSearchIn("all");
+    };
+
+    if (!currentConversationId && searchIn === "current") resetSearchIn();
+  }, [currentConversationId, searchIn]);
 
   useEffect(() => {
     if (!open) return;
@@ -67,7 +92,17 @@ export const SearchSidebar = ({
               isMobile && "shadow-2xl shadow-black/30",
             )}
           >
-            <SearchComponent {...props} />
+            <SearchComponent
+              searchQuery={searchQuery}
+              searchTerm={searchTerm}
+              searchIn={searchIn}
+              currentConversationId={currentConversationId}
+              results={results}
+              onSetSearchQuery={setSearchQuery}
+              onSetSearchIn={setSearchIn}
+              onSelectItem={onSelectItem}
+              onClose={onClose}
+            />
           </motion.aside>
         </motion.div>
       )}

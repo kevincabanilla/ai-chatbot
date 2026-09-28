@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { Search, X } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import clsx from "clsx";
-import { QUERY_PARAM, useStore } from "@/hooks";
-import { getMessageDate } from "@/libs/utils";
+import {
+  QUERY_PARAM,
+  type SearchConversationResult,
+  type SearchInType,
+} from "@/hooks";
 import { AppIconButton } from "@/components/buttons/AppIconButton";
 import { AppTooltip } from "@/components/indicators/AppTooltip";
 import {
@@ -13,86 +15,29 @@ import {
   type ComboboxOption,
 } from "@/components/inputs/AppCombobox";
 
-type SearchInType = "all" | "current";
-
-const getMatchPreview = (content: string, query: string) => {
-  const matchIndex = content
-    .toLocaleLowerCase()
-    .indexOf(query.toLocaleLowerCase());
-  if (matchIndex < 0) return null;
-
-  const start = Math.max(0, matchIndex - 48);
-  const end = Math.min(content.length, matchIndex + query.length + 88);
-
-  return {
-    before: `${start > 0 ? "..." : ""}${content.slice(start, matchIndex)}`,
-    match: content.slice(matchIndex, matchIndex + query.length),
-    after: `${content.slice(matchIndex + query.length, end)}${end < content.length ? "..." : ""}`,
-  };
-};
-
 export interface SearchComponentProps {
+  searchQuery: string;
+  searchTerm: string;
+  searchIn: SearchInType;
   currentConversationId?: string | null;
+  results: SearchConversationResult[];
+  onSetSearchQuery: (value: string) => void;
+  onSetSearchIn: (value: SearchInType) => void;
   onSelectItem: (conversationId: string) => void;
   onClose: () => void;
 }
 
 export const SearchComponent = ({
+  searchQuery,
+  searchTerm,
+  searchIn,
   currentConversationId,
+  results,
+  onSetSearchQuery,
+  onSetSearchIn,
   onSelectItem,
   onClose,
 }: SearchComponentProps) => {
-  const { state } = useStore();
-  const [searchVal, setSearchVal] = useState("");
-  const [searchIn, setSearchIn] = useState<SearchInType>("all");
-  const searchTerm = searchVal.trim();
-
-  const results = useMemo(() => {
-    if (!searchTerm) return [];
-
-    const source =
-      searchIn === "current" && currentConversationId
-        ? [
-            state.conversationOrder.find(
-              (id) => id === currentConversationId,
-            ) ?? "",
-          ]
-        : state.conversationOrder;
-
-    return source.flatMap((conversationId) => {
-      const conversation = state.conversationsById[conversationId];
-
-      return conversation.messages.flatMap((message) => {
-        if (!message.messageId) return [];
-        const preview = getMatchPreview(message.content, searchTerm);
-        return preview
-          ? [
-              {
-                conversation,
-                message,
-                preview,
-                date: getMessageDate(message),
-              },
-            ]
-          : [];
-      });
-    });
-  }, [
-    currentConversationId,
-    searchIn,
-    searchTerm,
-    state.conversationOrder,
-    state.conversationsById,
-  ]);
-
-  useEffect(() => {
-    const resetSearchIn = () => {
-      setSearchIn("all");
-    };
-
-    if (!currentConversationId && searchIn === "current") resetSearchIn();
-  }, [currentConversationId, searchIn]);
-
   const searchInOptions = [
     { label: "All Conversations", value: "all" },
     {
@@ -136,19 +81,19 @@ export const SearchComponent = ({
               "placeholder:text-white/35 outline-none transition",
               "hover:border-white/20 focus:border-accent/70 focus:ring-4 focus:ring-accent/10",
             )}
-            value={searchVal}
+            value={searchQuery}
             onChange={(event) => {
-              setSearchVal(event.target.value);
+              onSetSearchQuery(event.target.value);
             }}
           />
-          {searchVal && (
+          {searchQuery && (
             <AppIconButton
               label="Clear search"
               variant="plain"
               className="absolute top-1/2 right-2 -translate-y-1/2 text-white/55 hover:text-white"
               icon={X}
               onClick={() => {
-                setSearchVal("");
+                onSetSearchQuery("");
               }}
             />
           )}
@@ -162,7 +107,7 @@ export const SearchComponent = ({
               options={searchInOptions}
               placeholder="Search where?"
               aria-label="Where to Search"
-              onValueChange={setSearchIn}
+              onValueChange={onSetSearchIn}
             />
           </div>
         </div>
