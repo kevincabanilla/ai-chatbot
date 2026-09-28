@@ -53,7 +53,7 @@ export const ConversationHistory = ({
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
-      className="full-size"
+      className="size-full"
     >
       {messages.map((item, i) => {
         const isFromUser = item.role === "user";

@@ -34,10 +34,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-@utility full-size {
-  @apply h-full w-full;
-}
-
 .app-scrollbar {
   overflow-anchor: none;
   scrollbar-color: var(--color-scrollbar) transparent;
