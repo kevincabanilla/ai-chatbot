@@ -109,7 +109,7 @@ export const SearchComponent = ({
           <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent/15 text-accent">
             <Search size={18} aria-hidden="true" />
           </div>
-          <h1 className="text-lg font-semibold">Search messages</h1>
+          <h1 className="text-lg font-semibold truncate">Search messages</h1>
         </div>
         <AppIconButton
           label="Close"
@@ -155,7 +155,7 @@ export const SearchComponent = ({
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          <span className="text-sm font-medium">Find in</span>
+          <span className="text-sm font-medium truncate">Find in</span>
           <div className="flex-1 sm:max-w-52">
             <AppCombobox
               value={searchIn}
