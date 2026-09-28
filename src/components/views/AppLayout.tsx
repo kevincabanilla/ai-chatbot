@@ -62,6 +62,9 @@ export default function AppLayout() {
             setIsCollapsed(!shouldOpen);
           }}
           onDeleteConversation={onDeleteConversation}
+          onSearchClicked={() => {
+            setIsSearchOpen((isOpen) => !isOpen);
+          }}
         />
 
         <AppContext.Provider

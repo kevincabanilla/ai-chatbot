@@ -5,7 +5,7 @@ import {
   useMotionValueEvent,
   useScroll,
 } from "motion/react";
-import { ChevronDown, Menu, Trash2 } from "lucide-react";
+import { ChevronDown, Menu, Search, Trash2 } from "lucide-react";
 import { cn } from "@/libs/utils";
 import type { Conversation } from "@/interfaces";
 import { AppIconButton } from "@/components/buttons/AppIconButton";
@@ -17,6 +17,7 @@ export interface TopToolbarProps extends ComponentProps<typeof motion.header> {
   conversation: Conversation | null;
   onOpenDrawer: (shouldOpen: boolean) => void;
   onDeleteConversation: (cid: string) => void;
+  onSearchClicked: () => void;
 }
 
 export const TopToolbar = ({
@@ -25,6 +26,7 @@ export const TopToolbar = ({
   conversation,
   onOpenDrawer,
   onDeleteConversation,
+  onSearchClicked,
 }: TopToolbarProps) => {
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
@@ -77,11 +79,20 @@ export const TopToolbar = ({
           <div className="grow" />
 
           {conversation?.id && (
-            <DrodownMenu
-              onDelete={() => {
-                onDeleteConversation(conversation.id);
-              }}
-            />
+            <>
+              <AppIconButton
+                variant="plain"
+                label="Search button"
+                icon={Search}
+                onClick={onSearchClicked}
+              />
+
+              <DrodownMenu
+                onDelete={() => {
+                  onDeleteConversation(conversation.id);
+                }}
+              />
+            </>
           )}
         </motion.header>
       )}
