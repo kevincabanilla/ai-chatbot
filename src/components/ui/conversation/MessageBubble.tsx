@@ -60,7 +60,7 @@ export const MessageBubble = ({
       )}
 
       <motion.div
-        className="flex flex-col gap-0.5 min-w-0 w-full max-w-full"
+        className="flex flex-col gap-0.5 min-w-0"
         initial="hide"
         animate={isTouchDevice && isUserActionsVisible ? "hover" : "hide"}
         whileHover="hover"
