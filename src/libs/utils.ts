@@ -50,3 +50,19 @@ export function getDateLabel(date: string | number | Date) {
   if (isThisWeek(date, { weekStartsOn })) return format(date, "EEEE");
   return format(date, isThisYear(date) ? "MMM d" : "MMM d, yyyy");
 }
+
+export const getMatchPreview = (content: string, query: string) => {
+  const matchIndex = content
+    .toLocaleLowerCase()
+    .indexOf(query.toLocaleLowerCase());
+  if (matchIndex < 0) return null;
+
+  const start = Math.max(0, matchIndex - 48);
+  const end = Math.min(content.length, matchIndex + query.length + 88);
+
+  return {
+    before: `${start > 0 ? "..." : ""}${content.slice(start, matchIndex)}`,
+    match: content.slice(matchIndex, matchIndex + query.length),
+    after: `${content.slice(matchIndex + query.length, end)}${end < content.length ? "..." : ""}`,
+  };
+};
