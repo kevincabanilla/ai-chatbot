@@ -291,7 +291,7 @@ const NavActions = ({
                       )}
 
                       {loadingConversationId === cid && (
-                        <AppLoadingDots size="sm" />
+                        <AppLoadingDots size="xs" />
                       )}
                     </AppNavLink>
                   </motion.div>
