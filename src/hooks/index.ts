@@ -5,6 +5,7 @@ export * from "./useDebounceValue";
 export * from "./useGetQueryParam";
 export * from "./useKeyboardOffset";
 export * from "./useMediaQuery";
+export * from "./useSearchConversations";
 export * from "./useStateManager";
 export * from "./useStore";
 export * from "./useTitleGenerator";
