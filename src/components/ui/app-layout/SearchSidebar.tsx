@@ -1,12 +1,9 @@
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/libs/utils";
-import {
-  SearchComponent,
-  type SearchComponentProps,
-} from "@/components/ui/search/SearchComponent";
-import { MobileBackdrop } from "../common/MobileBackdrop";
 import { MEDIA_QUERIES, useMediaQuery } from "@/hooks";
+import { MobileBackdrop } from "@/components/common/MobileBackdrop";
+import { SearchComponent, type SearchComponentProps } from "./SearchComponent";
 
 export interface SearchSidebarProps extends SearchComponentProps {
   open?: boolean;

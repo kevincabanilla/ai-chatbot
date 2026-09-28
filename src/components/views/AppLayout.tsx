@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { Outlet } from "react-router";
+import clsx from "clsx";
 import {
   MEDIA_QUERIES,
   useGetQueryParam,
   useMediaQuery,
   useStateManager,
 } from "@/hooks";
-import { TopToolbar, LeftSidebar } from "@/components/views";
-import { SearchSidebar } from "./SearchSidebar";
-import { SettingsDialog } from "@/components/ui/SettingsDialog";
+import { Helper } from "@/libs/helper";
 import { AppContext } from "@/contexts/AppContext";
+import { TopToolbar } from "../ui/app-layout/TopToolbar";
+import { LeftSidebar } from "../ui/app-layout/LeftSidebar";
+import { SearchSidebar } from "../ui/app-layout/SearchSidebar";
+import { SettingsDialog } from "../ui/SettingsDialog";
 import { DeleteConversationDialog } from "../ui/DeleteConversationDialog";
 import { AboutDialog } from "../ui/AboutDialog";
-import clsx from "clsx";
-import { Helper } from "@/libs/helper";
 
 export default function AppLayout() {
   const isMobile = useMediaQuery(MEDIA_QUERIES.lg);

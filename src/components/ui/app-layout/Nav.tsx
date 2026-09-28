@@ -11,16 +11,16 @@ import {
   X,
   XIcon,
 } from "lucide-react";
-import { cn } from "@/libs/utils";
-import type { NavProps } from "@/interfaces";
-import { AppNavButton } from "../buttons/AppNavButton";
-import { AppIconButton } from "../buttons/AppIconButton";
-import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
 import { QUERY_PARAM, useGetQueryParam, useStateManager } from "@/hooks";
+import { cn } from "@/libs/utils";
+import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
 import { Helper } from "@/libs/helper";
-import { AppNavLink } from "../buttons/AppNavLink";
-import { HoverMarquee } from "../ui/HoverMarquee";
-import { AppLoadingDots } from "../indicators/AppLoadingDots";
+import type { NavProps } from "@/interfaces";
+import { AppNavButton } from "@/components/buttons/AppNavButton";
+import { AppIconButton } from "@/components/buttons/AppIconButton";
+import { AppNavLink } from "@/components/buttons/AppNavLink";
+import { AppLoadingDots } from "@/components/indicators/AppLoadingDots";
+import { HoverMarquee } from "../HoverMarquee";
 
 export function Nav({
   isMobile,

@@ -1,9 +1,9 @@
 import { createElement, lazy, Suspense } from "react";
 import { Navigate, createBrowserRouter, redirect } from "react-router";
 import { AppSplashLoader } from "@/components/common/AppSplashLoader";
-import AppLayout from "@/components/layout/AppLayout";
 import { useStore } from "@/hooks";
 
+const AppLayout = lazy(() => import("@/components/views/AppLayout"));
 const MainView = lazy(() => import("@/components/views/MainView"));
 const SetupView = lazy(() => import("@/components/views/SetupView"));
 const ErrorBoundary = lazy(() => import("@/components/views/ErrorBoundary"));

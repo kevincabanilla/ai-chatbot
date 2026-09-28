@@ -6,11 +6,11 @@ import {
   useScroll,
 } from "motion/react";
 import { ChevronDown, Menu, Trash2 } from "lucide-react";
-import { AppIconButton } from "../buttons/AppIconButton";
 import { cn } from "@/libs/utils";
 import type { Conversation } from "@/interfaces";
-import { AppNavButton } from "../buttons/AppNavButton";
-import { AppDropdownMenu } from "../containers/AppDropdownMenu";
+import { AppIconButton } from "@/components/buttons/AppIconButton";
+import { AppNavButton } from "@/components/buttons/AppNavButton";
+import { AppDropdownMenu } from "@/components/containers/AppDropdownMenu";
 
 export interface TopToolbarProps extends ComponentProps<typeof motion.header> {
   visible: boolean;
