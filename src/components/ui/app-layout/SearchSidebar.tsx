@@ -69,7 +69,7 @@ export const SearchSidebar = ({
               : "sticky top-0 h-dvh shrink-0 overflow-hidden",
           )}
           initial={isMobile ? { opacity: 0 } : { width: 0 }}
-          animate={isMobile ? { opacity: 1 } : { width: 600 }}
+          animate={isMobile ? { opacity: 1 } : { width: 512 }}
           exit={isMobile ? { opacity: 0 } : { width: 0 }}
           style={isMobile ? { width: "auto" } : undefined}
         >
@@ -88,8 +88,8 @@ export const SearchSidebar = ({
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 260, damping: 30 }}
             className={cn(
-              "absolute inset-y-0 right-0 flex flex-col w-full max-w-lg bg-bg-primary border-l border-accent/20",
-              isMobile && "shadow-2xl shadow-black/30",
+              "absolute inset-y-0 right-0 flex flex-col w-full bg-bg-primary border-l border-accent/20",
+              isMobile && "max-w-lg shadow-2xl shadow-black/30",
             )}
           >
             <SearchComponent
