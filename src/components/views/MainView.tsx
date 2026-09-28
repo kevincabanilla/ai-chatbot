@@ -316,7 +316,7 @@ export default function MainView() {
           hasStarted ? "justify-start" : "justify-center",
         )}
       >
-        <div className="min-w-0 grow flex flex-col justify-center w-full max-w-2xl xl:max-w-4xl">
+        <div className="min-w-0 grow flex flex-col justify-center w-full max-w-2xl xl:max-w-4xl 2xl:max-w-5xl 3xl:max-w-6xl">
           {hasStarted ? (
             <div className="grow">
               <ConversationHistory

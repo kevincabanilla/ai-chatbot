@@ -68,8 +68,8 @@ export const MessageBubble = ({
         <div className={cn("flex", isFromUser && "flex-row-reverse")}>
           <AppCard
             className={cn(
-              "min-h-9.5 md:min-h-10 min-w-0 max-w-full px-4 py-2",
-              "max-w-lg lg:max-w-xl xl:max-w-3xl rounded-2xl",
+              "min-h-9.5 md:min-h-10 min-w-0 max-w-full px-4 py-2 rounded-2xl",
+              "max-w-xl lg:max-w-2xl xl:max-w-3xl 2xl:max-w-4xl 3xl:max-w-5xl",
               "whitespace-pre-wrap wrap-anywhere",
               "transition-colors",
               isFromUser ? "rounded-tr-none" : "rounded-tl-none",
