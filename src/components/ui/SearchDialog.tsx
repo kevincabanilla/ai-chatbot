@@ -34,6 +34,7 @@ export interface SearchDialogProps extends DialogProps {
   onSelectItem?: (conversationId: string) => void;
 }
 
+/** @deprecated Use SearchComponent instead */
 export const SearchDialog = ({
   currentConversationId = null,
   onSelectItem,

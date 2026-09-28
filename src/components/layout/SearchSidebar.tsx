@@ -6,17 +6,18 @@ import {
   type SearchComponentProps,
 } from "@/components/ui/search/SearchComponent";
 import { MobileBackdrop } from "../common/MobileBackdrop";
+import { MEDIA_QUERIES, useMediaQuery } from "@/hooks";
 
 export interface SearchSidebarProps extends SearchComponentProps {
   open?: boolean;
-  isMobile?: boolean;
 }
 
 export const SearchSidebar = ({
   open = false,
-  isMobile = false,
   ...props
 }: SearchSidebarProps) => {
+  const isMobile = useMediaQuery(MEDIA_QUERIES.xl);
+
   const { onClose } = props;
 
   useEffect(() => {

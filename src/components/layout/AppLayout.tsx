@@ -7,7 +7,7 @@ import {
   useStateManager,
 } from "@/hooks";
 import { TopToolbar, LeftSidebar } from "@/components/views";
-import { SearchDialog } from "@/components/ui/SearchDialog";
+import { SearchSidebar } from "./SearchSidebar";
 import { SettingsDialog } from "@/components/ui/SettingsDialog";
 import { AppContext } from "@/contexts/AppContext";
 import { DeleteConversationDialog } from "../ui/DeleteConversationDialog";
@@ -40,7 +40,7 @@ export default function AppLayout() {
         isMobile={isMobile}
         setIsCollapsed={setIsCollapsed}
         onSearchClicked={() => {
-          setIsSearchOpen(true);
+          setIsSearchOpen((isOpen) => !isOpen);
         }}
         onSettingsClicked={() => {
           setIsSettingsOpen(true);
@@ -48,18 +48,6 @@ export default function AppLayout() {
         onDeleteConversation={onDeleteConversation}
         onAboutClicked={() => {
           setIsAboutOpen(true);
-        }}
-      />
-
-      <SearchDialog
-        open={isSearchOpen}
-        currentConversationId={conversation?.id}
-        onSelectItem={(conversationId) => {
-          if (isMobile) setIsCollapsed(true);
-          Helper.scrollToId(conversationId, "center");
-        }}
-        onClose={() => {
-          setIsSearchOpen(false);
         }}
       />
 
@@ -109,6 +97,21 @@ export default function AppLayout() {
           }}
         />
       </div>
+
+      <SearchSidebar
+        open={isSearchOpen}
+        currentConversationId={conversation?.id}
+        onSelectItem={(cid) => {
+          if (isMobile) {
+            setIsSearchOpen(false);
+            setIsCollapsed(true);
+          }
+          if (cid !== conversationId) Helper.scrollToId(cid, "center");
+        }}
+        onClose={() => {
+          setIsSearchOpen(false);
+        }}
+      />
     </div>
   );
 }
