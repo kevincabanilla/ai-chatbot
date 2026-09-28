@@ -22,7 +22,7 @@ import { AppNavLink } from "@/components/buttons/AppNavLink";
 import { AppLoadingDots } from "@/components/indicators/AppLoadingDots";
 import { HoverMarquee } from "../HoverMarquee";
 
-export function Nav({
+export function Navigation({
   isMobile,
   isCollapsed,
   setIsCollapsed,
