@@ -85,10 +85,10 @@ const NavHeader = ({
   );
 
   return (
-    <div className="flex items-center border-b border-accent/20 px-3 py-2">
+    <div className="flex items-center border-b border-accent/20 p-2">
       {isCollapsed ? (
         <button
-          className={HeaderIconClassName}
+          className={cn(HeaderIconClassName, "cursor-w-resize")}
           onMouseEnter={() => {
             setIsCollapseBtnHovered(true);
           }}
@@ -131,6 +131,7 @@ const NavHeader = ({
 
         <AppIconButton
           icon={isMobile ? X : PanelLeft}
+          className="cursor-w-resize"
           label="Toggle Sidebar"
           variant="ghost"
           onClick={onToggle}
