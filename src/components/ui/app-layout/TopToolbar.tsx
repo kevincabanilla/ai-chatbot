@@ -78,15 +78,15 @@ export const TopToolbar = ({
 
           <div className="grow" />
 
+          <AppIconButton
+            variant="plain"
+            label="Search button"
+            icon={Search}
+            onClick={onSearchClicked}
+          />
+
           {conversation?.id && (
             <>
-              <AppIconButton
-                variant="plain"
-                label="Search button"
-                icon={Search}
-                onClick={onSearchClicked}
-              />
-
               <DrodownMenu
                 onDelete={() => {
                   onDeleteConversation(conversation.id);
