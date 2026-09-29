@@ -10,7 +10,6 @@ import {
   useChat,
   useChatStream,
   useUpdateDocumentTitle,
-  useGetQueryParam,
   useStateManager,
   useTitleGenerator,
   useTypingAnimation,
@@ -33,21 +32,25 @@ const scrollToId = (id: string | number) => {
 export default function MainView() {
   const navigate = useNavigate();
   const messageId = useUrlHash();
-  const currentConversationId = useGetQueryParam("c");
-  const { isMobile, openSettings } = useAppContext();
+  const {
+    isMobile,
+    conversationId: currentConversationId,
+    conversation: currentConversation,
+    openSettings,
+  } = useAppContext();
   const {
     state,
+    loadingConversationId,
     moveConversationToTop,
     appendMessage,
     updateMessage,
     deleteMessage,
-    getConversation,
     updateConversation,
     branchOutToNewConversation,
+    setLoadingConversationId,
   } = useStateManager();
 
   const [showAlert, setShowAlert] = useState(false);
-  const [loadingId, setLoadingId] = useState(""); // Used to identify conversations with pending response.
   const [errorMessage, setErrorMessage] = useState("");
 
   const { sendChatMessage, isMutating: isChatLoading } = useChat();
@@ -56,8 +59,6 @@ export default function MainView() {
 
   const streamResponse = state.settings.streamResponse ?? false;
   const isLoading = streamResponse ? isStreaming : isChatLoading;
-
-  const currentConversation = getConversation(currentConversationId);
 
   const messages = useMemo(
     () => currentConversation?.messages ?? [],
@@ -124,7 +125,7 @@ export default function MainView() {
         });
       }
 
-      setLoadingId(conversationId);
+      setLoadingConversationId(conversationId);
 
       const newMessages = [...(latestConversationMessages ?? messages)];
 
@@ -241,7 +242,7 @@ export default function MainView() {
           errorMessage: errorMessage,
         }));
       } finally {
-        setLoadingId("");
+        setLoadingConversationId("");
       }
     },
     [
@@ -254,6 +255,7 @@ export default function MainView() {
       moveConversationToTop,
       navigate,
       sendChatMessage,
+      setLoadingConversationId,
       state.settings.mode,
       state.settings.model,
       streamMessage,
@@ -314,12 +316,12 @@ export default function MainView() {
           hasStarted ? "justify-start" : "justify-center",
         )}
       >
-        <div className="min-w-0 grow flex flex-col justify-center w-full md:w-2xl xl:w-4xl">
+        <div className="min-w-0 grow flex flex-col justify-center w-full max-w-2xl xl:max-w-4xl 2xl:max-w-5xl 3xl:max-w-6xl">
           {hasStarted ? (
             <div className="grow">
               <ConversationHistory
                 conversation={currentConversation}
-                loadingId={loadingId}
+                loadingId={loadingConversationId}
                 messages={messages}
                 onRetry={() => void sendMessage()}
                 onTryAgain={regenerateResponse}

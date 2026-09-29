@@ -10,6 +10,7 @@ export const BREAKPOINTS = {
 export const MEDIA_QUERIES = {
   md: `(max-width: ${BREAKPOINTS.md - 1}px)`,
   lg: `(max-width: ${BREAKPOINTS.lg - 1}px)`,
+  xl: `(max-width: ${BREAKPOINTS.xl - 1}px)`,
 } as const;
 
 const getMql = (query: string) =>

@@ -5,6 +5,8 @@
   --font-mono:
     "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
 
+  --breakpoint-3xl: 120rem; /* 1920px */
+
   --color-bg-primary: #22252b;
   --color-bg-secondary: #292c34;
 
@@ -32,10 +34,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-@utility full-size {
-  @apply h-full w-full;
 }
 
 .app-scrollbar {

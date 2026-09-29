@@ -18,8 +18,8 @@ export const sidebarVariants: Variants = {
     },
   },
   collapsed: {
-    width: 72,
-    minWidth: 72,
+    width: 64,
+    minWidth: 64,
     transition: {
       ...SIDEBAR_TRANSITION,
       when: "afterChildren",

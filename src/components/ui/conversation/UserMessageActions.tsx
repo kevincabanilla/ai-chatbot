@@ -32,7 +32,7 @@ export const UserMessageActions = ({
           pointerEvents: "auto",
           transition: {
             duration: 0.2,
-            delay: isTouchDevice ? 0 : 0.6,
+            delay: isTouchDevice ? 0 : 0.4,
             ease: "easeOut",
           },
         },

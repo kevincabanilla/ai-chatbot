@@ -5,31 +5,31 @@ import {
   useMotionValueEvent,
   useScroll,
 } from "motion/react";
-import { ChevronDown, Menu, Trash2 } from "lucide-react";
-import { AppIconButton } from "../buttons/AppIconButton";
-import { useGetQueryParam, useStateManager } from "@/hooks";
+import { ChevronDown, Menu, Search, Trash2 } from "lucide-react";
 import { cn } from "@/libs/utils";
-import { AppNavButton } from "../buttons/AppNavButton";
-import { AppDropdownMenu } from "../containers/AppDropdownMenu";
+import type { Conversation } from "@/interfaces";
+import { AppIconButton } from "@/components/buttons/AppIconButton";
+import { AppNavButton } from "@/components/buttons/AppNavButton";
+import { AppDropdownMenu } from "@/components/containers/AppDropdownMenu";
 
 export interface TopToolbarProps extends ComponentProps<typeof motion.header> {
-  isVisible: boolean;
+  visible: boolean;
+  conversation: Conversation | null;
   onOpenDrawer: (shouldOpen: boolean) => void;
   onDeleteConversation: (cid: string) => void;
+  onSearchClicked: () => void;
 }
 
 export const TopToolbar = ({
   className,
-  isVisible,
+  visible,
+  conversation,
   onOpenDrawer,
   onDeleteConversation,
+  onSearchClicked,
 }: TopToolbarProps) => {
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
-  const currentConversationId = useGetQueryParam("c");
-  const { getConversation, isConversationExists } = useStateManager();
-
-  const conversation = getConversation(currentConversationId);
 
   useMotionValueEvent(scrollY, "change", (current) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -46,7 +46,7 @@ export const TopToolbar = ({
   return (
     <AnimatePresence>
       {/* Mobile header */}
-      {isVisible && !hidden && (
+      {visible && !hidden && (
         <motion.header
           className={cn(
             "fixed inset-x-0 top-0 h-16 z-50 flex items-center",
@@ -78,37 +78,53 @@ export const TopToolbar = ({
 
           <div className="grow" />
 
-          {currentConversationId &&
-            isConversationExists(currentConversationId) && (
-              <AppDropdownMenu
-                role="menu"
-                ariaLabel="Conversation actions"
-                closeOnContentClick
-                placement="bottom-left"
-                trigger={(open) => (
-                  <AppIconButton
-                    variant="plain"
-                    label="Conversation actions"
-                    className={cn("transition-transform", open && "rotate-180")}
-                    icon={ChevronDown}
-                  />
-                )}
-              >
-                <AppNavButton
-                  type="button"
-                  role="menuitem"
-                  icon={Trash2}
-                  className="text-rose-400 hover:bg-rose-500/10 hover:text-rose-200 focus-visible:ring-rose-400"
-                  onClick={() => {
-                    onDeleteConversation(currentConversationId);
-                  }}
-                >
-                  <span>Delete conversation</span>
-                </AppNavButton>
-              </AppDropdownMenu>
-            )}
+          <AppIconButton
+            variant="plain"
+            label="Search button"
+            icon={Search}
+            onClick={onSearchClicked}
+          />
+
+          {conversation?.id && (
+            <>
+              <DrodownMenu
+                onDelete={() => {
+                  onDeleteConversation(conversation.id);
+                }}
+              />
+            </>
+          )}
         </motion.header>
       )}
     </AnimatePresence>
+  );
+};
+
+const DrodownMenu = ({ onDelete }: { onDelete: () => void }) => {
+  return (
+    <AppDropdownMenu
+      role="menu"
+      ariaLabel="Conversation actions"
+      closeOnContentClick
+      placement="bottom-left"
+      trigger={(open) => (
+        <AppIconButton
+          variant="plain"
+          label="Conversation actions"
+          className={cn("transition-transform", open && "rotate-180")}
+          icon={ChevronDown}
+        />
+      )}
+    >
+      <AppNavButton
+        type="button"
+        role="menuitem"
+        icon={Trash2}
+        className="text-rose-400 hover:bg-rose-500/10 hover:text-rose-200 focus-visible:ring-rose-400"
+        onClick={onDelete}
+      >
+        <span>Delete conversation</span>
+      </AppNavButton>
+    </AppDropdownMenu>
   );
 };

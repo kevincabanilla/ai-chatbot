@@ -5,13 +5,22 @@ import { GITHUB_URL } from "@/constants";
 import AppButton from "../buttons/AppButton";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 
+const TECH_STACK = [
+  "React",
+  "TypeScript",
+  "Vite",
+  "Tailwind CSS",
+  "Motion",
+  "Groq",
+];
+
 export const AboutDialog = ({ onClose, ...props }: DialogProps) => {
   const appTitle = import.meta.env.VITE_APP_TITLE;
   const appVersion = import.meta.env.VITE_APP_VERSION;
 
   return (
-    <AppDialog className="max-w-md" onClose={onClose} {...props}>
-      <div className="overflow-hidden rounded-2xl">
+    <AppDialog className="max-w-lg" onClose={onClose} {...props}>
+      <div className="max-h-[calc(100dvh-2rem)] overflow-x-hidden overflow-y-auto rounded-2xl">
         <div className="relative border-b border-white/10 bg-linear-to-br from-accent/15 via-bg-secondary/60 to-transparent px-6 pb-7 pt-8 sm:px-8">
           <div className="absolute -right-12 -top-16 size-40 rounded-full bg-accent/10 blur-3xl" />
 
@@ -33,10 +42,26 @@ export const AboutDialog = ({ onClose, ...props }: DialogProps) => {
               {appTitle}
             </h1>
 
-            <p className="mt-3 max-w-sm text-sm leading-6 text-foreground/60">
-              Thoughtful answers, coding help, research, and everyday tasks in
-              one focused conversation.
+            <p className="mt-3 max-w-md text-sm leading-6 text-foreground/60">
+              An open-source chatbot powered by Groq designed to help you get
+              thoughtful answers, coding help, solve problems, and everyday
+              tasks through simple, natural conversations.
             </p>
+          </div>
+
+          <div className="mt-6 flex flex-col gap-2 items-center text-sm">
+            <span className="text-foreground/50">Built with</span>
+
+            <div className="flex flex-wrap justify-center gap-2">
+              {TECH_STACK.map((techStack) => (
+                <span
+                  key={techStack}
+                  className="px-2.5 py-1 text-xs rounded-lg border border-accent/20 bg-accent/10 text-foreground/80 ring-1 ring-foreground/10 cursor-default"
+                >
+                  {techStack}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 

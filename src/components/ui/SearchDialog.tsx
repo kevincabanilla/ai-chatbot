@@ -1,14 +1,17 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { Search, X } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import clsx from "clsx";
-import { QUERY_PARAM, useGetQueryParam, useStore } from "@/hooks";
+import { QUERY_PARAM, useStore } from "@/hooks";
 import { getMessageDate } from "@/libs/utils";
 import { AppDialog, type DialogProps } from "../containers/AppDialog";
 import { AppIconButton } from "../buttons/AppIconButton";
 import { AppTooltip } from "../indicators/AppTooltip";
+import { AppCombobox, type ComboboxOption } from "../inputs/AppCombobox";
+
+type SearchInType = "all" | "current";
 
 const getMatchPreview = (content: string, query: string) => {
   const matchIndex = content
@@ -27,43 +30,76 @@ const getMatchPreview = (content: string, query: string) => {
 };
 
 export interface SearchDialogProps extends DialogProps {
+  currentConversationId?: string | null;
   onSelectItem?: (conversationId: string) => void;
 }
 
+/** @deprecated Use SearchComponent instead */
 export const SearchDialog = ({
+  currentConversationId = null,
   onSelectItem,
   onClose,
   ...props
 }: SearchDialogProps) => {
   const { state } = useStore();
   const [searchVal, setSearchVal] = useState("");
-  const currentConversationId = useGetQueryParam("c");
+  const [searchIn, setSearchIn] = useState<SearchInType>("all");
   const searchTerm = searchVal.trim();
 
-  const results = useMemo(
-    () =>
-      !searchTerm
-        ? []
-        : state.conversationOrder.flatMap((conversationId) => {
-            const conversation = state.conversationsById[conversationId];
+  const results = useMemo(() => {
+    if (!searchTerm) return [];
 
-            return conversation.messages.flatMap((message) => {
-              if (!message.messageId) return [];
-              const preview = getMatchPreview(message.content, searchTerm);
-              return preview
-                ? [
-                    {
-                      conversation,
-                      message,
-                      preview,
-                      date: getMessageDate(message),
-                    },
-                  ]
-                : [];
-            });
-          }),
-    [searchTerm, state.conversationOrder, state.conversationsById],
-  );
+    const source =
+      searchIn === "current" && currentConversationId
+        ? [
+            state.conversationOrder.find(
+              (id) => id === currentConversationId,
+            ) ?? "",
+          ]
+        : state.conversationOrder;
+
+    return source.flatMap((conversationId) => {
+      const conversation = state.conversationsById[conversationId];
+
+      return conversation.messages.flatMap((message) => {
+        if (!message.messageId) return [];
+        const preview = getMatchPreview(message.content, searchTerm);
+        return preview
+          ? [
+              {
+                conversation,
+                message,
+                preview,
+                date: getMessageDate(message),
+              },
+            ]
+          : [];
+      });
+    });
+  }, [
+    currentConversationId,
+    searchIn,
+    searchTerm,
+    state.conversationOrder,
+    state.conversationsById,
+  ]);
+
+  useEffect(() => {
+    const resetSearchIn = () => {
+      setSearchIn("all");
+    };
+
+    if (!currentConversationId && searchIn === "current") resetSearchIn();
+  }, [currentConversationId, searchIn]);
+
+  const SearchIn = [
+    { label: "All Conversations", value: "all" },
+    {
+      label: "Current Conversation",
+      value: "current",
+      disabled: !currentConversationId,
+    },
+  ] as ComboboxOption<SearchInType>[];
 
   const closeDialog = () => {
     setSearchVal("");
@@ -129,6 +165,19 @@ export const SearchDialog = ({
                 }}
               />
             )}
+          </div>
+
+          <div className="relative flex items-center gap-2 w-full">
+            <span className="text-sm md:text-base font-medium">Find in</span>
+            <div className="flex-1 sm:max-w-52">
+              <AppCombobox
+                value={searchIn}
+                options={SearchIn}
+                placeholder="Search where?"
+                aria-label="Where to Search"
+                onValueChange={setSearchIn}
+              />
+            </div>
           </div>
 
           {searchTerm && (

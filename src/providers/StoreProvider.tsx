@@ -12,6 +12,7 @@ import { AppSplashLoader } from "@/components/common/AppSplashLoader";
 export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
   const [isReady, setIsReady] = useState(false);
   const [state, setState] = useState<Store>(loadState);
+  const [loadingConversationId, setLoadingConversationId] = useState("");
 
   useEffect(() => {
     const frameId = requestAnimationFrame(() => {
@@ -33,6 +34,8 @@ export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
 
       isReady,
 
+      loadingConversationId,
+
       setState: (updater) => {
         setState((prev) => {
           if (typeof updater === "function") {
@@ -49,8 +52,12 @@ export const StoreProvider = ({ children }: { children: React.ReactNode }) => {
       reset: () => {
         setState(resetState());
       },
+
+      setLoadingConversationId: (id: string) => {
+        setLoadingConversationId(id);
+      },
     }),
-    [isReady, state],
+    [isReady, loadingConversationId, state],
   );
 
   if (!isReady) {

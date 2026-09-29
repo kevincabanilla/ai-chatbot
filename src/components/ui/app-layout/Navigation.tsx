@@ -11,17 +11,17 @@ import {
   X,
   XIcon,
 } from "lucide-react";
-import { cn } from "@/libs/utils";
-import type { NavProps } from "@/interfaces";
-import { AppNavButton } from "../buttons/AppNavButton";
-import { AppIconButton } from "../buttons/AppIconButton";
-import { SIDEBAR_TRANSITION, sidebarVariants } from "@/libs/animationVariants";
 import { QUERY_PARAM, useGetQueryParam, useStateManager } from "@/hooks";
+import { cn } from "@/libs/utils";
 import { Helper } from "@/libs/helper";
-import { AppNavLink } from "../buttons/AppNavLink";
-import { HoverMarquee } from "../ui/HoverMarquee";
+import type { NavProps } from "@/interfaces";
+import { AppNavButton } from "@/components/buttons/AppNavButton";
+import { AppIconButton } from "@/components/buttons/AppIconButton";
+import { AppNavLink } from "@/components/buttons/AppNavLink";
+import { AppLoadingDots } from "@/components/indicators/AppLoadingDots";
+import { HoverMarquee } from "../HoverMarquee";
 
-export function Nav({
+export function Navigation({
   isMobile,
   isCollapsed,
   setIsCollapsed,
@@ -35,23 +35,7 @@ export function Nav({
   };
 
   return (
-    <motion.aside
-      className={cn(
-        "h-full max-h-full flex flex-col overflow-hidden bg-bg-primary border-r border-accent/20",
-        isMobile ? "absolute inset-y-0 left-0" : "sticky top-0",
-      )}
-      initial={{ x: isMobile ? "-100%" : "0", width: isMobile ? 256 : 0 }}
-      animate={
-        isMobile
-          ? { x: isCollapsed ? "-100%" : 0 }
-          : isCollapsed
-            ? "collapsed"
-            : "expanded"
-      }
-      exit={{ x: "-100%" }} // Mobile only
-      transition={SIDEBAR_TRANSITION}
-      variants={sidebarVariants}
-    >
+    <>
       {/* Logo */}
       <NavHeader
         isMobile={isMobile}
@@ -73,7 +57,7 @@ export function Nav({
         onSettingsClicked={onSettingsClicked}
         onAboutClicked={onAboutClicked}
       />
-    </motion.aside>
+    </>
   );
 }
 
@@ -101,10 +85,10 @@ const NavHeader = ({
   );
 
   return (
-    <div className="flex items-center border-b border-accent/20 px-3 py-2">
+    <div className="flex items-center border-b border-accent/20 p-2">
       {isCollapsed ? (
         <button
-          className={HeaderIconClassName}
+          className={cn(HeaderIconClassName, "cursor-w-resize")}
           onMouseEnter={() => {
             setIsCollapseBtnHovered(true);
           }}
@@ -147,6 +131,7 @@ const NavHeader = ({
 
         <AppIconButton
           icon={isMobile ? X : PanelLeft}
+          className="cursor-w-resize"
           label="Toggle Sidebar"
           variant="ghost"
           onClick={onToggle}
@@ -170,7 +155,7 @@ const NavActions = ({
   onDeleteConversation: (cid: string) => void;
 }) => {
   const currentConversationId = useGetQueryParam("c");
-  const { state } = useStateManager();
+  const { state, loadingConversationId } = useStateManager();
   const recentConversationsRef = useRef<HTMLUListElement>(null);
   const selectedItemRef = useRef<HTMLLIElement>(null);
   const previousConversationOrderRef = useRef<string[] | null>(null);
@@ -303,6 +288,10 @@ const NavActions = ({
 
                       {(hasUnread ?? hasError) && (
                         <AlertBadge hasUnread={hasUnread} hasError={hasError} />
+                      )}
+
+                      {loadingConversationId === cid && (
+                        <AppLoadingDots size="xs" />
                       )}
                     </AppNavLink>
                   </motion.div>
