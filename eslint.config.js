@@ -18,7 +18,7 @@ export default defineConfig([
     ],
     languageOptions: {
       parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
+        project: ["./tsconfig.node.json", "./tsconfig.app.json", "./tsconfig.test.json"],
         tsconfigRootDir: import.meta.dirname,
       },
       globals: globals.browser,
@@ -30,6 +30,17 @@ export default defineConfig([
           allowNumber: true,
         },
       ],
+    },
+  },
+  {
+    files: ["tests/unit-tests/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/require-await": "off",
+      "@typescript-eslint/unbound-method": "off",
     },
   },
 ]);
