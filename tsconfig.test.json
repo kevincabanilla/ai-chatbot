@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.test.tsbuildinfo",
+    "types": ["vite/client", "node", "jest"],
+    "noEmit": true
+  },
+  "include": ["tests/unit-tests/**/*.ts", "tests/unit-tests/**/*.tsx"],
+  "exclude": ["node_modules", "dist", ".vercel"]
+}
